@@ -1,6 +1,6 @@
 package dev3.bank.dao.entity;
 
-public class Person extends Id{
+public class Person extends Id {
     protected String name;
     protected String surname;
     protected long phoneNumber;

@@ -2,10 +2,11 @@ package dev3.bank.dao.entity;
 
 import java.util.Date;
 
-public class Transaction extends Id{
+public class Transaction extends Id {
     private Date date;
     private long cardIdSender;
     private long cardIdReceiver;
+    private long amountOfMoney;
 
     public Date getDate() {
         return date;
@@ -39,5 +40,5 @@ public class Transaction extends Id{
         this.amountOfMoney = amountOfMoney;
     }
 
-    private long amountOfMoney;
+
 }

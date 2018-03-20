@@ -1,16 +1,16 @@
 package dev3.bank.dao.entity;
 
 public class Card extends Id {
-    private boolean status;
+    private boolean locked;
     private int pin;
     private long accountId;
 
-    public boolean isStatus() {
-        return status;
+    public boolean isLocked() {
+        return locked;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setLocked(boolean status) {
+        this.locked = status;
     }
 
     public int getPin() {

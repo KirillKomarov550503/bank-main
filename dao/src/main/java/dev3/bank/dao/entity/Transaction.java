@@ -2,11 +2,11 @@ package dev3.bank.dao.entity;
 
 import java.util.Date;
 
-public class Transaction extends Id {
+public class Transaction extends BaseEntity {
     private Date date;
-    private long cardIdSender;
-    private long cardIdReceiver;
-    private long amountOfMoney;
+    private Account accountFrom;
+    private Account accountTo;
+    private long money;
 
     public Date getDate() {
         return date;
@@ -16,29 +16,27 @@ public class Transaction extends Id {
         this.date = date;
     }
 
-    public long getCardIdSender() {
-        return cardIdSender;
+    public Account getAccountFrom() {
+        return accountFrom;
     }
 
-    public void setCardIdSender(long cardIdSender) {
-        this.cardIdSender = cardIdSender;
+    public void setAccountFrom(Account accountFrom) {
+        this.accountFrom = accountFrom;
     }
 
-    public long getCardIdReceiver() {
-        return cardIdReceiver;
+    public Account getAccountTo() {
+        return accountTo;
     }
 
-    public void setCardIdReceiver(long cardIdReceiver) {
-        this.cardIdReceiver = cardIdReceiver;
+    public void setAccountTo(Account accountTo) {
+        this.accountTo = accountTo;
     }
 
-    public long getAmountOfMoney() {
-        return amountOfMoney;
+    public long getMoney() {
+        return money;
     }
 
-    public void setAmountOfMoney(long amountOfMoney) {
-        this.amountOfMoney = amountOfMoney;
+    public void setMoney(long money) {
+        this.money = money;
     }
-
-
 }

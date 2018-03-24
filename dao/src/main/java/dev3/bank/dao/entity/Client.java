@@ -1,13 +1,15 @@
 package dev3.bank.dao.entity;
 
-public class Client extends Person {
-    private long personId;
+import java.util.Collection;
 
-    public long getPersonId() {
-        return personId;
+public class Client extends Person {
+    private Collection<Account> accountCollection;
+
+    public Collection<Account> getAccountCollection() {
+        return accountCollection;
     }
 
-    public void setPersonId(long personId) {
-        this.personId = personId;
+    public void setAccountCollection(Collection<Account> accountCollection) {
+        this.accountCollection = accountCollection;
     }
 }

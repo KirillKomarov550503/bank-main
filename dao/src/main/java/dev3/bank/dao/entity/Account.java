@@ -1,9 +1,11 @@
 package dev3.bank.dao.entity;
 
-public class Account extends Id{
+import java.util.Collection;
+
+public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
-    private long clientId;
+    private Collection<Card> cardCollection;
 
     public double getBalance() {
         return balance;
@@ -17,15 +19,15 @@ public class Account extends Id{
         return locked;
     }
 
-    public void setLocked(boolean status) {
-        this.locked = status;
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
-    public long getClientId() {
-        return clientId;
+    public Collection<Card> getCardCollection() {
+        return cardCollection;
     }
 
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
+    public void setCardCollection(Collection<Card> cardCollection) {
+        this.cardCollection = cardCollection;
     }
 }

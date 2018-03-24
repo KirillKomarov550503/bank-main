@@ -1,6 +1,6 @@
 package dev3.bank.dao.entity;
 
-public class Person extends Id {
+public class Person extends BaseEntity {
     protected String name;
     protected String surname;
     protected long phoneNumber;
@@ -25,6 +25,8 @@ public class Person extends Id {
     public long getPhoneNumber() {
         return phoneNumber;
     }
+
+
 
     public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;

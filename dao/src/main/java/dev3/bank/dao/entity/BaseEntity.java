@@ -1,6 +1,6 @@
 package dev3.bank.dao.entity;
 
-public class Id {
+public class BaseEntity {
     protected long id;
 
     public long getId() {

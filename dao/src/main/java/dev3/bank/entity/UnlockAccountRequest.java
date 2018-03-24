@@ -2,7 +2,7 @@ package dev3.bank.entity;
 
 import java.util.Collection;
 
-public class UnlockRequestAccount {
+public class UnlockAccountRequest extends BaseEntity {
     public Collection<Account> getAccountCollection() {
         return accountCollection;
     }

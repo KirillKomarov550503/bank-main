@@ -1,4 +1,4 @@
-package dev3.bank.dao.entity;
+package dev3.bank.entity;
 
 public enum Role {
     CLIENT, ADMIN

@@ -1,4 +1,4 @@
-package dev3.bank.dao.entity;
+package dev3.bank.entity;
 
 public class BaseEntity {
     protected long id;

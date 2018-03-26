@@ -1,4 +1,4 @@
-package dev3.bank.dao;
+package dev3.bank.dao.interfaces;
 
 import dev3.bank.entity.Transaction;
 

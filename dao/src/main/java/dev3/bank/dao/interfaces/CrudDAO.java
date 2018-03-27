@@ -2,6 +2,7 @@ package dev3.bank.dao.interfaces;
 
 import dev3.bank.entity.BaseEntity;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,5 +15,7 @@ public interface CrudDAO<T extends BaseEntity> {
     T update(T entity);
 
     void delete(long id);
+
+    Collection<T> getAll();
 
 }

@@ -35,7 +35,7 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
     public T add(T entity) {
         Map<Long, T> entityMap = getEntityMap();
         if (entityMap.isEmpty()) {
-            entity.setId(1);
+            entity.setId(1L);
             entityMap.put(1L, entity);
         } else {
             long lastId = getLastId(entityMap);
@@ -43,6 +43,12 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
             entityMap.put(lastId + 1L, entity);
         }
         return null;
+    }
+
+
+    @Override
+    public Collection<T> getAll() {
+        return getEntityMapValues();
     }
 
     public static void writeEntitiesMap(String path) {

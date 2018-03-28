@@ -5,6 +5,9 @@ import dev3.bank.impl.VisitorServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import dev3.bank.interfaces.TestService;
 import dev3.bank.interfaces.VisitorService;
+import menu.FabricMethod;
+import menu.Menu;
+import menu.Role;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -15,19 +18,20 @@ public class Main {
         CrudDAOImpl.readEntitiesMap(getPathToDB());
 
         while (!exit) {
-            Output.printMenu();
+            Output.printMainMenu();
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Input number of variant: ");
+            System.out.println("utils.Input number of variant: ");
             try{
+                Role role = null;
                 switch (scanner.nextInt()) {
                     case 1:
-                        VisitorService visitorService = new VisitorServiceImpl();
-                        visitorService.registration(Input.inputClientData());
+                        role = Role.VISITOR;
                         break;
                     case 2:
-                        TestService testService = new TestServiceImpl();
-                        Output.printClients(testService.getAll());
+                        role = Role.CLIENT;
                         break;
+                    case 3:
+                        role = Role.ADMIN;
                     case 0:
                         CrudDAOImpl.writeEntitiesMap(getPathToDB());
                         exit = true;
@@ -35,6 +39,9 @@ public class Main {
                     default:
                         break;
                 }
+                FabricMethod fabricMethod = new FabricMethod();
+                Menu menu = fabricMethod.getMenu(role);
+                menu.printMenu();
             } catch (InputMismatchException e){
                 System.out.println("Wrong input variant");
             }

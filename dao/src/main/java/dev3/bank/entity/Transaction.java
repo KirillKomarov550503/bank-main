@@ -6,7 +6,7 @@ public class Transaction extends BaseEntity {
     private Date date;
     private Account accountFrom;
     private Account accountTo;
-    private long money;
+    private double money;
 
     public Date getDate() {
         return date;
@@ -32,11 +32,12 @@ public class Transaction extends BaseEntity {
         this.accountTo = accountTo;
     }
 
-    public long getMoney() {
+
+    public double getMoney() {
         return money;
     }
 
-    public void setMoney(long money) {
+    public void setMoney(double money) {
         this.money = money;
     }
 }

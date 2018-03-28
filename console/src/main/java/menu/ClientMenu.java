@@ -1,6 +1,7 @@
 package menu;
 
 import dev3.bank.entity.Account;
+import dev3.bank.entity.Card;
 import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import utils.Input;
@@ -34,9 +35,17 @@ public class ClientMenu implements Menu {
                     account.setBalance(0.0);
                     account.setCardCollection(new ArrayList<>());
                     account.setLocked(false);
-                    clientService.createAccount(account, Input.inputPersonId());
+                    clientService.createAccount(account, Input.inputClientId());
+                    break;
                 case 2:
-
+                    Card card = new Card();
+                    card.setLocked(false);
+                    card.setPin(Input.inputCardPIN());
+                    clientService.createCard(card, Input.inputAccountId(), Input.inputClientId());
+                    break;
+                case 3:
+                    clientService.createTransaction(Input.inputTransaction());
+                    break;
                 case 0:
                     flag = false;
                     break;

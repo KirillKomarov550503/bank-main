@@ -7,19 +7,25 @@ import dev3.bank.entity.Transaction;
 import java.util.Collection;
 
 public interface ClientService {
-    Account createAccount(Account account, long personId);
+    Account createAccount(Account account, long clientId);
 
-    Card createCard(Card card, long accountId);
+    Collection<Account> getAllAccounts(long clientId);
 
-    Collection<Transaction> showStories();
+    Collection<Card> getAllCards(long clientId);
 
-    void lockCard(long cardId);
+    Collection<Card> getAllCardsByAccount(long accountId, long clientId);
 
-    void lockAccount(long accountId);
+    Card createCard(Card card, long accountId, long clientId);
 
-    void unlockCardRequest(long cardId);
+    Collection<Transaction> showStories(long clientId);
 
-    void unlockAccountRequest(long accountId);
+    void lockCard(long cardId, long clientId);
 
-    Transaction crateTransaction(long accountFromId, long accountToId);
+    void lockAccount(long accountId, long clientId);
+
+    void unlockCardRequest(long cardId, long clientId);
+
+    void unlockAccountRequest(long accountId, long clientId);
+
+    Transaction createTransaction(Transaction transaction);
 }

@@ -13,7 +13,7 @@ public class NewsDAOImpl extends CrudDAOImpl<News> implements NewsDAO {
     }
 
     @Override
-    public Collection<News> getNewsByDate(Date date) {
+    public Collection<News> getNewsByDate(String date) {
         return getEntityMapValues()
                 .stream()
                 .filter(news -> news.getDate().equals(date))

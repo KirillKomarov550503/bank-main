@@ -1,9 +1,7 @@
 package utils;
 
-import dev3.bank.entity.Account;
-import dev3.bank.entity.Card;
-import dev3.bank.entity.Client;
-import dev3.bank.entity.Role;
+import dev3.bank.dao.interfaces.AccountDAO;
+import dev3.bank.entity.*;
 
 import java.util.Scanner;
 
@@ -24,30 +22,49 @@ public class Input {
         try {
             client.setPhoneNumber(scanner.nextInt());
         } catch (NumberFormatException e) {
-            System.out.println("\nWrong input phone number");
+            System.out.println("Wrong input phone number");
         }
         client.setRole(Role.CLIENT);
         return client;
     }
 
-    public static long inputPersonId() {
+    public static long inputClientId() {
         long personId;
-        System.out.println("\nInput person ID: ");
+        System.out.println("Input person ID: ");
         personId = scanner.nextLong();
         return personId;
     }
 
     public static int inputCardPIN() {
         int pin;
-        System.out.println("\nInput pin: ");
+        System.out.println("Input pin: ");
         pin = scanner.nextInt();
         return pin;
     }
 
     public static long inputAccountId(){
         long accountId;
-        System.out.println("\nInput account ID: ");
+        System.out.println("Input account ID: ");
         accountId = scanner.nextLong();
         return accountId;
     }
+
+    public static Transaction inputTransaction(){
+        Transaction transaction = new Transaction();
+        print("Input account ID FROM you want transfer money: ");
+        long accountFromId = scanner.nextLong();
+        print("Input account ID WHERE you want to transfer money: ");
+        long accountToId = scanner.nextLong();
+        print("Input amount of transfer: ");
+        double money = scanner.nextDouble();
+        Account accountFrom = new Account();
+        accountFrom.setId(accountFromId);
+        Account accountTo = new Account();
+        accountTo.setId(accountToId);
+        transaction.setAccountFrom(accountFrom);
+        transaction.setAccountTo(accountTo);
+        transaction.setMoney(money);
+        return transaction;
+    }
+
 }

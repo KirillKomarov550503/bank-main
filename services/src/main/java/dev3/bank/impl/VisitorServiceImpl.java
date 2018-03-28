@@ -22,8 +22,7 @@ public class VisitorServiceImpl implements VisitorService {
     }
 
     @Override
-    public Person registration(Person person) {
-        Client client = (Client) person;
+    public Person registration(Client client) {
         client.setAccountCollection(new ArrayList<>());
         ClientDAO clientDAO = new ClientDAOImpl();
         return clientDAO.add(client);

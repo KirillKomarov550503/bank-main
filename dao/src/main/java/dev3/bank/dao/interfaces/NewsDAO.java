@@ -6,5 +6,5 @@ import java.util.Collection;
 import java.util.Date;
 
 public interface NewsDAO extends CrudDAO<News> {
-    Collection<News> getNewsByDate(Date date);
+    Collection<News> getNewsByDate(String date);
 }

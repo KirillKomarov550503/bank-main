@@ -6,4 +6,5 @@ public class News {
     private Date date;
     private String title;
     private String text;
+    private Admin admin;
 }

@@ -17,7 +17,7 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
         memoryMap.computeIfAbsent(classType, k -> new HashMap<Long, T>());
     }
 
-    public Collection<T> getEntityMapValues(){
+    public Collection<T> getEntityMapValues() {
         return getEntityMap().values();
     }
 
@@ -61,12 +61,15 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
     }
 
     public static void readEntitiesMap(String path) {
+        Map tempMemoryMap = null;
+        System.out.println("Path: " + path + "\n");
         try (FileInputStream inputStream = new FileInputStream(new File(path))) {
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            memoryMap.putAll((Map) objectInputStream.readObject());
-        } catch (IOException | ClassNotFoundException e) {
+            tempMemoryMap = (Map) objectInputStream.readObject();
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
+        memoryMap.putAll(tempMemoryMap);
     }
 
     private long getLastId(Map<Long, T> entityMap) {

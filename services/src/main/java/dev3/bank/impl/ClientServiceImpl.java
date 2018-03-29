@@ -77,7 +77,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Collection<Transaction> showStories(long clientId) {
-        return null;
+        ClientDAO clientDAO = new ClientDAOImpl();
+        Collection<Account> accounts = clientDAO.getByAccountId(clientId).getAccountCollection();
+        TransactionDAO transactionDAO = new TransactionDAOImpl();
+        Collection<Transaction> transactions = new ArrayList<>();
+        for (Account account : accounts) {
+            transactions.addAll(transactionDAO.getByAccountFromId(account.getId()));
+        }
+        return transactions;
     }
 
     @Override
@@ -128,8 +135,8 @@ public class ClientServiceImpl implements ClientService {
 
         Client clientTo = clientDAO.getByAccountId(accountToId);
         ArrayList<Account> accountsTo = (ArrayList<Account>) clientTo.getAccountCollection();
-        for(Account account : accountsTo){
-            if(account.getId() == accountFromId){
+        for (Account account : accountsTo) {
+            if (account.getId() == accountFromId) {
                 account.setBalance(accountFromBalance + money);
             }
         }

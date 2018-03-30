@@ -1,8 +1,6 @@
 package dev3.bank.interfaces;
 
-import dev3.bank.entity.Account;
-import dev3.bank.entity.Card;
-import dev3.bank.entity.Transaction;
+import dev3.bank.entity.*;
 
 import java.util.Collection;
 
@@ -13,19 +11,19 @@ public interface ClientService {
 
     Collection<Card> getAllCards(long clientId);
 
-    Collection<Card> getAllCardsByAccount(long accountId, long clientId);
+    Collection<Card> getAllCardsByAccount(long accountId);
 
-    Card createCard(Card card, long accountId, long clientId);
+    Card createCard(Card card, long accountId);
 
     Collection<Transaction> showStories(long clientId);
 
-    void lockCard(long cardId, long clientId);
+    void lockCard(long cardId);
 
-    void lockAccount(long accountId, long clientId);
+    void lockAccount(long accountId);
 
-    void unlockCardRequest(long cardId, long clientId);
+    UnlockCardRequest unlockCardRequest(long cardId);
 
-    void unlockAccountRequest(long accountId, long clientId);
+    UnlockAccountRequest unlockAccountRequest(long accountId);
 
     Transaction createTransaction(Transaction transaction);
 }

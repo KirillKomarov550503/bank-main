@@ -1,15 +1,13 @@
 package dev3.bank.entity;
 
-import java.util.Collection;
-
 public class UnlockCardRequest extends BaseEntity{
-    private Collection<Card> cardCollection;
+    private Card card;
 
-    public Collection<Card> getCardCollection() {
-        return cardCollection;
+    public Card getCard() {
+        return card;
     }
 
-    public void setCardCollection(Collection<Card> cardCollection) {
-        this.cardCollection = cardCollection;
+    public void setCard(Card card) {
+        this.card = card;
     }
 }

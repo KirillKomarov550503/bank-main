@@ -5,10 +5,7 @@ import dev3.bank.dao.interfaces.*;
 import dev3.bank.entity.*;
 import dev3.bank.interfaces.ClientService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -73,17 +70,21 @@ public class ClientServiceImpl implements ClientService {
         UnlockCardRequestDAO unlockCardRequestDAO = new UnlockCardRequestDAOImpl();
         CardDAO cardDAO = new CardDAOImpl();
         UnlockCardRequest unlockCardRequest = new UnlockCardRequest();
-        unlockCardRequest.set
+        unlockCardRequest.setCard(cardDAO.getById(cardId));
         return unlockCardRequestDAO.add(unlockCardRequest);
     }
 
     @Override
     public UnlockAccountRequest unlockAccountRequest(long accountId) {
+        UnlockAccountRequestDAO unlockAccountRequestDAO = new UnlockAccountRequestDAOImpl();
+        AccountDAO accountDAO = new AccountDAOImpl();
+        UnlockAccountRequest request = new UnlockAccountRequest();
+        request.setAccount(accountDAO.getById(accountId));
         return null;
     }
 
     @Override
-    public Transaction createTransaction(Transaction transaction) {
+    public Transaction createTransaction(long accountFromId, long accountToId) {
         return null;
     }
 }

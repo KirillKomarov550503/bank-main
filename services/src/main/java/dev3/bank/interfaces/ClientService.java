@@ -25,5 +25,5 @@ public interface ClientService {
 
     UnlockAccountRequest unlockAccountRequest(long accountId);
 
-    Transaction createTransaction(Transaction transaction);
+    Transaction createTransaction(long accountFromId, long accountToId);
 }

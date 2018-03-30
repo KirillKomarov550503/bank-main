@@ -12,6 +12,14 @@ public class AccountDAOImpl extends CrudDAOImpl<Account> implements AccountDAO {
     }
 
     @Override
+    public Collection<Account> getAccountsByClientId(long clientId) {
+        return getEntityMapValues()
+                .stream()
+                .filter(account -> account.getClient().getId() == clientId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<Account> getLockedAccounts() {
         return getEntityMapValues()
                 .stream()

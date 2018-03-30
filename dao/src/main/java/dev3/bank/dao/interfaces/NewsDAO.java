@@ -7,4 +7,5 @@ import java.util.Date;
 
 public interface NewsDAO extends CrudDAO<News> {
     Collection<News> getNewsByDate(String date);
+    Collection<News> getNewsByAdmin(long adminId);
 }

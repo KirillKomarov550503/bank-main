@@ -13,6 +13,14 @@ public class NewsDAOImpl extends CrudDAOImpl<News> implements NewsDAO {
     }
 
     @Override
+    public Collection<News> getNewsByAdmin(long adminId) {
+        return getEntityMapValues()
+                .stream()
+                .filter(news -> news.getAdmin().getId() == adminId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<News> getNewsByDate(String date) {
         return getEntityMapValues()
                 .stream()

@@ -7,4 +7,5 @@ import java.util.Collection;
 public interface AccountDAO extends CrudDAO<Account> {
     Collection<Account> getLockedAccounts();
     Collection<Account> getUnlockedAccounts();
+    Collection<Account> getAccountsByClientId(long clientId);
 }

@@ -20,6 +20,14 @@ public class CardDAOImpl extends CrudDAOImpl<Card> implements CardDAO {
     }
 
     @Override
+    public Collection<Card> getCardsByAccountId(long accountId) {
+        return getEntityMapValues()
+                .stream()
+                .filter(card -> card.getAccount().getId() == accountId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<Card> getUnlockedCards() {
         return getEntityMapValues()
                 .stream()

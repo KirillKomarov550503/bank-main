@@ -11,16 +11,5 @@ public class ClientDAOImpl extends CrudDAOImpl<Client> implements ClientDAO {
         super(Client.class);
     }
 
-    @Override
-    public Client getByAccountId(long accountId) {
-        Collection<Client> clients = getEntityMapValues();
-        Client needClient = null;
-        for (Client client : clients) {
-            for (Account account : client.getAccountCollection()) {
-                if (account.getId() == accountId)
-                    needClient = client;
-            }
-        }
-        return needClient;
-    }
+
 }

@@ -1,11 +1,18 @@
 package dev3.bank.entity;
 
-import java.util.Date;
-
-public class News extends BaseEntity{
+public class News extends BaseEntity {
     private String date;
     private String title;
     private String text;
+    private Admin admin;
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
 
     public String getDate() {
         return date;

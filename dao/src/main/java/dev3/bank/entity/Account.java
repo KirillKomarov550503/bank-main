@@ -1,11 +1,9 @@
 package dev3.bank.entity;
 
-import java.util.Collection;
-
 public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
-    private Collection<Card> cardCollection;
+    private Client client;
 
     public double getBalance() {
         return balance;
@@ -23,11 +21,11 @@ public class Account extends BaseEntity {
         this.locked = locked;
     }
 
-    public Collection<Card> getCardCollection() {
-        return cardCollection;
+    public Client getClient() {
+        return client;
     }
 
-    public void setCardCollection(Collection<Card> cardCollection) {
-        this.cardCollection = cardCollection;
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

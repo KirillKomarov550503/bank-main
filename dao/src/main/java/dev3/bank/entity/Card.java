@@ -3,6 +3,15 @@ package dev3.bank.entity;
 public class Card extends BaseEntity {
     private boolean locked;
     private int pin;
+    private Account account;
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public boolean isLocked() {
         return locked;

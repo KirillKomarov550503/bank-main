@@ -7,4 +7,5 @@ import java.util.Collection;
 public interface TransactionDAO extends CrudDAO<Transaction> {
     Collection<Transaction> getByAccountFromId(long accountFromId);
     Collection<Transaction> getByAccountToId(long accountToId);
+    Collection<Transaction> getByClientId(long clientId);
 }

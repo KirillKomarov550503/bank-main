@@ -26,4 +26,12 @@ public class TransactionDAOImpl extends CrudDAOImpl<Transaction> implements Tran
                 .filter(transaction -> transaction.getAccountTo().getId() == accountToId)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Collection<Transaction> getByClientId(long clientId) {
+        return getEntityMapValues()
+                .stream()
+                .filter(transaction -> transaction.getAccountFrom().getClient().getId() == clientId)
+                .collect(Collectors.toList());
+    }
 }

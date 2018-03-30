@@ -1,15 +1,13 @@
 package dev3.bank.entity;
 
-import java.util.Collection;
-
 public class UnlockAccountRequest extends BaseEntity {
-    public Collection<Account> getAccountCollection() {
-        return accountCollection;
+    private Account account;
+
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountCollection(Collection<Account> accountCollection) {
-        this.accountCollection = accountCollection;
+    public void setAccount(Account account) {
+        this.account = account;
     }
-
-    private Collection<Account> accountCollection;
 }

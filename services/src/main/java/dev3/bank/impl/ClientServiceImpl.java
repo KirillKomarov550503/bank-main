@@ -5,7 +5,9 @@ import dev3.bank.dao.interfaces.*;
 import dev3.bank.entity.*;
 import dev3.bank.interfaces.ClientService;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -84,7 +86,22 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Transaction createTransaction(long accountFromId, long accountToId) {
-        return null;
+    public Transaction createTransaction(long accountFromId, long accountToId, double money) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        Transaction transaction = new Transaction();
+        transaction.setDate(simpleDateFormat.format(new Date()));
+
+        AccountDAO accountDAO = new AccountDAOImpl();
+        Account accountFrom = accountDAO.getById(accountFromId);
+        Account accountTo = accountDAO.getById(accountToId);
+
+        double accountFromMoney = accountFrom.getBalance();
+        double accoutToMoney = accountTo.getBalance();
+        accountFrom.setBalance(accountFromMoney - money);
+        accountTo.setBalance(accoutToMoney + money);
+
+        transaction.setAccountFrom(accountFrom);
+        transaction.setAccountTo(accountTo);
+        return transaction;
     }
 }

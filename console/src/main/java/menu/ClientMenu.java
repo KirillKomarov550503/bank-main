@@ -33,7 +33,6 @@ public class ClientMenu implements Menu {
                 case 1:
                     Account account = new Account();
                     account.setBalance(0.0);
-                    account.setCardCollection(new ArrayList<>());
                     account.setLocked(false);
                     clientService.createAccount(account, Input.inputClientId());
                     break;

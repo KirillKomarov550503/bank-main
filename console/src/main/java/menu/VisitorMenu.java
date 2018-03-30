@@ -16,7 +16,7 @@ public class VisitorMenu implements Menu {
         Scanner scanner = new Scanner(System.in);
         while (flag) {
             System.out.println("1-Get all news");
-            System.out.println("2-Register");
+            System.out.println("2-Registration");
             System.out.println("0-Back to main menu");
             System.out.println("utils.Input your variant: ");
             switch (scanner.nextInt()) {

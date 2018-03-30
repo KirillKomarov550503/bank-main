@@ -80,7 +80,7 @@ public class ClientServiceImpl implements ClientService {
         AccountDAO accountDAO = new AccountDAOImpl();
         UnlockAccountRequest request = new UnlockAccountRequest();
         request.setAccount(accountDAO.getById(accountId));
-        return null;
+        return unlockAccountRequestDAO.add(request);
     }
 
     @Override

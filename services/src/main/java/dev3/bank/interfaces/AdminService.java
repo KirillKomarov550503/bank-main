@@ -13,11 +13,11 @@ public interface AdminService {
 
     void unlockCard(long cardId);
 
-    Collection<Card> getAllCards();
+    Collection<Card> getAllUnlockCardRequest();
 
-    void unlockAccount();
+    void unlockAccount(long accountId);
 
-    Collection<Account> getAllAccounts();
+    Collection<Account> getAllUnlockAccountRequest();
 
     void sendNews(News news);
 }

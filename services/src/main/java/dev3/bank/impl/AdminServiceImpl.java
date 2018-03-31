@@ -71,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void sendNews(News news) {
+    public void sendNews(GeneralNews generalNews) {
 
     }
 }

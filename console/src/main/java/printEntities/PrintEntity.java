@@ -1,13 +1,13 @@
 package printEntities;
 
-import dev3.bank.entity.News;
+import dev3.bank.entity.GeneralNews;
 
 public class PrintEntity {
 
-    public static void printNews(News news) {
+    public static void printNews(GeneralNews generalNews) {
         System.out.println("" +
-                "Date: " + news.getDate() + "\t" +
-                "Title: " + news.getTitle() + "\t" +
-                "Text: " + news.getText());
+                "Date: " + generalNews.getDate() + "\t" +
+                "Title: " + generalNews.getTitle() + "\t" +
+                "Text: " + generalNews.getText());
     }
 }

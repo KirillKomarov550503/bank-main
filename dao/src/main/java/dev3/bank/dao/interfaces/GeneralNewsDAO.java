@@ -1,11 +1,10 @@
 package dev3.bank.dao.interfaces;
 
-import dev3.bank.entity.News;
+import dev3.bank.entity.GeneralNews;
 
 import java.util.Collection;
-import java.util.Date;
 
-public interface NewsDAO extends CrudDAO<News> {
-    Collection<News> getNewsByDate(String date);
-    Collection<News> getNewsByAdmin(long adminId);
+public interface GeneralNewsDAO extends CrudDAO<GeneralNews> {
+    Collection<GeneralNews> getNewsByDate(String date);
+    Collection<GeneralNews> getNewsByAdmin(long adminId);
 }

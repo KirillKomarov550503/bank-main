@@ -1,6 +1,6 @@
 package dev3.bank.entity;
 
-public class News extends BaseEntity {
+public class GeneralNews extends BaseEntity {
     private String date;
     private String title;
     private String text;

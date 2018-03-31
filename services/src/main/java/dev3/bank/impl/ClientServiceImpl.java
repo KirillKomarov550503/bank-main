@@ -3,6 +3,7 @@ package dev3.bank.impl;
 import dev3.bank.dao.impl.*;
 import dev3.bank.dao.interfaces.*;
 import dev3.bank.entity.*;
+import dev3.bank.exception.NotEnoughMoneyException;
 import dev3.bank.interfaces.ClientService;
 
 import java.text.SimpleDateFormat;
@@ -94,22 +95,27 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Transaction createTransaction(long accountFromId, long accountToId, double money) {
+    public Transaction createTransaction(long accountFromId, long accountToId, double money, long clientId) throws NotEnoughMoneyException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         Transaction transaction = new Transaction();
         transaction.setDate(simpleDateFormat.format(new Date()));
 
         AccountDAO accountDAO = new AccountDAOImpl();
         Account accountFrom = accountDAO.getById(accountFromId);
-        Account accountTo = accountDAO.getById(accountToId);
+        if (accountFrom.getClient().getId() == clientId) {
+            Account accountTo = accountDAO.getById(accountToId);
 
-        double accountFromMoney = accountFrom.getBalance();
-        double accoutToMoney = accountTo.getBalance();
-        accountFrom.setBalance(accountFromMoney - money);
-        accountTo.setBalance(accoutToMoney + money);
+            double moneyFrom = accountFrom.getBalance();
+            if(money > moneyFrom)
+                throw new NotEnoughMoneyException("Not enough money on your account");
+            double moneyTo = accountTo.getBalance();
+            accountFrom.setBalance(moneyFrom - money);
+            accountTo.setBalance(moneyTo + money);
 
-        transaction.setAccountFrom(accountFrom);
-        transaction.setAccountTo(accountTo);
-        return transaction;
+            transaction.setAccountFrom(accountFrom);
+            transaction.setAccountTo(accountTo);
+            return transaction;
+        }
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package dev3.bank.interfaces;
 
 import dev3.bank.entity.*;
+import dev3.bank.exception.NotEnoughMoneyException;
 
 import java.util.Collection;
 
@@ -25,5 +26,5 @@ public interface ClientService {
 
     UnlockAccountRequest unlockAccountRequest(long accountId);
 
-    Transaction createTransaction(long accountFromId, long accountToId, double money);
+    Transaction createTransaction(long accountFromId, long accountToId, double money, long clientId) throws NotEnoughMoneyException;
 }

@@ -69,20 +69,28 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public UnlockCardRequest unlockCardRequest(long cardId) {
-        UnlockCardRequestDAO unlockCardRequestDAO = new UnlockCardRequestDAOImpl();
-        CardDAO cardDAO = new CardDAOImpl();
-        UnlockCardRequest unlockCardRequest = new UnlockCardRequest();
-        unlockCardRequest.setCard(cardDAO.getById(cardId));
-        return unlockCardRequestDAO.add(unlockCardRequest);
+        UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
+        if (requestDAO.getByCardId(cardId) == null) {
+            CardDAO cardDAO = new CardDAOImpl();
+            UnlockCardRequest request = new UnlockCardRequest();
+            request.setCard(cardDAO.getById(cardId));
+            return requestDAO.add(request);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public UnlockAccountRequest unlockAccountRequest(long accountId) {
-        UnlockAccountRequestDAO unlockAccountRequestDAO = new UnlockAccountRequestDAOImpl();
-        AccountDAO accountDAO = new AccountDAOImpl();
-        UnlockAccountRequest request = new UnlockAccountRequest();
-        request.setAccount(accountDAO.getById(accountId));
-        return unlockAccountRequestDAO.add(request);
+        UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
+        if (requestDAO.getByAccountId(accountId) == null) {
+            AccountDAO accountDAO = new AccountDAOImpl();
+            UnlockAccountRequest request = new UnlockAccountRequest();
+            request.setAccount(accountDAO.getById(accountId));
+            return requestDAO.add(request);
+        } else {
+            return null;
+        }
     }
 
     @Override

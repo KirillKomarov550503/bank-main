@@ -106,7 +106,7 @@ public class ClientServiceImpl implements ClientService {
             Account accountTo = accountDAO.getById(accountToId);
 
             double moneyFrom = accountFrom.getBalance();
-            if(money > moneyFrom)
+            if (moneyFrom < money)
                 throw new NotEnoughMoneyException("Not enough money on your account");
             double moneyTo = accountTo.getBalance();
             accountFrom.setBalance(moneyFrom - money);
@@ -114,7 +114,8 @@ public class ClientServiceImpl implements ClientService {
 
             transaction.setAccountFrom(accountFrom);
             transaction.setAccountTo(accountTo);
-            return transaction;
+            TransactionDAO transactionDAO = new TransactionDAOImpl();
+            return transactionDAO.add(transaction);
         }
         return null;
     }

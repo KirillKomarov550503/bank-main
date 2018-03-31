@@ -2,20 +2,29 @@ import dev3.bank.dao.impl.CrudDAOImpl;
 import menu.FabricMethod;
 import menu.Menu;
 import menu.Role;
+import utils.PropertyDB;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
+
+    private static void printMainMenu() {
+        System.out.println("1-Enter like visitor ");
+        System.out.println("2-Enter like client");
+        System.out.println("3-Enter like admin");
+        System.out.println("0-Exit");
+    }
+
     public static void main(String[] args) {
         boolean exit = false;
         CrudDAOImpl.readEntitiesMap(getPathToDB());
 
         while (!exit) {
-            Output.printMainMenu();
+            printMainMenu();
             Scanner scanner = new Scanner(System.in);
-            System.out.println("utils.Input number of variant: ");
-            try{
+            System.out.println("Input number of variant: ");
+            try {
                 Role role = null;
                 switch (scanner.nextInt()) {
                     case 1:
@@ -36,13 +45,13 @@ public class Main {
                 FabricMethod fabricMethod = new FabricMethod();
                 Menu menu = fabricMethod.getMenu(role);
                 menu.printMenu();
-            } catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("Wrong input variant");
             }
         }
     }
 
-    public static String getPathToDB(){
+    private static String getPathToDB() {
         PropertyDB propertyDB = new PropertyDB();
         return propertyDB.getProperty("database.path");
     }

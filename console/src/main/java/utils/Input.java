@@ -1,7 +1,10 @@
 package utils;
 
-import dev3.bank.dao.interfaces.AccountDAO;
-import dev3.bank.entity.*;
+import dev3.bank.dto.TransactionDTO;
+import dev3.bank.entity.Account;
+import dev3.bank.entity.Client;
+import dev3.bank.entity.Role;
+import dev3.bank.entity.Transaction;
 
 import java.util.Scanner;
 
@@ -30,14 +33,14 @@ public class Input {
 
     public static long inputClientId() {
         long personId;
-        System.out.println("Input person ID: ");
+        System.out.println("Input your ID: ");
         personId = scanner.nextLong();
         return personId;
     }
 
     public static int inputCardPIN() {
         int pin;
-        System.out.println("Input pin: ");
+        System.out.println("Come up with PIN of your card: ");
         pin = scanner.nextInt();
         return pin;
     }
@@ -49,22 +52,26 @@ public class Input {
         return accountId;
     }
 
-    public static Transaction inputTransaction(){
-        Transaction transaction = new Transaction();
-        print("Input account ID FROM you want transfer money: ");
+    public static TransactionDTO inputTransactionDTO(){
+        print("Input your client ID: ");
+        long clientId = scanner.nextLong();
+        print("Input account from ID: ");
         long accountFromId = scanner.nextLong();
-        print("Input account ID WHERE you want to transfer money: ");
+        print("Input account to ID: ");
         long accountToId = scanner.nextLong();
-        print("Input amount of transfer: ");
+        print("Input amount of money: ");
         double money = scanner.nextDouble();
-        Account accountFrom = new Account();
-        accountFrom.setId(accountFromId);
-        Account accountTo = new Account();
-        accountTo.setId(accountToId);
-        transaction.setAccountFrom(accountFrom);
-        transaction.setAccountTo(accountTo);
-        transaction.setMoney(money);
-        return transaction;
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setAccountFromId(accountFromId);
+        transactionDTO.setAccountToId(accountToId);
+        transactionDTO.setClientId(clientId);
+        transactionDTO.setMoney(money);
+        return transactionDTO;
     }
 
+    public static long inputCardId() {
+        print("Input ID of card that you want to lock: ");
+        long cardId = scanner.nextLong();
+        return cardId;
+    }
 }

@@ -11,14 +11,19 @@ public class VisitorMenu implements Menu {
     private VisitorService visitorService = new VisitorServiceImpl();
 
     @Override
+    public void printTextMenu() {
+        System.out.println("1-Get all news");
+        System.out.println("2-Registration");
+        System.out.println("0-Back to main menu");
+        System.out.println("\nInput your variant: ");
+    }
+
+    @Override
     public void printMenu() {
         boolean flag = true;
         Scanner scanner = new Scanner(System.in);
         while (flag) {
-            System.out.println("1-Get all news");
-            System.out.println("2-Registration");
-            System.out.println("0-Back to main menu");
-            System.out.println("utils.Input your variant: ");
+            printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
                     visitorService.getAllNews().forEach(PrintEntity::printNews);

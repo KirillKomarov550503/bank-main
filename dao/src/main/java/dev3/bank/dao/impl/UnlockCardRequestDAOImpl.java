@@ -7,4 +7,13 @@ public class UnlockCardRequestDAOImpl extends CrudDAOImpl<UnlockCardRequest> imp
     public UnlockCardRequestDAOImpl() {
         super(UnlockCardRequest.class);
     }
+
+    @Override
+    public UnlockCardRequest getByCardId(long cardId) {
+        return getEntityMapValues()
+                .stream()
+                .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
+                .findFirst()
+                .orElse(null);
+    }
 }

@@ -4,7 +4,7 @@ import dev3.bank.dao.impl.*;
 import dev3.bank.dao.interfaces.*;
 import dev3.bank.dto.TransactionDTO;
 import dev3.bank.entity.*;
-import dev3.bank.exception.NotEnoughMoneyException;
+import dev3.bank.exception.TransactionException;
 import dev3.bank.interfaces.ClientService;
 
 import java.text.SimpleDateFormat;
@@ -31,15 +31,27 @@ public class ClientServiceImpl implements ClientService {
 
 
     @Override
-    public Collection<Account> getAllAccounts(long clientId) {
+    public Collection<Account> getLockAccounts(long clientId) {
         AccountDAO accountDAO = new AccountDAOImpl();
-        return accountDAO.getAccountsByClientId(clientId);
+        return accountDAO.getLockedAccounts();
     }
 
     @Override
-    public Collection<Card> getAllCards(long clientId) {
+    public Collection<Card> getLockCards(long clientId) {
         CardDAO cardDAO = new CardDAOImpl();
-        return cardDAO.getCardsByClientId(clientId);
+        return cardDAO.getLockedCards();
+    }
+
+    @Override
+    public Collection<Account> getUnlockAccounts(long clientId) {
+        AccountDAO accountDAO = new AccountDAOImpl();
+        return accountDAO.getUnlockedAccounts();
+    }
+
+    @Override
+    public Collection<Card> getUnlockCards(long clientId) {
+        CardDAO cardDAO = new CardDAOImpl();
+        return cardDAO.getUnlockedCards();
     }
 
     @Override
@@ -96,7 +108,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Transaction createTransaction(TransactionDTO transactionDTO) throws NotEnoughMoneyException {
+    public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         Transaction transaction = new Transaction();
         transaction.setDate(simpleDateFormat.format(new Date()));
@@ -105,11 +117,17 @@ public class ClientServiceImpl implements ClientService {
         Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
         if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
             Account accountTo = accountDAO.getById(transactionDTO.getAccountToId());
-
+            if (accountFrom.isLocked()) {
+                throw new TransactionException("Your account is lock");
+            }
+            if (accountTo.isLocked()) {
+                throw new TransactionException("Other account is lock");
+            }
             double moneyFrom = accountFrom.getBalance();
             double transactionMoney = transactionDTO.getMoney();
-            if (moneyFrom < transactionMoney)
-                throw new NotEnoughMoneyException("Not enough money on your account");
+            if (moneyFrom < transactionMoney) {
+                throw new TransactionException("Not enough money on your account");
+            }
             double moneyTo = accountTo.getBalance();
             accountFrom.setBalance(moneyFrom - transactionMoney);
             accountTo.setBalance(moneyTo + transactionMoney);

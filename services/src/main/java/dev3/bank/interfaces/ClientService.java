@@ -1,5 +1,6 @@
 package dev3.bank.interfaces;
 
+import dev3.bank.dto.TransactionDTO;
 import dev3.bank.entity.*;
 import dev3.bank.exception.NotEnoughMoneyException;
 
@@ -26,5 +27,5 @@ public interface ClientService {
 
     UnlockAccountRequest unlockAccountRequest(long accountId);
 
-    Transaction createTransaction(long accountFromId, long accountToId, double money, long clientId) throws NotEnoughMoneyException;
+    Transaction createTransaction(TransactionDTO transactionDTO) throws NotEnoughMoneyException;
 }

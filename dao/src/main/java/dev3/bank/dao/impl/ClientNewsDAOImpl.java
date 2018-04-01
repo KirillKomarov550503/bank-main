@@ -20,12 +20,5 @@ public class ClientNewsDAOImpl extends CrudDAOImpl<ClientNews> implements Client
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Collection<ClientNews> getAllUnviewedByClientId(long clientId) {
-        return getEntityMapValues()
-                .stream()
-                .filter(clientNews -> ((clientNews.getClient().getId() == clientId)
-                        || (clientNews.getClient().getId() == 0)) && !clientNews.isViewed())
-                .collect(Collectors.toList());
-    }
+
 }

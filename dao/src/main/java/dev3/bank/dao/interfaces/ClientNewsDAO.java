@@ -6,5 +6,4 @@ import java.util.Collection;
 
 public interface ClientNewsDAO extends CrudDAO<ClientNews> {
     Collection<ClientNews> getAllByClientId(long clientId);
-    Collection<ClientNews> getAllUnviewedByClientId(long clientId);
 }

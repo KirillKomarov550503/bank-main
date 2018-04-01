@@ -32,4 +32,5 @@ public interface ClientService {
     UnlockCardRequest unlockCardRequest(long cardId);
 
     UnlockAccountRequest unlockAccountRequest(long accountId);
+
 }

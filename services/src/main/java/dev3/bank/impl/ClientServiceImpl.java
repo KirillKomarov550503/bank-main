@@ -10,6 +10,7 @@ import dev3.bank.interfaces.ClientService;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Stream;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -47,6 +48,8 @@ public class ClientServiceImpl implements ClientService {
         AccountDAO accountDAO = new AccountDAOImpl();
         return accountDAO.getUnlockedAccounts();
     }
+
+
 
     @Override
     public Collection<Card> getUnlockCards(long clientId) {

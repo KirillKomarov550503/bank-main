@@ -1,10 +1,19 @@
 package dev3.bank.entity;
 
-public class GeneralNews extends BaseEntity {
+public class News extends BaseEntity {
     private String date;
     private String title;
     private String text;
     private Admin admin;
+    private NewsStatus newsStatus;
+
+    public NewsStatus getNewsStatus() {
+        return newsStatus;
+    }
+
+    public void setNewsStatus(NewsStatus newsStatus) {
+        this.newsStatus = newsStatus;
+    }
 
     public Admin getAdmin() {
         return admin;

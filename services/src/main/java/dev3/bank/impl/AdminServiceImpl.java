@@ -1,14 +1,11 @@
 package dev3.bank.impl;
 
-import dev3.bank.dao.impl.ClientDAOImpl;
-import dev3.bank.dao.impl.UnlockAccountRequestDAOImpl;
-import dev3.bank.dao.impl.UnlockCardRequestDAOImpl;
-import dev3.bank.dao.interfaces.ClientDAO;
-import dev3.bank.dao.interfaces.UnlockAccountRequestDAO;
-import dev3.bank.dao.interfaces.UnlockCardRequestDAO;
+import dev3.bank.dao.impl.*;
+import dev3.bank.dao.interfaces.*;
 import dev3.bank.entity.*;
 import dev3.bank.interfaces.AdminService;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,8 +56,8 @@ public class AdminServiceImpl implements AdminService {
         UnlockAccountRequestDAO unlockAccountRequestDAO = new UnlockAccountRequestDAOImpl();
         Collection<UnlockAccountRequest> requests = unlockAccountRequestDAO.getAll();
         long unlockAccountRequestId = 0;
-        for(UnlockAccountRequest request : requests){
-            if(request.getAccount().getId() == accountId){
+        for (UnlockAccountRequest request : requests) {
+            if (request.getAccount().getId() == accountId) {
                 request.getAccount().setLocked(false);
                 unlockAccountRequestId = request.getId();
                 break;
@@ -71,7 +68,22 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void sendNews(News news) {
+    public Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news) {
+        Collection<ClientNews> newsCollection = new ArrayList<>();
+        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
+        ClientDAO clientDAO = new ClientDAOImpl();
+        for (Long clientId : clientIds) {
+            ClientNews clientNews = new ClientNews();
+            clientNews.setClient(clientDAO.getById(clientId));
+            clientNews.setNews(news);
+            newsCollection.add(clientNewsDAO.add(clientNews));
+        }
+        return newsCollection;
+    }
 
+    @Override
+    public News addGeneralNews(News news) {
+        NewsDAO newsDAO = new NewsDAOImpl();
+        return newsDAO.add(news);
     }
 }

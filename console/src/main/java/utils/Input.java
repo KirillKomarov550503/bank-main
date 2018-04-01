@@ -1,12 +1,10 @@
 package utils;
 
 import dev3.bank.dto.TransactionDTO;
-import dev3.bank.entity.Account;
-import dev3.bank.entity.Client;
-import dev3.bank.entity.Role;
-import dev3.bank.entity.Transaction;
+import dev3.bank.entity.*;
 
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Input {
     private static Scanner scanner = new Scanner(System.in);
@@ -45,14 +43,14 @@ public class Input {
         return pin;
     }
 
-    public static long inputAccountId(){
+    public static long inputAccountId() {
         long accountId;
         System.out.println("Input account ID: ");
         accountId = scanner.nextLong();
         return accountId;
     }
 
-    public static TransactionDTO inputTransactionDTO(){
+    public static TransactionDTO inputTransactionDTO() {
         print("Input your client ID: ");
         long clientId = scanner.nextLong();
         print("Input account from ID: ");
@@ -67,6 +65,54 @@ public class Input {
         transactionDTO.setClientId(clientId);
         transactionDTO.setMoney(money);
         return transactionDTO;
+    }
+
+    public static News createGeneralNews() {
+        News news = new News();
+        inputNews(news);
+        news.setNewsStatus(NewsStatus.GENERAL);
+        return news;
+
+    }
+
+    public static News createClientNews() {
+        News news = new News();
+        inputNews(news);
+        news.setNewsStatus(NewsStatus.CLIENT);
+        return news;
+    }
+
+    private static void inputNews(News news) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        news.setDate(simpleDateFormat.format(new Date()));
+
+        print("Input title of article: ");
+        String title = scanner.nextLine();
+        news.setTitle(title);
+
+        print("Input main text of article: ");
+        String text = scanner.nextLine();
+        news.setText(text);
+
+        news.setAdmin(null);
+    }
+
+
+    public static Collection<Long> inputClientIds() {
+        Collection<Long> clientIds = new ArrayList<>();
+        print("\nInput IDs more than 1 to send news to concrete clients or " +
+                "input 0 to send news to all clients. To finish input press empty line. ");
+        boolean flag = true;
+        while (flag) {
+            print("Input client ID: ");
+            String clientId = scanner.nextLine();
+            if (clientId.isEmpty()) {
+                flag = false;
+            } else {
+                clientIds.add(Long.valueOf(clientId));
+            }
+        }
+        return clientIds;
     }
 
     public static long inputCardId() {

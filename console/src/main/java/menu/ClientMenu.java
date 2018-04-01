@@ -2,14 +2,12 @@ package menu;
 
 import dev3.bank.entity.Account;
 import dev3.bank.entity.Card;
-import dev3.bank.entity.Transaction;
 import dev3.bank.exception.TransactionException;
 import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import utils.Input;
 import utils.Output;
 
-import java.util.Collection;
 import java.util.Scanner;
 
 public class ClientMenu implements Menu {
@@ -24,7 +22,8 @@ public class ClientMenu implements Menu {
         System.out.println("5-Lock card");
         System.out.println("6-Send request to unlock account");
         System.out.println("7-Send request to unlock card");
-        System.out.println("8-Show transaction story");
+        System.out.println("8-View transaction story");
+        System.out.println("9-View bank messages");
         System.out.println("0-Back");
         System.out.println("\nInput your variant: ");
     }
@@ -56,29 +55,27 @@ public class ClientMenu implements Menu {
                     }
                     break;
                 case 4:
-                    Collection<Account> accounts1 = clientService.getUnlockAccounts(Input.inputClientId());
-                    Output.printAccountCollection(accounts1);
+                    clientService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
                     clientService.lockAccount(Input.inputAccountId());
                     break;
 
                 case 5:
-                    Collection<Card> cards1 = clientService.getUnlockCards(Input.inputClientId());
-                    Output.printCardCollection(cards1);
+                    clientService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
                     clientService.lockCard(Input.inputCardId());
                     break;
                 case 6:
-                    Collection<Account> accounts2 = clientService.getLockAccounts(Input.inputClientId());
-                    Output.printAccountCollection(accounts2);
+                    clientService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
                     clientService.unlockAccountRequest(Input.inputAccountId());
                     break;
                 case 7:
-                    Collection<Card> cards2 = clientService.getUnlockCards(Input.inputCardId());
-                    Output.printCardCollection(cards2);
+                    clientService.getUnlockCards(Input.inputCardId()).forEach(Output::printCard);
                     clientService.unlockCardRequest(Input.inputCardId());
                     break;
                 case 8:
-                    Collection<Transaction> transactions = clientService.showStories(Input.inputClientId());
-                    Output.printTransactionStory(transactions);
+                    clientService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
+                    break;
+                case 9:
+                    clientService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
                     break;
                 case 0:
                     flag = false;

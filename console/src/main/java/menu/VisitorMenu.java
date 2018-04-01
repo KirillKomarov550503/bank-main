@@ -2,8 +2,8 @@ package menu;
 
 import dev3.bank.impl.VisitorServiceImpl;
 import dev3.bank.interfaces.VisitorService;
-import printEntities.PrintEntity;
 import utils.Input;
+import utils.Output;
 
 import java.util.Scanner;
 
@@ -26,7 +26,7 @@ public class VisitorMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    visitorService.getAllNews().forEach(PrintEntity::printNews);
+                    visitorService.getAllNews().forEach(Output::printNews);
                 case 2:
                     visitorService.registration(Input.inputClient());
                 case 0:

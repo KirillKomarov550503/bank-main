@@ -1,8 +1,9 @@
 package dev3.bank.entity;
 
-public class ClientNews extends GeneralNews {
+public class ClientNews extends News {
     private Client client;
     private boolean viewed;
+    private News news;
 
     public Client getClient() {
         return client;

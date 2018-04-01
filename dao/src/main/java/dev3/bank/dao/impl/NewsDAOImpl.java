@@ -1,13 +1,14 @@
 package dev3.bank.dao.impl;
 
-import dev3.bank.dao.interfaces.GeneralNewsDAO;
+import dev3.bank.dao.interfaces.NewsDAO;
 import dev3.bank.entity.News;
+import dev3.bank.entity.NewsStatus;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class GeneralNewsDAOImpl extends CrudDAOImpl<News> implements GeneralNewsDAO {
-    public GeneralNewsDAOImpl() {
+public class NewsDAOImpl extends CrudDAOImpl<News> implements NewsDAO {
+    public NewsDAOImpl() {
         super(News.class);
     }
 
@@ -16,6 +17,14 @@ public class GeneralNewsDAOImpl extends CrudDAOImpl<News> implements GeneralNews
         return getEntityMapValues()
                 .stream()
                 .filter(news -> news.getAdmin().getId() == adminId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<News> getNewsByStatus(NewsStatus newsStatus) {
+        return getEntityMapValues()
+                .stream()
+                .filter(news -> news.getNewsStatus().equals(newsStatus))
                 .collect(Collectors.toList());
     }
 

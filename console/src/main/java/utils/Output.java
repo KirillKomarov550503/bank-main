@@ -1,9 +1,9 @@
 package utils;
 
-import dev3.bank.entity.*;
-
-import java.sql.SQLOutput;
-import java.util.Collection;
+import dev3.bank.entity.Account;
+import dev3.bank.entity.Card;
+import dev3.bank.entity.News;
+import dev3.bank.entity.Transaction;
 
 public class Output {
 

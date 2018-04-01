@@ -8,6 +8,16 @@ public interface AdminService {
 
     Collection<Client> getAllClients();
 
+    Collection<Account> getAllAccounts();
+
+    Collection<Card> getAllCards();
+
+    Collection<News> getAllGeneralNews();
+
+    Collection<ClientNews> getAllClientNews();
+
+
+
     void unlockCard(long cardId);
 
     Collection<Card> getAllUnlockCardRequest();

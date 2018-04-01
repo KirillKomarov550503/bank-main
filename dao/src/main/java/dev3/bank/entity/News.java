@@ -7,6 +7,18 @@ public class News extends BaseEntity {
     private Admin admin;
     private NewsStatus newsStatus;
 
+    @Override
+    public String toString() {
+        return "News{" +
+                "date='" + date + '\'' +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", admin=" + admin +
+                ", newsStatus=" + newsStatus +
+                ", id=" + id +
+                '}';
+    }
+
     public NewsStatus getNewsStatus() {
         return newsStatus;
     }

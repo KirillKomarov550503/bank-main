@@ -28,4 +28,14 @@ public class Account extends BaseEntity {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "balance=" + balance +
+                ", locked=" + locked +
+                ", client=" + client +
+                ", id=" + id +
+                '}';
+    }
 }

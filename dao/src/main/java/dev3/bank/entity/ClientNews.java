@@ -19,4 +19,13 @@ public class ClientNews extends BaseEntity {
     public void setNews(News news) {
         this.news = news;
     }
+
+    @Override
+    public String toString() {
+        return "ClientNews{" +
+                "client=" + client +
+                ", news=" + news +
+                ", id=" + id +
+                '}';
+    }
 }

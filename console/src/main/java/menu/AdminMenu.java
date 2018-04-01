@@ -6,11 +6,8 @@ import dev3.bank.interfaces.AdminService;
 import utils.Input;
 import utils.Output;
 
-import javax.print.DocFlavor;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 public class AdminMenu implements Menu {
     private AdminService adminService = new AdminServiceImpl();
@@ -21,6 +18,11 @@ public class AdminMenu implements Menu {
         System.out.println("2-Unlock card");
         System.out.println("3-Send general news");
         System.out.println("4-Send news to client");
+        System.out.println("5-Get all clients");
+        System.out.println("6-Get all accounts");
+        System.out.println("7-Get all cards");
+        System.out.println("8-Get all news");
+        System.out.println("9-Get all client news");
         System.out.println("0-Back");
         System.out.println("\n\nInput your variant: ");
     }
@@ -39,6 +41,7 @@ public class AdminMenu implements Menu {
                 case 2:
                     adminService.getAllUnlockCardRequest().forEach(Output::printCard);
                     adminService.unlockCard(Input.inputCardId());
+                    break;
                 case 3:
                     adminService.addGeneralNews(Input.createGeneralNews());
                     break;
@@ -46,6 +49,22 @@ public class AdminMenu implements Menu {
                     News news = Input.createClientNews();
                     Collection<Long> clientIds = Input.inputClientIds();
                     adminService.addClientNews(clientIds, news);
+                    break;
+                case 5:
+                    adminService.getAllClients().forEach(System.out::println);
+                    break;
+                case 6:
+                    adminService.getAllAccounts().forEach(System.out::println);
+                    break;
+                case 7:
+                    adminService.getAllCards().forEach(System.out::println);
+                    break;
+                case 8:
+                    adminService.getAllGeneralNews().forEach(System.out::println);
+                    break;
+                case 9:
+                    adminService.getAllClientNews().forEach(System.out::println);
+                    break;
                 case 0:
                     flag = false;
                     break;

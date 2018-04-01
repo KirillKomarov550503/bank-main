@@ -1,10 +1,16 @@
 package utils;
 
 import dev3.bank.dto.TransactionDTO;
-import dev3.bank.entity.*;
+import dev3.bank.entity.Client;
+import dev3.bank.entity.News;
+import dev3.bank.entity.NewsStatus;
+import dev3.bank.entity.Role;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Scanner;
 
 public class Input {
     private static Scanner scanner = new Scanner(System.in);

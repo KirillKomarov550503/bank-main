@@ -68,6 +68,30 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
+    public Collection<Account> getAllAccounts() {
+        AccountDAO accountDAO = new AccountDAOImpl();
+        return accountDAO.getAll();
+    }
+
+    @Override
+    public Collection<Card> getAllCards() {
+        CardDAO cardDAO = new CardDAOImpl();
+        return cardDAO.getAll();
+    }
+
+    @Override
+    public Collection<News> getAllGeneralNews() {
+        NewsDAO newsDAO = new NewsDAOImpl();
+        return newsDAO.getAll();
+    }
+
+    @Override
+    public Collection<ClientNews> getAllClientNews() {
+        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
+        return clientNewsDAO.getAll();
+    }
+
+    @Override
     public Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news) {
         Collection<ClientNews> newsCollection = new ArrayList<>();
         ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();

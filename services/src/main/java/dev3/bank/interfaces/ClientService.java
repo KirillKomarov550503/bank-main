@@ -33,4 +33,7 @@ public interface ClientService {
 
     UnlockAccountRequest unlockAccountRequest(long accountId);
 
+    Collection<News> getAllPersonalNews(long clientId);
+
+    News getPersonalNews(long newsId);
 }

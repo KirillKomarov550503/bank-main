@@ -10,6 +10,7 @@ import dev3.bank.interfaces.ClientService;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClientServiceImpl implements ClientService {
@@ -48,7 +49,6 @@ public class ClientServiceImpl implements ClientService {
         AccountDAO accountDAO = new AccountDAOImpl();
         return accountDAO.getUnlockedAccounts();
     }
-
 
 
     @Override
@@ -141,5 +141,20 @@ public class ClientServiceImpl implements ClientService {
             return transactionDAO.add(transaction);
         }
         return null;
+    }
+
+    @Override
+    public Collection<News> getAllPersonalNews(long clientId) {
+        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
+        return clientNewsDAO.getAllByClientId(clientId)
+                .stream()
+                .flatMap(clientNews -> Stream.of(clientNews.getNews()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public News getPersonalNews(long newsId) {
+        NewsDAO newsDAO = new NewsDAOImpl();
+        return newsDAO.getById(newsId);
     }
 }

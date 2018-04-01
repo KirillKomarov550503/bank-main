@@ -2,7 +2,6 @@ package dev3.bank.entity;
 
 public class ClientNews {
     private Client client;
-    private boolean viewed;
     private News news;
 
     public Client getClient() {
@@ -13,11 +12,5 @@ public class ClientNews {
         this.client = client;
     }
 
-    public boolean isViewed() {
-        return viewed;
-    }
 
-    public void setViewed(boolean viewed) {
-        this.viewed = viewed;
-    }
 }

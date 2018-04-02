@@ -4,7 +4,6 @@ import dev3.bank.entity.News;
 import dev3.bank.impl.AdminServiceImpl;
 import dev3.bank.interfaces.AdminService;
 import utils.Input;
-import utils.Output;
 
 import java.util.Collection;
 import java.util.Scanner;
@@ -23,6 +22,8 @@ public class AdminMenu implements Menu {
         System.out.println("7-Get all cards");
         System.out.println("8-Get all news");
         System.out.println("9-Get all client news");
+        System.out.println("10-Get all unlock account requests");
+        System.out.println("11-Get all unlock card requests");
         System.out.println("0-Back");
         System.out.println("\n\nInput your variant: ");
     }
@@ -35,11 +36,11 @@ public class AdminMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    adminService.getAllUnlockAccountRequest().forEach(Output::printAccount);
-                    adminService.unlockAccount(Input.inputClientId());
+                    adminService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    adminService.unlockAccount(Input.inputAccountId());
                     break;
                 case 2:
-                    adminService.getAllUnlockCardRequest().forEach(Output::printCard);
+                    adminService.getAllUnlockCardRequest().forEach(System.out::println);
                     adminService.unlockCard(Input.inputCardId());
                     break;
                 case 3:
@@ -64,6 +65,12 @@ public class AdminMenu implements Menu {
                     break;
                 case 9:
                     adminService.getAllClientNews().forEach(System.out::println);
+                    break;
+                case 10:
+                    adminService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    break;
+                case 11:
+                    adminService.getAllUnlockCardRequest().forEach(System.out::println);
                     break;
                 case 0:
                     flag = false;

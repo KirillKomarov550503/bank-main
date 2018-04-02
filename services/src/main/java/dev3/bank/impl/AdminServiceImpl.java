@@ -114,4 +114,16 @@ public class AdminServiceImpl implements AdminService {
         NewsDAO newsDAO = new NewsDAOImpl();
         return newsDAO.add(news);
     }
+
+    @Override
+    public Collection<UnlockAccountRequest> getAllAccountRequest() {
+        UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
+        return requestDAO.getAll();
+    }
+
+    @Override
+    public Collection<UnlockCardRequest> getAllCardRequest() {
+        UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
+        return requestDAO.getAll();
+    }
 }

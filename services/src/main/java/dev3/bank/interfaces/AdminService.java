@@ -29,4 +29,8 @@ public interface AdminService {
     News addGeneralNews(News news);
 
     Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news);
+
+    Collection<UnlockAccountRequest> getAllAccountRequest();
+
+    Collection<UnlockCardRequest> getAllCardRequest();
 }

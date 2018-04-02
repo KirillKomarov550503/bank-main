@@ -41,7 +41,7 @@ public class Input {
     public static long inputClientId() {
         Scanner scanner = new Scanner(System.in);
         long personId;
-        System.out.println("Input your ID: ");
+        System.out.println("Input client ID: ");
         personId = scanner.nextLong();
         return personId;
     }

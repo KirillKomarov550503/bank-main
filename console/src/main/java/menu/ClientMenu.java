@@ -24,6 +24,7 @@ public class ClientMenu implements Menu {
         System.out.println("7-Send request to unlock card");
         System.out.println("8-View transaction story");
         System.out.println("9-View bank messages");
+        System.out.println("10-Refill by 100 conventional units");
         System.out.println("0-Back");
         System.out.println("\nInput your variant: ");
     }
@@ -76,6 +77,9 @@ public class ClientMenu implements Menu {
                     break;
                 case 9:
                     clientService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
+                    break;
+                case 10:
+                    clientService.refill(Input.inputAccountId());
                     break;
                 case 0:
                     flag = false;

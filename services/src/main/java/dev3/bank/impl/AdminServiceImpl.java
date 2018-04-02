@@ -39,31 +39,35 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void unlockCard(long cardId) {
         UnlockCardRequestDAO unlockCardRequestDAO = new UnlockCardRequestDAOImpl();
-        Collection<UnlockCardRequest> requests = unlockCardRequestDAO.getAll();
-        long unlockCardRequstId = 0;
-        for (UnlockCardRequest request : requests) {
-            if (request.getCard().getId() == cardId) {
-                request.getCard().setLocked(false);
-                unlockCardRequstId = request.getId();
-                break;
-            }
-        }
-        unlockCardRequestDAO.delete(unlockCardRequstId);
+        UnlockCardRequest request = unlockCardRequestDAO.getAll()
+                .stream()
+                .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
+                .collect(Collectors.toList())
+                .get(0);
+
+        CardDAO cardDAO = new CardDAOImpl();
+        Card card = cardDAO.getById(request.getCard().getId());
+        card.setLocked(false);
+        cardDAO.update(card);
+
+        unlockCardRequestDAO.delete(request.getId());
     }
 
     @Override
     public void unlockAccount(long accountId) {
         UnlockAccountRequestDAO unlockAccountRequestDAO = new UnlockAccountRequestDAOImpl();
-        Collection<UnlockAccountRequest> requests = unlockAccountRequestDAO.getAll();
-        long unlockAccountRequestId = 0;
-        for (UnlockAccountRequest request : requests) {
-            if (request.getAccount().getId() == accountId) {
-                request.getAccount().setLocked(false);
-                unlockAccountRequestId = request.getId();
-                break;
-            }
-        }
-        unlockAccountRequestDAO.delete(unlockAccountRequestId);
+        UnlockAccountRequest request = unlockAccountRequestDAO.getAll()
+                .stream()
+                .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
+                .collect(Collectors.toList())
+                .get(0);
+
+        AccountDAO accountDAO = new AccountDAOImpl();
+        Account account = accountDAO.getById(request.getAccount().getId());
+        account.setLocked(false);
+        accountDAO.update(account);
+
+        unlockAccountRequestDAO.delete(request.getId());
     }
 
 

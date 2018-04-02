@@ -35,26 +35,26 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Collection<Account> getLockAccounts(long clientId) {
         AccountDAO accountDAO = new AccountDAOImpl();
-        return accountDAO.getLockedAccounts();
+        return accountDAO.getLockedAccountsByClientId(clientId);
     }
 
     @Override
     public Collection<Card> getLockCards(long clientId) {
         CardDAO cardDAO = new CardDAOImpl();
-        return cardDAO.getLockedCards();
+        return cardDAO.getLockedCardsByClientId(clientId);
     }
 
     @Override
     public Collection<Account> getUnlockAccounts(long clientId) {
         AccountDAO accountDAO = new AccountDAOImpl();
-        return accountDAO.getUnlockedAccounts();
+        return accountDAO.getUnlockedAccountsByClientId(clientId);
     }
 
 
     @Override
     public Collection<Card> getUnlockCards(long clientId) {
         CardDAO cardDAO = new CardDAOImpl();
-        return cardDAO.getUnlockedCards();
+        return cardDAO.getUnlockedCardsByClientId(clientId);
     }
 
     @Override
@@ -71,17 +71,19 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void lockCard(long cardId) {
+    public Card lockCard(long cardId) {
         CardDAO cardDAO = new CardDAOImpl();
         Card card = cardDAO.getById(cardId);
         card.setLocked(true);
+        return cardDAO.update(card);
     }
 
     @Override
-    public void lockAccount(long accountId) {
+    public Account lockAccount(long accountId) {
         AccountDAO accountDAO = new AccountDAOImpl();
         Account account = accountDAO.getById(accountId);
         account.setLocked(true);
+        return accountDAO.update(account);
     }
 
     @Override
@@ -135,12 +137,24 @@ public class ClientServiceImpl implements ClientService {
             accountFrom.setBalance(moneyFrom - transactionMoney);
             accountTo.setBalance(moneyTo + transactionMoney);
 
+            accountDAO.update(accountFrom);
+            accountDAO.update(accountTo);
+
             transaction.setAccountFrom(accountFrom);
             transaction.setAccountTo(accountTo);
             TransactionDAO transactionDAO = new TransactionDAOImpl();
             return transactionDAO.add(transaction);
         }
         return null;
+    }
+
+    @Override
+    public Account refill(long accountId) {
+        AccountDAO accountDAO = new AccountDAOImpl();
+        Account account = accountDAO.getById(accountId);
+        double balance = account.getBalance();
+        account.setBalance(balance + 100.0);
+        return accountDAO.update(account);
     }
 
     @Override

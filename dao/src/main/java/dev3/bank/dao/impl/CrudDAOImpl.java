@@ -25,31 +25,6 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
         return CrudDAO.memoryMap.get(classType);
     }
 
-    @Override
-    public T getById(long id) {
-        Map<Long, T> entityMap = getEntityMap();
-        return entityMap.get(id);
-    }
-
-    @Override
-    public T add(T entity) {
-        Map<Long, T> entityMap = getEntityMap();
-        if (entityMap.isEmpty()) {
-            entity.setId(1L);
-            entityMap.put(1L, entity);
-        } else {
-            long lastId = getLastId(entityMap);
-            entity.setId(lastId + 1L);
-            entityMap.put(lastId + 1L, entity);
-        }
-        return null;
-    }
-
-
-    @Override
-    public Collection<T> getAll() {
-        return getEntityMapValues();
-    }
 
     public static void writeEntitiesMap(String path) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path))) {
@@ -80,6 +55,26 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
     }
 
     @Override
+    public T getById(long id) {
+        Map<Long, T> entityMap = getEntityMap();
+        return entityMap.get(id);
+    }
+
+    @Override
+    public T add(T entity) {
+        Map<Long, T> entityMap = getEntityMap();
+        if (entityMap.isEmpty()) {
+            entity.setId(1L);
+            entityMap.put(1L, entity);
+        } else {
+            long lastId = getLastId(entityMap);
+            entity.setId(lastId + 1L);
+            entityMap.put(lastId + 1L, entity);
+        }
+        return null;
+    }
+
+    @Override
     public T update(T entity) {
         Map<Long, T> entityMap = getEntityMap();
         entityMap.put(entity.getId(), entity);
@@ -90,5 +85,10 @@ public class CrudDAOImpl<T extends BaseEntity> implements CrudDAO<T> {
     public void delete(long id) {
         Map<Long, T> entityMap = getEntityMap();
         entityMap.remove(id);
+    }
+
+    @Override
+    public Collection<T> getAll() {
+        return getEntityMapValues();
     }
 }

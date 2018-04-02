@@ -13,21 +13,24 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Input {
-    private static Scanner scanner = new Scanner(System.in);
 
     private static void print(String message) {
         System.out.print("\n" + message);
     }
 
     public static Client inputClient() {
+        Scanner scanner = new Scanner(System.in);
         Client client = new Client();
         print("Input your name: ");
-        client.setName(scanner.nextLine());
+        String name = scanner.nextLine();
+        client.setName(name);
         print("Input your surname: ");
-        client.setSurname(scanner.nextLine());
+        String surname = scanner.nextLine();
+        client.setSurname(surname);
         print("Input your phone number: ");
+        int phoneNumber = scanner.nextInt();
         try {
-            client.setPhoneNumber(scanner.nextInt());
+            client.setPhoneNumber(phoneNumber);
         } catch (NumberFormatException e) {
             System.out.println("Wrong input phone number");
         }
@@ -36,6 +39,7 @@ public class Input {
     }
 
     public static long inputClientId() {
+        Scanner scanner = new Scanner(System.in);
         long personId;
         System.out.println("Input your ID: ");
         personId = scanner.nextLong();
@@ -43,6 +47,7 @@ public class Input {
     }
 
     public static int inputCardPIN() {
+        Scanner scanner = new Scanner(System.in);
         int pin;
         System.out.println("Come up with PIN of your card: ");
         pin = scanner.nextInt();
@@ -50,6 +55,7 @@ public class Input {
     }
 
     public static long inputAccountId() {
+        Scanner scanner = new Scanner(System.in);
         long accountId;
         System.out.println("Input account ID: ");
         accountId = scanner.nextLong();
@@ -57,6 +63,7 @@ public class Input {
     }
 
     public static TransactionDTO inputTransactionDTO() {
+        Scanner scanner = new Scanner(System.in);
         print("Input your client ID: ");
         long clientId = scanner.nextLong();
         print("Input account from ID: ");
@@ -89,6 +96,7 @@ public class Input {
     }
 
     private static void inputNews(News news) {
+        Scanner scanner = new Scanner(System.in);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         news.setDate(simpleDateFormat.format(new Date()));
 
@@ -105,6 +113,7 @@ public class Input {
 
 
     public static Collection<Long> inputClientIds() {
+        Scanner scanner = new Scanner(System.in);
         Collection<Long> clientIds = new ArrayList<>();
         print("\nInput IDs more than 1 to send news to concrete clients or " +
                 "input 0 to send news to all clients. To finish input press empty line. ");
@@ -122,6 +131,7 @@ public class Input {
     }
 
     public static long inputCardId() {
+        Scanner scanner = new Scanner(System.in);
         print("Input ID of card that you want to lock: ");
         long cardId = scanner.nextLong();
         return cardId;

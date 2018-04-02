@@ -13,9 +13,9 @@ public interface ClientService {
 
     Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException;
 
-    void lockAccount(long accountId);
+    Account lockAccount(long accountId);
 
-    void lockCard(long cardId);
+    Card lockCard(long cardId);
 
     Collection<Account> getLockAccounts(long clientId);
 
@@ -36,4 +36,6 @@ public interface ClientService {
     Collection<News> getAllPersonalNews(long clientId);
 
     News getPersonalNews(long newsId);
+
+    Account refill(long accountId);
 }

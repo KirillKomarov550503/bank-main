@@ -114,10 +114,6 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        Transaction transaction = new Transaction();
-        transaction.setDate(simpleDateFormat.format(new Date()));
-
         AccountDAO accountDAO = new AccountDAOImpl();
         Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
         if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
@@ -140,8 +136,12 @@ public class ClientServiceImpl implements ClientService {
             accountDAO.update(accountFrom);
             accountDAO.update(accountTo);
 
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+            Transaction transaction = new Transaction();
+            transaction.setDate(simpleDateFormat.format(new Date()));
             transaction.setAccountFrom(accountFrom);
             transaction.setAccountTo(accountTo);
+            transaction.setMoney(transactionMoney);
             TransactionDAO transactionDAO = new TransactionDAOImpl();
             return transactionDAO.add(transaction);
         }

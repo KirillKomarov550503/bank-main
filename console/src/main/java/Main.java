@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-//        CrudDAOImpl.readEntitiesMap(getPathToDB());
+        CrudDAOImpl.readEntitiesMap(getPathToDB());
 
         while (!exit) {
             printMainMenu();

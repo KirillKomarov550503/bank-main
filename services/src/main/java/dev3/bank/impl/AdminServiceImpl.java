@@ -102,7 +102,13 @@ public class AdminServiceImpl implements AdminService {
         ClientDAO clientDAO = new ClientDAOImpl();
         for (Long clientId : clientIds) {
             ClientNews clientNews = new ClientNews();
-            clientNews.setClient(clientDAO.getById(clientId));
+            if (clientId > 0) {
+                clientNews.setClient(clientDAO.getById(clientId));
+            } else {
+                Client client = new Client();
+                client.setId(0L);
+                clientNews.setClient(client);
+            }
             clientNews.setNews(news);
             newsCollection.add(clientNewsDAO.add(clientNews));
         }

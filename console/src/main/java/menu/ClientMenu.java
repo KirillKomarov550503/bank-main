@@ -69,7 +69,7 @@ public class ClientMenu implements Menu {
                     clientService.unlockAccountRequest(Input.inputAccountId());
                     break;
                 case 7:
-                    clientService.getUnlockCards(Input.inputCardId()).forEach(Output::printCard);
+                    clientService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
                     clientService.unlockCardRequest(Input.inputCardId());
                     break;
                 case 8:

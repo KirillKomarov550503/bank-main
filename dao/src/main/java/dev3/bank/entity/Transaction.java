@@ -2,16 +2,16 @@ package dev3.bank.entity;
 
 public class Transaction extends BaseEntity {
     private String date;
-    private Account accountFrom;
-    private Account accountTo;
+    private long accountFromId;
+    private long accountToId;
     private double money;
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "date='" + date + '\'' +
-                ", accountFrom=" + accountFrom +
-                ", accountTo=" + accountTo +
+                ", accountFromId=" + accountFromId +
+                ", accountToId=" + accountToId +
                 ", money=" + money +
                 ", id=" + id +
                 '}';
@@ -25,22 +25,21 @@ public class Transaction extends BaseEntity {
         this.date = date;
     }
 
-    public Account getAccountFrom() {
-        return accountFrom;
+    public long getAccountFromId() {
+        return accountFromId;
     }
 
-    public void setAccountFrom(Account accountFrom) {
-        this.accountFrom = accountFrom;
+    public void setAccountFromId(long accountFromId) {
+        this.accountFromId = accountFromId;
     }
 
-    public Account getAccountTo() {
-        return accountTo;
+    public long getAccountToId() {
+        return accountToId;
     }
 
-    public void setAccountTo(Account accountTo) {
-        this.accountTo = accountTo;
+    public void setAccountToId(long accountToId) {
+        this.accountToId = accountToId;
     }
-
 
     public double getMoney() {
         return money;

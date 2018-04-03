@@ -3,7 +3,7 @@ package dev3.bank.entity;
 public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
-    private Client client;
+    private long clientId;
 
     public double getBalance() {
         return balance;
@@ -21,12 +21,12 @@ public class Account extends BaseEntity {
         this.locked = locked;
     }
 
-    public Client getClient() {
-        return client;
+    public long getClientId() {
+        return clientId;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class Account extends BaseEntity {
         return "Account{" +
                 "balance=" + balance +
                 ", locked=" + locked +
-                ", client=" + client +
+                ", clientId=" + clientId +
                 ", id=" + id +
                 '}';
     }

@@ -4,19 +4,15 @@ public class News extends BaseEntity {
     private String date;
     private String title;
     private String text;
-    private Admin admin;
+    private long adminId;
     private NewsStatus newsStatus;
 
-    @Override
-    public String toString() {
-        return "News{" +
-                "date='" + date + '\'' +
-                ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
-                ", admin=" + admin +
-                ", newsStatus=" + newsStatus +
-                ", id=" + id +
-                '}';
+    public long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(long adminId) {
+        this.adminId = adminId;
     }
 
     public NewsStatus getNewsStatus() {
@@ -27,13 +23,6 @@ public class News extends BaseEntity {
         this.newsStatus = newsStatus;
     }
 
-    public Admin getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
-    }
 
     public String getDate() {
         return date;
@@ -57,5 +46,17 @@ public class News extends BaseEntity {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "date='" + date + '\'' +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", adminId=" + adminId +
+                ", newsStatus=" + newsStatus +
+                ", id=" + id +
+                '}';
     }
 }

@@ -1,21 +1,21 @@
 package dev3.bank.entity;
 
 public class UnlockAccountRequest extends BaseEntity {
-    private Account account;
+    private long accountId;
 
     @Override
     public String toString() {
         return "UnlockAccountRequest{" +
-                "account=" + account +
+                "accountId=" + accountId +
                 ", id=" + id +
                 '}';
     }
 
-    public Account getAccount() {
-        return account;
+    public long getAccountId() {
+        return accountId;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
     }
 }

@@ -1,30 +1,30 @@
 package dev3.bank.entity;
 
 public class ClientNews extends BaseEntity {
-    private Client client;
-    private News news;
+    private long  clientId;
+    private long newsId;
 
-    public Client getClient() {
-        return client;
+    public long getClientId() {
+        return clientId;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
     }
 
-    public News getNews() {
-        return news;
+    public long getNewsId() {
+        return newsId;
     }
 
-    public void setNews(News news) {
-        this.news = news;
+    public void setNewsId(long newsId) {
+        this.newsId = newsId;
     }
 
     @Override
     public String toString() {
         return "ClientNews{" +
-                "client=" + client +
-                ", news=" + news +
+                "clientId=" + clientId +
+                ", newsId=" + newsId +
                 ", id=" + id +
                 '}';
     }

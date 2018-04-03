@@ -1,21 +1,21 @@
 package dev3.bank.entity;
 
 public class UnlockCardRequest extends BaseEntity{
-    private Card card;
+    private long cardId;
 
     @Override
     public String toString() {
         return "UnlockCardRequest{" +
-                "card=" + card +
+                "cardId=" + cardId +
                 ", id=" + id +
                 '}';
     }
 
-    public Card getCard() {
-        return card;
+    public long getCardId() {
+        return cardId;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
     }
 }

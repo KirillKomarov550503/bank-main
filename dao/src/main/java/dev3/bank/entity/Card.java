@@ -3,14 +3,24 @@ package dev3.bank.entity;
 public class Card extends BaseEntity {
     private boolean locked;
     private int pin;
-    private Account account;
+    private long accountId;
 
-    public Account getAccount() {
-        return account;
+    @Override
+    public String toString() {
+        return "Card{" +
+                "locked=" + locked +
+                ", pin=" + pin +
+                ", accountId=" + accountId +
+                ", id=" + id +
+                '}';
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
     }
 
     public boolean isLocked() {
@@ -29,13 +39,4 @@ public class Card extends BaseEntity {
         this.pin = pin;
     }
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "locked=" + locked +
-                ", pin=" + pin +
-                ", account=" + account +
-                ", id=" + id +
-                '}';
-    }
 }

@@ -5,6 +5,27 @@ public class Account extends BaseEntity {
     private boolean locked;
     private long clientId;
 
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
+
+    private long accountId;
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "balance=" + balance +
+                ", locked=" + locked +
+                ", clientId=" + clientId +
+                ", accountId=" + accountId +
+                ", id=" + id +
+                '}';
+    }
+
     public double getBalance() {
         return balance;
     }
@@ -29,13 +50,4 @@ public class Account extends BaseEntity {
         this.clientId = clientId;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "balance=" + balance +
-                ", locked=" + locked +
-                ", clientId=" + clientId +
-                ", id=" + id +
-                '}';
-    }
 }

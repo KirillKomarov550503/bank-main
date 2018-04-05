@@ -4,6 +4,7 @@ public class Card extends BaseEntity {
     private boolean locked;
     private int pin;
     private long accountId;
+    private long cardId;
 
     @Override
     public String toString() {
@@ -11,8 +12,17 @@ public class Card extends BaseEntity {
                 "locked=" + locked +
                 ", pin=" + pin +
                 ", accountId=" + accountId +
+                ", cardId=" + cardId +
                 ", id=" + id +
                 '}';
+    }
+
+    public long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
     }
 
     public long getAccountId() {

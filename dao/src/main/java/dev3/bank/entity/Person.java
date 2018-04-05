@@ -7,6 +7,29 @@ public class Person extends BaseEntity {
     protected Role role;
     protected String login;
     protected String password;
+    protected long passportId;
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", role=" + role +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", passportId=" + passportId +
+                ", id=" + id +
+                '}';
+    }
+
+    public long getPassportId() {
+        return passportId;
+    }
+
+    public void setPassportId(long passportId) {
+        this.passportId = passportId;
+    }
 
     public String getLogin() {
         return login;
@@ -56,16 +79,4 @@ public class Person extends BaseEntity {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", role=" + role +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", id=" + id +
-                '}';
-    }
 }

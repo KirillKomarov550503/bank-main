@@ -13,3 +13,4 @@ public class BaseEntity implements Serializable {
         this.id = id;
     }
 }
+

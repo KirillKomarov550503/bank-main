@@ -42,8 +42,7 @@ public class AdminServiceImpl implements AdminService {
         UnlockCardRequest request = unlockCardRequestDAO.getAll()
                 .stream()
                 .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
-                .collect(Collectors.toList())
-                .get(0);
+                .findFirst().orElse(null);
 
         CardDAO cardDAO = new CardDAOImpl();
         Card card = cardDAO.getById(request.getCard().getId());

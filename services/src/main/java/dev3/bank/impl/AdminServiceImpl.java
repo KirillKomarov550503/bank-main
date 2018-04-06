@@ -23,7 +23,7 @@ public class AdminServiceImpl implements AdminService {
         UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
         return requestDAO.getAll()
                 .stream()
-                .flatMap(unlockCardRequest -> Stream.of(unlockCardRequest.getCard()))
+                .map(UnlockCardRequest::getCard)
                 .collect(Collectors.toList());
     }
 
@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
         UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
         return requestDAO.getAll()
                 .stream()
-                .flatMap(accountRequest -> Stream.of(accountRequest.getAccount()))
+                .map(UnlockAccountRequest::getAccount)
                 .collect(Collectors.toList());
     }
 

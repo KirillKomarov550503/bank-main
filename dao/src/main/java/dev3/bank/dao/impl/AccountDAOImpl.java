@@ -40,7 +40,8 @@ public class AccountDAOImpl extends CrudDAOImpl<Account> implements AccountDAO {
     public Collection<Account> getLockedAccountsByClientId(long clientId) {
         return getEntityMapValues()
                 .stream()
-                .filter(account -> account.isLocked() && (account.getClient().getId() == clientId))
+                .filter(Account::isLocked)
+                .filter(account -> account.getClient().getId() == clientId)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +49,8 @@ public class AccountDAOImpl extends CrudDAOImpl<Account> implements AccountDAO {
     public Collection<Account> getUnlockedAccountsByClientId(long clientId) {
         return getEntityMapValues()
                 .stream()
-                .filter(account -> (!account.isLocked()) && (account.getClient().getId() == clientId))
+                .filter(account -> !account.isLocked())
+                .filter(account -> account.getClient().getId() == clientId)
                 .collect(Collectors.toList());
     }
 }

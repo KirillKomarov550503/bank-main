@@ -48,7 +48,8 @@ public class CardDAOImpl extends CrudDAOImpl<Card> implements CardDAO {
     public Collection<Card> getLockedCardsByClientId(long clientId) {
         return getEntityMapValues()
                 .stream()
-                .filter(card -> card.isLocked() && (card.getAccount().getClient().getId() == clientId))
+                .filter(Card::isLocked)
+                .filter(card -> card.getAccount().getClient().getId() == clientId)
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +57,8 @@ public class CardDAOImpl extends CrudDAOImpl<Card> implements CardDAO {
     public Collection<Card> getUnlockedCardsByClientId(long clientId) {
         return getEntityMapValues()
                 .stream()
-                .filter(card -> (!card.isLocked()) && (card.getAccount().getClient().getId() == clientId))
+                .filter(card -> !card.isLocked())
+                .filter(card -> card.getAccount().getClient().getId() == clientId)
                 .collect(Collectors.toList());
     }
 }

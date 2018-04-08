@@ -6,17 +6,6 @@ public class Transaction extends BaseEntity {
     private long accountToId;
     private double money;
 
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "date='" + date + '\'' +
-                ", accountFromId=" + accountFromId +
-                ", accountToId=" + accountToId +
-                ", money=" + money +
-                ", id=" + id +
-                '}';
-    }
-
     public String getDate() {
         return date;
     }
@@ -47,5 +36,16 @@ public class Transaction extends BaseEntity {
 
     public void setMoney(double money) {
         this.money = money;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "date='" + date + '\'' +
+                ", accountFromId=" + accountFromId +
+                ", accountToId=" + accountToId +
+                ", money=" + money +
+                ", id=" + id +
+                '}';
     }
 }

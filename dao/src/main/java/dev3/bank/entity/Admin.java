@@ -3,6 +3,14 @@ package dev3.bank.entity;
 public class Admin extends Person {
     private long personId;
 
+    public long getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(long personId) {
+        this.personId = personId;
+    }
+
     @Override
     public String toString() {
         return "Admin{" +
@@ -15,13 +23,5 @@ public class Admin extends Person {
                 ", password='" + password + '\'' +
                 ", id=" + id +
                 '}';
-    }
-
-    public long getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(long personId) {
-        this.personId = personId;
     }
 }

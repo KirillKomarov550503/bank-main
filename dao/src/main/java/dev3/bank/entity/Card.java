@@ -6,17 +6,6 @@ public class Card extends BaseEntity {
     private long accountId;
     private long cardId;
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "locked=" + locked +
-                ", pin=" + pin +
-                ", accountId=" + accountId +
-                ", cardId=" + cardId +
-                ", id=" + id +
-                '}';
-    }
-
     public long getCardId() {
         return cardId;
     }
@@ -49,4 +38,14 @@ public class Card extends BaseEntity {
         this.pin = pin;
     }
 
+    @Override
+    public String toString() {
+        return "Card{" +
+                "locked=" + locked +
+                ", pin=" + pin +
+                ", accountId=" + accountId +
+                ", cardId=" + cardId +
+                ", id=" + id +
+                '}';
+    }
 }

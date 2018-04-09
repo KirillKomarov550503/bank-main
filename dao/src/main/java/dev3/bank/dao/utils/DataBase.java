@@ -14,9 +14,13 @@ public class DataBase {
     private static final String PASSWORD = "qwerty";
     private static Connection connection;
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() {
         if (connection == null) {
-            connection = DriverManager.getConnection(URL, NAME, PASSWORD);
+            try (Connection connect = DriverManager.getConnection(URL, NAME, PASSWORD)) {
+                connection = connect;
+            } catch (SQLException e) {
+                System.out.println("Database exception");
+            }
         }
         return connection;
     }

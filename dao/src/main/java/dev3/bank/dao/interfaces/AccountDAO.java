@@ -10,4 +10,5 @@ public interface AccountDAO extends CrudDAO<Account> {
     Collection<Account> getLockedAccountsByClientId(long clientId);
     Collection<Account> getUnlockedAccountsByClientId(long clientId);
     Collection<Account> getAccountsByClientId(long clientId);
+    Account getByAccountId(long accountId);
 }

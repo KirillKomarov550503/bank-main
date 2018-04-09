@@ -14,14 +14,6 @@ public class Card extends BaseEntity {
         this.cardId = cardId;
     }
 
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
-    }
-
     public boolean isLocked() {
         return locked;
     }
@@ -38,13 +30,20 @@ public class Card extends BaseEntity {
         this.pin = pin;
     }
 
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
+
     @Override
     public String toString() {
         return "Card{" +
                 "locked=" + locked +
                 ", pin=" + pin +
                 ", accountId=" + accountId +
-                ", cardId=" + cardId +
                 ", id=" + id +
                 '}';
     }

@@ -4,6 +4,7 @@ public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
     private long clientId;
+    private long accountId;
 
     public long getAccountId() {
         return accountId;
@@ -12,8 +13,6 @@ public class Account extends BaseEntity {
     public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
-
-    private long accountId;
 
     public double getBalance() {
         return balance;
@@ -45,7 +44,6 @@ public class Account extends BaseEntity {
                 "balance=" + balance +
                 ", locked=" + locked +
                 ", clientId=" + clientId +
-                ", accountId=" + accountId +
                 ", id=" + id +
                 '}';
     }

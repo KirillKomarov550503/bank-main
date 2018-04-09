@@ -1,4 +1,4 @@
-package utils;
+package dev3.bank.dao.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ public class PropertyDB {
 
 
     public PropertyDB() {
-        this.filename = "console\\src\\main\\resources\\path.properties";
+        this.filename = "dao\\src\\main\\resources\\path.properties";
     }
 
     public String getProperty(String propertyName) {

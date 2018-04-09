@@ -1,7 +1,7 @@
 package dev3.bank.entity;
 
-public class ClientNews extends BaseEntity {
-    private long  clientId;
+public class ClientNews {
+    private long clientId;
     private long newsId;
 
     public long getClientId() {
@@ -25,7 +25,6 @@ public class ClientNews extends BaseEntity {
         return "ClientNews{" +
                 "clientId=" + clientId +
                 ", newsId=" + newsId +
-                ", id=" + id +
                 '}';
     }
 }

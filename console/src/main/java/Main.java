@@ -1,7 +1,7 @@
 import menu.FabricMethod;
 import menu.Menu;
 import menu.Role;
-import utils.PropertyDB;
+import dev3.bank.dao.utils.PropertyDB;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -17,7 +17,6 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-        CrudDAOImpl.readEntitiesMap(getPathToDB());
 
         while (!exit) {
             printMainMenu();

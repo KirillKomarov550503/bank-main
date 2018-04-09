@@ -19,12 +19,7 @@ public class CardDAOImpl extends CrudDAOImpl<Card> implements CardDAO {
     private CardDAOImpl() {
         try (Connection connection = DataBase.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "CREATE TABLE IF NOT EXISTS Card(" +
-                    "id BIGSERIAL NOT NULL PRIMARY KEY," +
-                    "locked BOOLEAN NOT NULL," +
-                    "pin INT NOT NULL," +
-                    "card_id BIGINT NOT NULL," +
-                    "account_id BIGINT NOT NULL REFERENCES Account(id))");
+                    "");
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();

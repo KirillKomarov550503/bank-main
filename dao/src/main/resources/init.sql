@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS ClientNews (
 CREATE TABLE IF NOT EXISTS News (
   id          BIGSERIAL    NOT NULL PRIMARY KEY,
   admin_id    BIGINT       NOT NULL REFERENCES Admin (id),
-  date        TIMESTAMP    NOT NULL,
+  date        VARCHAR(30)  NOT NULL,
   title       VARCHAR(100) NOT NULL,
   body        TEXT         NOT NULL,
   news_status VARCHAR(15)  NOT NULL
@@ -46,8 +46,11 @@ CREATE TABLE IF NOT EXISTS Person (
   id           BIGSERIAL   NOT NULL PRIMARY KEY,
   name         VARCHAR(30) NOT NULL,
   surname      VARCHAR(50) NOT NULL,
+  login        VARCHAR(30) NOT NULL,
+  password     VARCHAR(30) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
-  role_id      VARCHAR(10) NOT NULL
+  passport_id  BIGINT      NOT NULL,
+  role         VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Transaction (

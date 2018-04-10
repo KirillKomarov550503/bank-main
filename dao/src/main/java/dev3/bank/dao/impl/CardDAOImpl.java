@@ -27,13 +27,15 @@ public class CardDAOImpl implements CardDAO {
 
     @Override
     public Card getById(long id) {
-        Card card = new Card();
+        Card card = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Card WHERE id=?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardFromResultSet(card, resultSet);
+            if (resultSet.next()) {
+                card = getCard(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -42,7 +44,7 @@ public class CardDAOImpl implements CardDAO {
 
     @Override
     public Card update(Card entity) {
-        Card card = new Card();
+        Card card = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "UPDATE Card SET locked=?, pin=?, card_id=?, account_id=? WHERE id=?");
@@ -51,22 +53,28 @@ public class CardDAOImpl implements CardDAO {
             preparedStatement.setLong(3, entity.getCardId());
             preparedStatement.setLong(4, entity.getAccountId());
             preparedStatement.setLong(5, entity.getId());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Card WHERE id=?");
+            preparedStatement.setLong(1, entity.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardFromResultSet(card, resultSet);
+            if (resultSet.next()) {
+                card = getCard(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return card;
     }
 
-    private void parseCardFromResultSet(Card card, ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            card.setId(resultSet.getLong("id"));
-            card.setLocked(resultSet.getBoolean("locked"));
-            card.setCardId(resultSet.getLong("card_id"));
-            card.setPin(resultSet.getInt("pin"));
-            card.setAccountId(resultSet.getLong("account_id"));
-        }
+    private Card getCard(ResultSet resultSet) throws SQLException {
+        Card card = new Card();
+        card.setId(resultSet.getLong("id"));
+        card.setLocked(resultSet.getBoolean("locked"));
+        card.setCardId(resultSet.getLong("card_id"));
+        card.setPin(resultSet.getInt("pin"));
+        card.setAccountId(resultSet.getLong("account_id"));
+        return card;
     }
 
     @Override
@@ -83,7 +91,7 @@ public class CardDAOImpl implements CardDAO {
 
     @Override
     public Card add(Card entity) {
-        Card card = new Card();
+        Card card = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO Card (locked, pin, card_id, account_id) VALUES(?, ?, ?, ?)");
@@ -91,23 +99,48 @@ public class CardDAOImpl implements CardDAO {
             preparedStatement.setInt(2, entity.getPin());
             preparedStatement.setLong(3, entity.getCardId());
             preparedStatement.setLong(4, entity.getAccountId());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Card WHERE card_id=?");
+            preparedStatement.setLong(1, entity.getCardId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardFromResultSet(card, resultSet);
+            if (resultSet.next()) {
+                card = getCard(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return card;
     }
 
+
+    @Override
+    public Collection<Card> getAll() {
+        Collection<Card> cards = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Card");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
+    }
+
     @Override
     public Card getByCardId(long cardId) {
-        Card card = new Card();
+        Card card = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Card WHERE card_id=?");
             preparedStatement.setLong(1, cardId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardFromResultSet(card, resultSet);
+            if (resultSet.next()) {
+                card = getCard(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,7 +154,9 @@ public class CardDAOImpl implements CardDAO {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Card WHERE locked=TRUE");
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -136,23 +171,13 @@ public class CardDAOImpl implements CardDAO {
                     "SELECT * FROM Card WHERE account_id IN (SELECT id FROM Account WHERE client_id=?)");
             preparedStatement.setLong(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return cards;
-    }
-
-    private void parseCardCollectionFromResultSet(Collection<Card> cards, ResultSet resultSet) throws SQLException {
-        while (resultSet.next()) {
-            Card card = new Card();
-            card.setId(resultSet.getLong("id"));
-            card.setLocked(resultSet.getBoolean("locked"));
-            card.setPin(resultSet.getInt("pin"));
-            card.setCardId(resultSet.getLong("card_id"));
-            card.setAccountId(resultSet.getLong("account_id"));
-            cards.add(card);
-        }
     }
 
     @Override
@@ -163,7 +188,9 @@ public class CardDAOImpl implements CardDAO {
                     "SELECT * FROM Card WHERE account_id=?");
             preparedStatement.setLong(1, accountId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -177,7 +204,9 @@ public class CardDAOImpl implements CardDAO {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Card WHERE locked=FALSE");
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -192,7 +221,9 @@ public class CardDAOImpl implements CardDAO {
                     "SELECT * FROM Card WHERE id=? and locked=TRUE");
             preparedStatement.setLong(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -208,7 +239,9 @@ public class CardDAOImpl implements CardDAO {
                     "SELECT * FROM Card WHERE id=? and locked=FALSE");
             preparedStatement.setLong(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseCardCollectionFromResultSet(cards, resultSet);
+            while (resultSet.next()) {
+                cards.add(getCard(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

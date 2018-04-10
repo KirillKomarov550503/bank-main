@@ -1,6 +1,7 @@
 package dev3.bank.dao.impl;
 
 import dev3.bank.dao.interfaces.ClientNewsDAO;
+import dev3.bank.entity.Client;
 import dev3.bank.entity.ClientNews;
 
 import java.sql.Connection;
@@ -34,11 +35,7 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
             preparedStatement.setLong(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                ClientNews clientNews = new ClientNews();
-                clientNews.setId(resultSet.getLong("id"));
-                clientNews.setNewsId(resultSet.getLong("news_id"));
-                clientNews.setClientId(resultSet.getLong("client_id"));
-                clientNewsCollection.add(clientNews);
+                clientNewsCollection.add(getClientNews(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,19 +43,25 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
         return clientNewsCollection;
     }
 
+    private ClientNews getClientNews(ResultSet resultSet) throws SQLException {
+        ClientNews clientNews = new ClientNews();
+        clientNews.setId(resultSet.getLong("id"));
+        clientNews.setNewsId(resultSet.getLong("news_id"));
+        clientNews.setClientId(resultSet.getLong("client_id"));
+        return clientNews;
+    }
+
 
     @Override
     public ClientNews getById(long id) {
-        ClientNews clientNews = new ClientNews();
+        ClientNews clientNews = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM ClientNews WHERE id=?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                clientNews.setId(resultSet.getLong("id"));
-                clientNews.setNewsId(resultSet.getLong("news_id"));
-                clientNews.setClientId(resultSet.getLong("client_id"));
+                clientNews = getClientNews(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,7 +71,7 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
 
     @Override
     public ClientNews add(ClientNews entity) {
-        ClientNews clientNews = new ClientNews();
+        ClientNews clientNews = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO ClientNews(news_id, client_id) VALUES(?, ?)");
@@ -76,9 +79,7 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
             preparedStatement.setLong(2, entity.getClientId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                clientNews.setId(resultSet.getLong("id"));
-                clientNews.setNewsId(resultSet.getLong("news_id"));
-                clientNews.setClientId(resultSet.getLong("client_id"));
+                clientNews = getClientNews(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,24 +89,17 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
 
     @Override
     public ClientNews update(ClientNews entity) {
-        ClientNews clientNews = new ClientNews();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "UPDATE ClientNews SET news_id=?, client_id=? WHERE id=?");
             preparedStatement.setLong(1, entity.getNewsId());
             preparedStatement.setLong(2, entity.getClientId());
             preparedStatement.setLong(3, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                clientNews.setId(resultSet.getLong("id"));
-                clientNews.setNewsId(resultSet.getLong("news_id"));
-                clientNews.setClientId(resultSet.getLong("client_id"));
-            }
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return clientNews;
-
+        return entity;
     }
 
     @Override
@@ -118,5 +112,21 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Collection<ClientNews> getAll() {
+        Collection<ClientNews> newsCollection = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM ClientNews");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                newsCollection.add(getClientNews(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newsCollection;
     }
 }

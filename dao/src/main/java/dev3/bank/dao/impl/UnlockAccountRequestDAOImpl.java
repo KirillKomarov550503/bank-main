@@ -26,12 +26,12 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     @Override
     public UnlockAccountRequest getById(long id) {
         UnlockAccountRequest request = null;
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM UnlockAccountRequest WHERE id=?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 request = getUnlockAccountRequest(resultSet);
             }
         } catch (SQLException e) {
@@ -43,13 +43,13 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     @Override
     public UnlockAccountRequest update(UnlockAccountRequest entity) {
         UnlockAccountRequest request = null;
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "UPDATE UnlockAccountRequest SET account_id=? WHERE id=?");
             preparedStatement.setLong(1, entity.getAccountId());
             preparedStatement.setLong(2, entity.getId());
-            ResultSet resultSet  = preparedStatement.executeQuery();
-            if(resultSet.next()){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
                 request = getUnlockAccountRequest(resultSet);
             }
         } catch (SQLException e) {
@@ -60,7 +60,7 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
 
     @Override
     public void delete(long id) {
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "DELETE FROM UnlockAccountRequest WHERE id=?");
             preparedStatement.setLong(1, id);
@@ -73,12 +73,12 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     @Override
     public UnlockAccountRequest add(UnlockAccountRequest entity) {
         UnlockAccountRequest request = null;
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO UnlockAccountRequest(account_id) VALUES(?)");
             preparedStatement.setLong(1, entity.getAccountId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 request = getUnlockAccountRequest(resultSet);
             }
         } catch (SQLException e) {

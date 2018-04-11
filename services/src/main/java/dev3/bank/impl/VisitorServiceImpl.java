@@ -13,15 +13,35 @@ import dev3.bank.interfaces.VisitorService;
 import java.util.Collection;
 
 public class VisitorServiceImpl implements VisitorService {
+    private static VisitorServiceImpl visitorService;
+    private NewsDAO newsDAO;
+    private ClientDAO clientDAO;
+
+    private VisitorServiceImpl() {
+    }
+
+    public static synchronized VisitorServiceImpl getVisitorService() {
+        if (visitorService == null) {
+            visitorService = new VisitorServiceImpl();
+        }
+        return visitorService;
+    }
+
+    public void setNewsDAO(NewsDAO newsDAO) {
+        this.newsDAO = newsDAO;
+    }
+
+    public void setClientDAO(ClientDAO clientDAO) {
+        this.clientDAO = clientDAO;
+    }
+
     @Override
     public Collection<News> getAllNews() {
-        NewsDAO newsDAO = new NewsDAOImpl();
         return newsDAO.getNewsByStatus(NewsStatus.GENERAL);
     }
 
     @Override
     public Person registration(Client client) {
-        ClientDAO clientDAO = new ClientDAOImpl();
         return clientDAO.add(client);
     }
 

@@ -1,12 +1,14 @@
 package dev3.bank.impl;
 
-import dev3.bank.dao.impl.*;
 import dev3.bank.dao.interfaces.*;
+import dev3.bank.dao.utils.DataBase;
 import dev3.bank.dto.TransactionDTO;
 import dev3.bank.entity.*;
 import dev3.bank.exception.TransactionException;
 import dev3.bank.interfaces.ClientService;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -14,65 +16,106 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClientServiceImpl implements ClientService {
+    private static ClientServiceImpl clientService;
+    private AccountDAO accountDAO;
+    private CardDAO cardDAO;
+    private ClientDAO clientDAO;
+    private NewsDAO newsDAO;
+    private ClientNewsDAO clientNewsDAO;
+    private UnlockCardRequestDAO unlockCardRequestDAO;
+    private UnlockAccountRequestDAO unlockAccountRequestDAO;
+    private TransactionDAO transactionDAO;
+
+    public void setTransactionDAO(TransactionDAO transactionDAO) {
+        this.transactionDAO = transactionDAO;
+    }
+
+    private ClientServiceImpl() {
+    }
+
+    public static synchronized ClientServiceImpl getClientService() {
+        if (clientService == null) {
+            clientService = new ClientServiceImpl();
+        }
+        return clientService;
+
+    }
+
+    public void setAccountDAO(AccountDAO accountDAO) {
+        this.accountDAO = accountDAO;
+    }
+
+    public void setCardDAO(CardDAO cardDAO) {
+        this.cardDAO = cardDAO;
+    }
+
+    public void setClientDAO(ClientDAO clientDAO) {
+        this.clientDAO = clientDAO;
+    }
+
+    public void setNewsDAO(NewsDAO newsDAO) {
+        this.newsDAO = newsDAO;
+    }
+
+    public void setClientNewsDAO(ClientNewsDAO clientNewsDAO) {
+        this.clientNewsDAO = clientNewsDAO;
+    }
+
+    public void setUnlockCardRequestDAO(UnlockCardRequestDAO unlockCardRequestDAO) {
+        this.unlockCardRequestDAO = unlockCardRequestDAO;
+    }
+
+    public void setUnlockAccountRequestDAO(UnlockAccountRequestDAO unlockAccountRequestDAO) {
+        this.unlockAccountRequestDAO = unlockAccountRequestDAO;
+    }
 
     @Override
     public Account createAccount(Account account, long clientId) {
-        ClientDAO clientDAO = new ClientDAOImpl();
-        account.setClient(clientDAO.getById(clientId));
-        AccountDAO accountDAO = new AccountDAOImpl();
+        account.setClientId(clientId);
         return accountDAO.add(account);
     }
 
     @Override
     public Card createCard(Card card, long accountId) {
-        CardDAO cardDAO = new CardDAOImpl();
-        AccountDAO accountDAO = new AccountDAOImpl();
-        card.setAccount(accountDAO.getById(accountId));
+        card.setAccountId(accountId);
         return cardDAO.add(card);
     }
 
 
     @Override
     public Collection<Account> getLockAccounts(long clientId) {
-        AccountDAO accountDAO = new AccountDAOImpl();
         return accountDAO.getLockedAccountsByClientId(clientId);
     }
 
     @Override
     public Collection<Card> getLockCards(long clientId) {
-        CardDAO cardDAO = new CardDAOImpl();
         return cardDAO.getLockedCardsByClientId(clientId);
     }
 
     @Override
     public Collection<Account> getUnlockAccounts(long clientId) {
-        AccountDAO accountDAO = new AccountDAOImpl();
         return accountDAO.getUnlockedAccountsByClientId(clientId);
     }
 
 
     @Override
     public Collection<Card> getUnlockCards(long clientId) {
-        CardDAO cardDAO = new CardDAOImpl();
         return cardDAO.getUnlockedCardsByClientId(clientId);
     }
 
     @Override
     public Collection<Card> getAllCardsByAccount(long accountId) {
-        CardDAO cardDAO = new CardDAOImpl();
         return cardDAO.getCardsByAccountId(accountId);
     }
 
 
     @Override
     public Collection<Transaction> showStories(long clientId) {
-        TransactionDAO transactionDAO = new TransactionDAOImpl();
         return transactionDAO.getByClientId(clientId);
     }
 
     @Override
     public Card lockCard(long cardId) {
-        CardDAO cardDAO = new CardDAOImpl();
         Card card = cardDAO.getById(cardId);
         card.setLocked(true);
         return cardDAO.update(card);
@@ -80,7 +123,6 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Account lockAccount(long accountId) {
-        AccountDAO accountDAO = new AccountDAOImpl();
         Account account = accountDAO.getById(accountId);
         account.setLocked(true);
         return accountDAO.update(account);
@@ -88,12 +130,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public UnlockCardRequest unlockCardRequest(long cardId) {
-        UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
-        if (requestDAO.getByCardId(cardId) == null) {
-            CardDAO cardDAO = new CardDAOImpl();
+        if (unlockCardRequestDAO.getByCardId(cardId) == null) {
             UnlockCardRequest request = new UnlockCardRequest();
-            request.setCard(cardDAO.getById(cardId));
-            return requestDAO.add(request);
+            request.setCardId(cardId);
+            return unlockCardRequestDAO.add(request);
         } else {
             return null;
         }
@@ -101,12 +141,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public UnlockAccountRequest unlockAccountRequest(long accountId) {
-        UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
-        if (requestDAO.getByAccountId(accountId) == null) {
-            AccountDAO accountDAO = new AccountDAOImpl();
+        if (unlockAccountRequestDAO.getByAccountId(accountId) == null) {
             UnlockAccountRequest request = new UnlockAccountRequest();
-            request.setAccount(accountDAO.getById(accountId));
-            return requestDAO.add(request);
+            request.setAccountId(accountId);
+            return unlockAccountRequestDAO.add(request);
         } else {
             return null;
         }
@@ -114,9 +152,8 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
-        AccountDAO accountDAO = new AccountDAOImpl();
         Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
-        if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
+        if (accountFrom.getClientId() == transactionDTO.getClientId()) {
             Account accountTo = accountDAO.getById(transactionDTO.getAccountToId());
             if (accountFrom.isLocked()) {
                 throw new TransactionException("Your account is lock");
@@ -132,25 +169,38 @@ public class ClientServiceImpl implements ClientService {
             double moneyTo = accountTo.getBalance();
             accountFrom.setBalance(moneyFrom - transactionMoney);
             accountTo.setBalance(moneyTo + transactionMoney);
-
-            accountDAO.update(accountFrom);
-            accountDAO.update(accountTo);
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+            Connection connection = DataBase.getConnection();
             Transaction transaction = new Transaction();
-            transaction.setDate(simpleDateFormat.format(new Date()));
-            transaction.setAccountFrom(accountFrom);
-            transaction.setAccountTo(accountTo);
-            transaction.setMoney(transactionMoney);
-            TransactionDAO transactionDAO = new TransactionDAOImpl();
-            return transactionDAO.add(transaction);
+            Transaction newTransaction = null;
+            try {
+                connection.setAutoCommit(false);
+                connection.commit();
+                accountDAO.update(accountFrom);
+                accountDAO.update(accountTo);
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+                transaction.setDate(simpleDateFormat.format(new Date()));
+                transaction.setAccountFromId(accountFrom.getId());
+                transaction.setAccountToId(accountTo.getId());
+                transaction.setMoney(transactionMoney);
+                newTransaction = transactionDAO.add(transaction);
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    System.out.println("SQL exception");
+                }
+                System.out.println("SQL exception");
+            }
+            return newTransaction;
         }
         return null;
     }
 
     @Override
     public Account refill(long accountId) {
-        AccountDAO accountDAO = new AccountDAOImpl();
         Account account = accountDAO.getById(accountId);
         double balance = account.getBalance();
         account.setBalance(balance + 100.0);
@@ -159,16 +209,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Collection<News> getAllPersonalNews(long clientId) {
-        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
         return clientNewsDAO.getAllByClientId(clientId)
                 .stream()
-                .flatMap(clientNews -> Stream.of(clientNews.getNews()))
+                .flatMap(clientNews -> Stream.of(newsDAO.getById(clientNews.getNewsId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     public News getPersonalNews(long newsId) {
-        NewsDAO newsDAO = new NewsDAOImpl();
         return newsDAO.getById(newsId);
     }
 }

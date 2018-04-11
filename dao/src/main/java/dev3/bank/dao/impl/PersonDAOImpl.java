@@ -35,9 +35,7 @@ public class PersonDAOImpl implements PersonDAO {
             preparedStatement.setString(1, role.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Person person = new Person();
-                parsePersonFromResultSet(resultSet, person);
-                people.add(person);
+                people.add(getPerson(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,7 +43,8 @@ public class PersonDAOImpl implements PersonDAO {
         return people;
     }
 
-    private void parsePersonFromResultSet(ResultSet resultSet, Person person) throws SQLException {
+    private Person getPerson(ResultSet resultSet) throws SQLException {
+        Person person = new Person();
         person.setId(resultSet.getLong("id"));
         person.setName(resultSet.getString("name"));
         person.setSurname(resultSet.getString("surname"));
@@ -61,11 +60,12 @@ public class PersonDAOImpl implements PersonDAO {
                 person.setRole(Role.ADMIN);
                 break;
         }
+        return person;
     }
 
     @Override
     public Person update(Person entity) {
-        Person person = new Person();
+        Person person = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "UPDATE Person SET name=?, surname=?, login=?, password=?, passport_id=?, role=?, phone_number=? WHERE id=?");
@@ -77,9 +77,13 @@ public class PersonDAOImpl implements PersonDAO {
             preparedStatement.setString(6, entity.getRole().toString());
             preparedStatement.setLong(7, person.getPhoneNumber());
             preparedStatement.setLong(8, person.getId());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Person WHERE id=?");
+            preparedStatement.setLong(1, entity.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                parsePersonFromResultSet(resultSet, person);
+                person = getPerson(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,14 +93,14 @@ public class PersonDAOImpl implements PersonDAO {
 
     @Override
     public Person getById(long id) {
-        Person person = new Person();
+        Person person = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Person WHERE id=?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                parsePersonFromResultSet(resultSet, person);
+                person = getPerson(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,7 +122,7 @@ public class PersonDAOImpl implements PersonDAO {
 
     @Override
     public Person add(Person entity) {
-        Person person = new Person();
+        Person person = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO Person(name, surname, login, password, phone_number, passport_id, role)" +
@@ -130,13 +134,32 @@ public class PersonDAOImpl implements PersonDAO {
             preparedStatement.setLong(5, entity.getPhoneNumber());
             preparedStatement.setLong(6, entity.getPassportId());
             preparedStatement.setString(7, entity.getRole().toString());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Person WHERE passport_id=?");
+            preparedStatement.setLong(1, entity.getPassportId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                parsePersonFromResultSet(resultSet, person);
+                person = getPerson(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return person;
+    }
+
+    @Override
+    public Collection<Person> getAll() {
+        Collection<Person> people = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                        people.add(getPerson(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return people;
     }
 }

@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     private static UnlockAccountRequestDAOImpl unlockAccountRequestDAO;
@@ -48,6 +50,10 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
                     "UPDATE UnlockAccountRequest SET account_id=? WHERE id=?");
             preparedStatement.setLong(1, entity.getAccountId());
             preparedStatement.setLong(2, entity.getId());
+            preparedStatement.execute();
+            preparedStatement =connection.prepareStatement("" +
+                    "SELECT * FROM UnlockAccountRequest WHERE id=?");
+            preparedStatement.setLong(1, entity.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 request = getUnlockAccountRequest(resultSet);
@@ -72,19 +78,15 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
 
     @Override
     public UnlockAccountRequest add(UnlockAccountRequest entity) {
-        UnlockAccountRequest request = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO UnlockAccountRequest(account_id) VALUES(?)");
             preparedStatement.setLong(1, entity.getAccountId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockAccountRequest(resultSet);
-            }
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return request;
+        return entity;
     }
 
     private UnlockAccountRequest getUnlockAccountRequest(ResultSet resultSet) throws SQLException {
@@ -109,5 +111,21 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
             e.printStackTrace();
         }
         return request;
+    }
+
+    @Override
+    public Collection<UnlockAccountRequest> getAll() {
+        Collection<UnlockAccountRequest> requests = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM UnlockAccountRequest");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                requests.add(getUnlockAccountRequest(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requests;
     }
 }

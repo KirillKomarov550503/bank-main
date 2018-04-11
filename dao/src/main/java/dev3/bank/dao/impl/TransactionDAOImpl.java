@@ -53,6 +53,10 @@ public class TransactionDAOImpl implements TransactionDAO {
             preparedStatement.setLong(3, entity.getAccountToId());
             preparedStatement.setDouble(4, entity.getMoney());
             preparedStatement.setLong(5, entity.getId());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Transaction WHERE id=?");
+            preparedStatement.setLong(1, entity.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 transaction = getTransaction(resultSet);
@@ -146,6 +150,22 @@ public class TransactionDAOImpl implements TransactionDAO {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM Transaction WHERE from_id IN (SELECT id FROM Account WHERE client_id=?)");
             preparedStatement.setLong(1, clientId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                transactions.add(getTransaction(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
+    @Override
+    public Collection<Transaction> getAll() {
+        Collection<Transaction> transactions = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM Transaction");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 transactions.add(getTransaction(resultSet));

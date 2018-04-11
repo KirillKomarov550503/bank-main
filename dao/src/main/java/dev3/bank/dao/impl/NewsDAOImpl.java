@@ -34,7 +34,9 @@ public class NewsDAOImpl implements NewsDAO {
                     "SELECT * FROM News WHERE admin_id=?");
             preparedStatement.setLong(1, adminId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseNewsFromResultSet(newsCollection, resultSet);
+            while (resultSet.next()) {
+                newsCollection.add(getNews(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,36 +51,37 @@ public class NewsDAOImpl implements NewsDAO {
                     "SELECT * FROM News WHERE news_status=?");
             preparedStatement.setString(1, newsStatus.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseNewsFromResultSet(newsCollection, resultSet);
+            while (resultSet.next()) {
+                newsCollection.add(getNews(resultSet));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return newsCollection;
     }
 
-    private void parseNewsFromResultSet(Collection<News> newsCollection, ResultSet resultSet) throws SQLException {
-        while (resultSet.next()) {
-            News news = new News();
-            news.setId(resultSet.getLong("id"));
-            setSwitch(news, resultSet);
-            news.setDate(resultSet.getString("date"));
-            news.setAdminId(resultSet.getLong("admin_id"));
-            news.setTitle(resultSet.getString("title"));
-            news.setText(resultSet.getString("body"));
-            newsCollection.add(news);
-        }
+    private News getNews(ResultSet resultSet) throws SQLException {
+        News news = new News();
+        news.setId(resultSet.getLong("id"));
+        setSwitch(news, resultSet);
+        news.setDate(resultSet.getString("date"));
+        news.setAdminId(resultSet.getLong("admin_id"));
+        news.setTitle(resultSet.getString("title"));
+        news.setText(resultSet.getString("body"));
+        return news;
     }
 
     @Override
     public News getById(long id) {
-        News news = new News();
+        News news = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "SELECT * FROM News WHERE id=?");
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseNewsFromResultSet(news, resultSet);
-
+            if (resultSet.next()) {
+                news = getNews(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -96,16 +99,6 @@ public class NewsDAOImpl implements NewsDAO {
         }
     }
 
-    private void parseNewsFromResultSet(News news, ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            news.setId(resultSet.getLong("id"));
-            setSwitch(news, resultSet);
-            news.setDate(resultSet.getString("date"));
-            news.setAdminId(resultSet.getLong("admin_id"));
-            news.setTitle(resultSet.getString("title"));
-            news.setText(resultSet.getString("body"));
-        }
-    }
 
     @Override
     public void delete(long id) {
@@ -121,7 +114,6 @@ public class NewsDAOImpl implements NewsDAO {
 
     @Override
     public News add(News entity) {
-        News news = new News();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "INSERT INTO News(admin_id, date, title, body, news_status) VALUES(?, ?, ?, ?, ?)");
@@ -130,17 +122,16 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setString(3, entity.getTitle());
             preparedStatement.setString(4, entity.getText());
             preparedStatement.setString(5, entity.getNewsStatus().toString());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            parseNewsFromResultSet(news, resultSet);
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return news;
+        return entity;
     }
 
     @Override
     public News update(News entity) {
-        News news = new News();
+        News news = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("" +
                     "UPDATE News SET admin_id=?, date=?, title=?, body=?, news_status=? WHERE id=?");
@@ -150,11 +141,33 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setString(4, entity.getText());
             preparedStatement.setString(5, entity.getNewsStatus().toString());
             preparedStatement.setLong(6, entity.getId());
+            preparedStatement.execute();
+            preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM News WHERE id=?");
+            preparedStatement.setLong(1, entity.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            parseNewsFromResultSet(news, resultSet);
+            if (resultSet.next()) {
+                news = getNews(resultSet);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return news;
+    }
+
+    @Override
+    public Collection<News> getAll() {
+        Collection<News> newsCollection = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("" +
+                    "SELECT * FROM News");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                newsCollection.add(getNews(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newsCollection;
     }
 }

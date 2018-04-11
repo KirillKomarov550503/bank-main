@@ -26,44 +26,40 @@ public class CardDAOImpl implements CardDAO {
     }
 
     @Override
-    public Card getById(long id) {
+    public Card getById(long id) throws SQLException {
         Card card = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                card = getCard(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            card = getCard(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return card;
     }
 
     @Override
-    public Card update(Card entity) {
+    public Card update(Card entity) throws SQLException {
         Card card = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE Card SET locked=?, pin=?, card_id=?, account_id=? WHERE id=?");
-            preparedStatement.setBoolean(1, entity.isLocked());
-            preparedStatement.setInt(2, entity.getPin());
-            preparedStatement.setLong(3, entity.getCardId());
-            preparedStatement.setLong(4, entity.getAccountId());
-            preparedStatement.setLong(5, entity.getId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                card = getCard(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE Card SET locked=?, pin=?, card_id=?, account_id=? WHERE id=?");
+        preparedStatement.setBoolean(1, entity.isLocked());
+        preparedStatement.setInt(2, entity.getPin());
+        preparedStatement.setLong(3, entity.getCardId());
+        preparedStatement.setLong(4, entity.getAccountId());
+        preparedStatement.setLong(5, entity.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            card = getCard(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return card;
     }
 
@@ -78,173 +74,152 @@ public class CardDAOImpl implements CardDAO {
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM Card WHERE id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM Card WHERE id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
-    public Card add(Card entity) {
+    public Card add(Card entity) throws SQLException {
         Card card = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO Card (locked, pin, card_id, account_id) VALUES(?, ?, ?, ?)");
-            preparedStatement.setBoolean(1, entity.isLocked());
-            preparedStatement.setInt(2, entity.getPin());
-            preparedStatement.setLong(3, entity.getCardId());
-            preparedStatement.setLong(4, entity.getAccountId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE card_id=?");
-            preparedStatement.setLong(1, entity.getCardId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                card = getCard(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO Card (locked, pin, card_id, account_id) VALUES(?, ?, ?, ?)");
+        preparedStatement.setBoolean(1, entity.isLocked());
+        preparedStatement.setInt(2, entity.getPin());
+        preparedStatement.setLong(3, entity.getCardId());
+        preparedStatement.setLong(4, entity.getAccountId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE card_id=?");
+        preparedStatement.setLong(1, entity.getCardId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            card = getCard(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return card;
     }
 
 
     @Override
-    public Collection<Card> getAll() {
+    public Collection<Card> getAll() throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
     @Override
-    public Card getByCardId(long cardId) {
+    public Card getByCardId(long cardId) throws SQLException {
         Card card = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE card_id=?");
-            preparedStatement.setLong(1, cardId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                card = getCard(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE card_id=?");
+        preparedStatement.setLong(1, cardId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            card = getCard(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return card;
     }
 
     @Override
-    public Collection<Card> getLockedCards() {
+    public Collection<Card> getLockedCards() throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE locked=TRUE");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE locked=TRUE");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
     @Override
-    public Collection<Card> getCardsByClientId(long clientId) {
+    public Collection<Card> getCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE account_id IN (SELECT id FROM Account WHERE client_id=?)");
-            preparedStatement.setLong(1, clientId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE account_id IN (SELECT id FROM Account WHERE client_id=?)");
+        preparedStatement.setLong(1, clientId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
     @Override
-    public Collection<Card> getCardsByAccountId(long accountId) {
+    public Collection<Card> getCardsByAccountId(long accountId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE account_id=?");
-            preparedStatement.setLong(1, accountId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE account_id=?");
+        preparedStatement.setLong(1, accountId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
     @Override
-    public Collection<Card> getUnlockedCards() {
+    public Collection<Card> getUnlockedCards() throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE locked=FALSE");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE locked=FALSE");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
     @Override
-    public Collection<Card> getLockedCardsByClientId(long clientId) {
+    public Collection<Card> getLockedCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE id=? and locked=TRUE");
-            preparedStatement.setLong(1, clientId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE id=? and locked=TRUE");
+        preparedStatement.setLong(1, clientId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 
 
     @Override
-    public Collection<Card> getUnlockedCardsByClientId(long clientId) {
+    public Collection<Card> getUnlockedCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Card WHERE id=? and locked=FALSE");
-            preparedStatement.setLong(1, clientId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                cards.add(getCard(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Card WHERE id=? and locked=FALSE");
+        preparedStatement.setLong(1, clientId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            cards.add(getCard(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return cards;
     }
 }

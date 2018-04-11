@@ -26,110 +26,98 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public Transaction getById(long id) {
+    public Transaction getById(long id) throws SQLException {
         Transaction transaction = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                transaction = getTransaction(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            transaction = getTransaction(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return transaction;
     }
 
     @Override
-    public Transaction update(Transaction entity) {
+    public Transaction update(Transaction entity) throws SQLException {
         Transaction transaction = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE Transaction SET date=?, from_id=?, to_id=?, money=? WHERE id=?");
-            preparedStatement.setString(1, entity.getDate());
-            preparedStatement.setLong(2, entity.getAccountFromId());
-            preparedStatement.setLong(3, entity.getAccountToId());
-            preparedStatement.setDouble(4, entity.getMoney());
-            preparedStatement.setLong(5, entity.getId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                transaction = getTransaction(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE Transaction SET date=?, from_id=?, to_id=?, money=? WHERE id=?");
+        preparedStatement.setString(1, entity.getDate());
+        preparedStatement.setLong(2, entity.getAccountFromId());
+        preparedStatement.setLong(3, entity.getAccountToId());
+        preparedStatement.setDouble(4, entity.getMoney());
+        preparedStatement.setLong(5, entity.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            transaction = getTransaction(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return transaction;
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM Transaction WHERE id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM Transaction WHERE id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
+
     @Override
-    public Transaction add(Transaction entity) {
+    public Transaction add(Transaction entity) throws SQLException {
         Transaction transaction = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO Transaction(date, from_id, to_id, money) VALUES(?, ?, ?, ?, ?)");
-            preparedStatement.setString(1, entity.getDate());
-            preparedStatement.setLong(2, entity.getAccountFromId());
-            preparedStatement.setLong(3, entity.getAccountToId());
-            preparedStatement.setDouble(4, entity.getMoney());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                transaction = getTransaction(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO Transaction(date, from_id, to_id, money) VALUES(?, ?, ?, ?, ?)");
+        preparedStatement.setString(1, entity.getDate());
+        preparedStatement.setLong(2, entity.getAccountFromId());
+        preparedStatement.setLong(3, entity.getAccountToId());
+        preparedStatement.setDouble(4, entity.getMoney());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            transaction = getTransaction(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return transaction;
     }
 
     @Override
-    public Collection<Transaction> getByAccountFromId(long accountFromId) {
+    public Collection<Transaction> getByAccountFromId(long accountFromId) throws SQLException {
         Collection<Transaction> transactions = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction WHERE from_id=?");
-            preparedStatement.setLong(1, accountFromId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                transactions.add(getTransaction(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction WHERE from_id=?");
+        preparedStatement.setLong(1, accountFromId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            transactions.add(getTransaction(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return transactions;
     }
 
     @Override
-    public Collection<Transaction> getByAccountToId(long accountToId) {
+    public Collection<Transaction> getByAccountToId(long accountToId) throws SQLException {
         Collection<Transaction> transactions = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction WHERE to_id=?");
-            preparedStatement.setLong(1, accountToId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                transactions.add(getTransaction(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction WHERE to_id=?");
+        preparedStatement.setLong(1, accountToId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            transactions.add(getTransaction(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return transactions;
     }
 
@@ -144,35 +132,31 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public Collection<Transaction> getByClientId(long clientId) {
+    public Collection<Transaction> getByClientId(long clientId) throws SQLException {
         Collection<Transaction> transactions = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction WHERE from_id IN (SELECT id FROM Account WHERE client_id=?)");
-            preparedStatement.setLong(1, clientId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                transactions.add(getTransaction(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction WHERE from_id IN (SELECT id FROM Account WHERE client_id=?)");
+        preparedStatement.setLong(1, clientId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            transactions.add(getTransaction(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return transactions;
     }
 
     @Override
-    public Collection<Transaction> getAll() {
+    public Collection<Transaction> getAll() throws SQLException {
         Collection<Transaction> transactions = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Transaction");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                transactions.add(getTransaction(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Transaction");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            transactions.add(getTransaction(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return transactions;
     }
 }

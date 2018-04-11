@@ -28,19 +28,17 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public Client getById(long id) {
+    public Client getById(long id) throws SQLException {
         Client client = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Client WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                client = getClient(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Client WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            client = getClient(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return client;
     }
 
@@ -52,72 +50,64 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public Client update(Client entity) {
+    public Client update(Client entity) throws SQLException {
         Client client = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE Client SET person_id=? WHERE id=?");
-            preparedStatement.setLong(1, entity.getPersonId());
-            preparedStatement.setLong(2, entity.getId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Client WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                client = getClient(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE Client SET person_id=? WHERE id=?");
+        preparedStatement.setLong(1, entity.getPersonId());
+        preparedStatement.setLong(2, entity.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Client WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            client = getClient(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return client;
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM Client WHERE id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM Client WHERE id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
-    public Client add(Client entity) {
+    public Client add(Client entity) throws SQLException {
         Client client = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO Client(person_id) VALUES(?)");
-            preparedStatement.setLong(1, entity.getPersonId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Client WHERE person_id=?");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                client = getClient(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO Client(person_id) VALUES(?)");
+        preparedStatement.setLong(1, entity.getPersonId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Client WHERE person_id=?");
+//            preparedStatement.setLong(1, entity.getPersonId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            client = getClient(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return client;
     }
 
     @Override
-    public Collection<Client> getAll() {
+    public Collection<Client> getAll() throws SQLException {
         Collection<Client> clients = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Client");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                clients.add(getClient(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Client");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            clients.add(getClient(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return clients;
     }
 }

@@ -26,66 +26,56 @@ public class UnlockCardRequestDAOImpl implements UnlockCardRequestDAO {
     }
 
     @Override
-    public UnlockCardRequest getById(long id) {
+    public UnlockCardRequest getById(long id) throws SQLException {
         UnlockCardRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockCardRequest WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockCardRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockCardRequest WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockCardRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public UnlockCardRequest update(UnlockCardRequest entity) {
+    public UnlockCardRequest update(UnlockCardRequest entity) throws SQLException {
         UnlockCardRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE UnlockCardRequest SET card_id=? WHERE id=?");
-            preparedStatement.setLong(1, entity.getCardId());
-            preparedStatement.setLong(2, entity.getId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockCardRequest WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockCardRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE UnlockCardRequest SET card_id=? WHERE id=?");
+        preparedStatement.setLong(1, entity.getCardId());
+        preparedStatement.setLong(2, entity.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockCardRequest WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockCardRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM UnlockCardRequest WHERE id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM UnlockCardRequest WHERE id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
-    public UnlockCardRequest add(UnlockCardRequest entity) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO UnlockCardRequest(card_id) VALUES(?)");
-            preparedStatement.setLong(1, entity.getCardId());
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public UnlockCardRequest add(UnlockCardRequest entity) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO UnlockCardRequest(card_id) VALUES(?)");
+        preparedStatement.setLong(1, entity.getCardId());
+        preparedStatement.execute();
+        preparedStatement.close();
         return entity;
     }
 
@@ -98,35 +88,31 @@ public class UnlockCardRequestDAOImpl implements UnlockCardRequestDAO {
 
 
     @Override
-    public UnlockCardRequest getByCardId(long cardId) {
+    public UnlockCardRequest getByCardId(long cardId) throws SQLException {
         UnlockCardRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockCardRequest WHERE card_id=?");
-            preparedStatement.setLong(1, cardId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockCardRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockCardRequest WHERE card_id=?");
+        preparedStatement.setLong(1, cardId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockCardRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public Collection<UnlockCardRequest> getAll() {
+    public Collection<UnlockCardRequest> getAll() throws SQLException {
         Collection<UnlockCardRequest> requests = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockCardRequest");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                requests.add(getUnlockCardRequest(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockCardRequest");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            requests.add(getUnlockCardRequest(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return requests;
     }
 }

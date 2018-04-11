@@ -27,19 +27,17 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Override
-    public Collection<Person> getByRole(Role role) {
+    public Collection<Person> getByRole(Role role) throws SQLException {
         Collection<Person> people = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Person WHERE role=?");
-            preparedStatement.setString(1, role.toString());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                people.add(getPerson(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Person WHERE role=?");
+        preparedStatement.setString(1, role.toString());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            people.add(getPerson(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return people;
     }
 
@@ -64,102 +62,92 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Override
-    public Person update(Person entity) {
+    public Person update(Person entity) throws SQLException {
         Person person = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE Person SET name=?, surname=?, login=?, password=?, passport_id=?, role=?, phone_number=? WHERE id=?");
-            preparedStatement.setString(1, entity.getName());
-            preparedStatement.setString(2, entity.getSurname());
-            preparedStatement.setString(3, entity.getLogin());
-            preparedStatement.setString(4, entity.getPassword());
-            preparedStatement.setLong(5, entity.getPassportId());
-            preparedStatement.setString(6, entity.getRole().toString());
-            preparedStatement.setLong(7, person.getPhoneNumber());
-            preparedStatement.setLong(8, person.getId());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Person WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                person = getPerson(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE Person SET name=?, surname=?, login=?, password=?, passport_id=?, role=?, phone_number=? WHERE id=?");
+        preparedStatement.setString(1, entity.getName());
+        preparedStatement.setString(2, entity.getSurname());
+        preparedStatement.setString(3, entity.getLogin());
+        preparedStatement.setString(4, entity.getPassword());
+        preparedStatement.setLong(5, entity.getPassportId());
+        preparedStatement.setString(6, entity.getRole().toString());
+        preparedStatement.setLong(7, person.getPhoneNumber());
+        preparedStatement.setLong(8, person.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Person WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            person = getPerson(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return person;
     }
 
     @Override
-    public Person getById(long id) {
+    public Person getById(long id) throws SQLException {
         Person person = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Person WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                person = getPerson(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Person WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            person = getPerson(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return person;
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM Person WHERE  id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM Person WHERE  id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
-    public Person add(Person entity) {
+    public Person add(Person entity) throws SQLException {
         Person person = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO Person(name, surname, login, password, phone_number, passport_id, role)" +
-                    "VALUES(?, ?, ?, ?, ?, ?, ?)");
-            preparedStatement.setString(1, entity.getName());
-            preparedStatement.setString(2, entity.getSurname());
-            preparedStatement.setString(3, entity.getLogin());
-            preparedStatement.setString(4, entity.getPassword());
-            preparedStatement.setLong(5, entity.getPhoneNumber());
-            preparedStatement.setLong(6, entity.getPassportId());
-            preparedStatement.setString(7, entity.getRole().toString());
-            preparedStatement.execute();
-            preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM Person WHERE passport_id=?");
-            preparedStatement.setLong(1, entity.getPassportId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                person = getPerson(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO Person(name, surname, login, password, phone_number, passport_id, role)" +
+                "VALUES(?, ?, ?, ?, ?, ?, ?)");
+        preparedStatement.setString(1, entity.getName());
+        preparedStatement.setString(2, entity.getSurname());
+        preparedStatement.setString(3, entity.getLogin());
+        preparedStatement.setString(4, entity.getPassword());
+        preparedStatement.setLong(5, entity.getPhoneNumber());
+        preparedStatement.setLong(6, entity.getPassportId());
+        preparedStatement.setString(7, entity.getRole().toString());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM Person WHERE passport_id=?");
+        preparedStatement.setLong(1, entity.getPassportId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            person = getPerson(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return person;
     }
 
     @Override
-    public Collection<Person> getAll() {
+    public Collection<Person> getAll() throws SQLException {
         Collection<Person> people = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                        people.add(getPerson(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM person");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            people.add(getPerson(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return people;
     }
 }

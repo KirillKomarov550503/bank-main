@@ -26,66 +26,56 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     }
 
     @Override
-    public UnlockAccountRequest getById(long id) {
+    public UnlockAccountRequest getById(long id) throws SQLException {
         UnlockAccountRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockAccountRequest WHERE id=?");
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockAccountRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockAccountRequest WHERE id=?");
+        preparedStatement.setLong(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockAccountRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public UnlockAccountRequest update(UnlockAccountRequest entity) {
+    public UnlockAccountRequest update(UnlockAccountRequest entity) throws SQLException {
         UnlockAccountRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "UPDATE UnlockAccountRequest SET account_id=? WHERE id=?");
-            preparedStatement.setLong(1, entity.getAccountId());
-            preparedStatement.setLong(2, entity.getId());
-            preparedStatement.execute();
-            preparedStatement =connection.prepareStatement("" +
-                    "SELECT * FROM UnlockAccountRequest WHERE id=?");
-            preparedStatement.setLong(1, entity.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockAccountRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "UPDATE UnlockAccountRequest SET account_id=? WHERE id=?");
+        preparedStatement.setLong(1, entity.getAccountId());
+        preparedStatement.setLong(2, entity.getId());
+        preparedStatement.execute();
+        preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockAccountRequest WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockAccountRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public void delete(long id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "DELETE FROM UnlockAccountRequest WHERE id=?");
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void delete(long id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "DELETE FROM UnlockAccountRequest WHERE id=?");
+        preparedStatement.setLong(1, id);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
-    public UnlockAccountRequest add(UnlockAccountRequest entity) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "INSERT INTO UnlockAccountRequest(account_id) VALUES(?)");
-            preparedStatement.setLong(1, entity.getAccountId());
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public UnlockAccountRequest add(UnlockAccountRequest entity) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "INSERT INTO UnlockAccountRequest(account_id) VALUES(?)");
+        preparedStatement.setLong(1, entity.getAccountId());
+        preparedStatement.execute();
+        preparedStatement.close();
         return entity;
     }
 
@@ -97,35 +87,31 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     }
 
     @Override
-    public UnlockAccountRequest getByAccountId(long accountId) {
+    public UnlockAccountRequest getByAccountId(long accountId) throws SQLException {
         UnlockAccountRequest request = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockAccountRequest WHERE account_id=?");
-            preparedStatement.setLong(1, accountId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                request = getUnlockAccountRequest(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockAccountRequest WHERE account_id=?");
+        preparedStatement.setLong(1, accountId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            request = getUnlockAccountRequest(resultSet);
         }
+        resultSet.close();
+        preparedStatement.close();
         return request;
     }
 
     @Override
-    public Collection<UnlockAccountRequest> getAll() {
+    public Collection<UnlockAccountRequest> getAll() throws SQLException {
         Collection<UnlockAccountRequest> requests = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("" +
-                    "SELECT * FROM UnlockAccountRequest");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                requests.add(getUnlockAccountRequest(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement preparedStatement = connection.prepareStatement("" +
+                "SELECT * FROM UnlockAccountRequest");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            requests.add(getUnlockAccountRequest(resultSet));
         }
+        resultSet.close();
+        preparedStatement.close();
         return requests;
     }
 }

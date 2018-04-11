@@ -2,16 +2,17 @@ package dev3.bank.dao.interfaces;
 
 import dev3.bank.entity.BaseEntity;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public interface CrudDAO<T extends BaseEntity> {
-    T getById(long id);
+    T getById(long id) throws SQLException;
 
-    T update(T entity);
+    T update(T entity) throws SQLException;
 
-    void delete(long id);
+    void delete(long id) throws SQLException;
 
-    T add(T entity);
+    T add(T entity) throws SQLException;
 
-    Collection<T> getAll();
+    Collection<T> getAll() throws SQLException;
 }

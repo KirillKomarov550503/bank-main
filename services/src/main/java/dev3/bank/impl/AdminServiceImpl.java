@@ -62,37 +62,76 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Collection<Client> getAllClients() {
-        return clientDAO.getAll();
+        Collection<Client> clients = null;
+        try {
+            clients = clientDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return clients;
     }
 
     @Override
     public Collection<Card> getAllUnlockCardRequest() {
-        return unlockCardRequestDAO.getAll()
-                .stream()
-                .flatMap(unlockCardRequest -> Stream.of(cardDAO.getByCardId(unlockCardRequest.getCardId())))
-                .collect(Collectors.toList());
+        Collection<Card> cards = null;
+        try {
+            cards = unlockCardRequestDAO.getAll()
+                    .stream()
+                    .flatMap(unlockCardRequest -> {
+                        Stream<Card> stream = null;
+                        try {
+                            stream = Stream.of(cardDAO.getByCardId(unlockCardRequest.getCardId()));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return stream;
+                    })
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 
     @Override
     public Collection<Account> getAllUnlockAccountRequest() {
-        return unlockAccountRequestDAO.getAll()
-                .stream()
-                .flatMap(accountRequest -> Stream.of(accountDAO.getByAccountId(accountRequest.getAccountId())))
-                .collect(Collectors.toList());
+        Collection<Account> accounts = null;
+        try {
+            accounts = unlockAccountRequestDAO.getAll()
+                    .stream()
+                    .flatMap(accountRequest -> {
+                        Stream<Account> stream = null;
+                        try {
+                            stream = Stream.of(accountDAO.getByAccountId(accountRequest.getAccountId()));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return stream;
+                    })
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
     @Override
     public void unlockCard(long cardId) {
-        UnlockCardRequest request = unlockCardRequestDAO.getAll()
-                .stream()
-                .filter(unlockCardRequest -> unlockCardRequest.getCardId() == cardId)
-                .findFirst()
-                .orElse(null);
-        Card card = cardDAO.getById(request.getCardId());
+        UnlockCardRequest request = null;
+        Card card = null;
+        try {
+            request = unlockCardRequestDAO.getAll()
+                    .stream()
+                    .filter(unlockCardRequest -> unlockCardRequest.getCardId() == cardId)
+                    .findFirst()
+                    .orElse(null);
+            card = cardDAO.getById(request.getCardId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Connection connection = DataBase.getConnection();
         try {
             connection.setAutoCommit(false);
-            connection.commit();
             card.setLocked(false);
             cardDAO.update(card);
             unlockCardRequestDAO.delete(request.getId());
@@ -101,6 +140,7 @@ public class AdminServiceImpl implements AdminService {
         } catch (SQLException e) {
             try {
                 connection.rollback();
+                connection.setAutoCommit(true);
             } catch (SQLException e1) {
                 System.out.println("SQL exception");
             }
@@ -110,17 +150,22 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void unlockAccount(long accountId) {
-        UnlockAccountRequest request = unlockAccountRequestDAO.getAll()
-                .stream()
-                .filter(unlockAccountRequest -> unlockAccountRequest.getAccountId() == accountId)
-                .findFirst()
-                .orElse(null);
-        Account account = accountDAO.getById(request.getAccountId());
+        UnlockAccountRequest request = null;
+        Account account = null;
+        try {
+            request = unlockAccountRequestDAO.getAll()
+                    .stream()
+                    .filter(unlockAccountRequest -> unlockAccountRequest.getAccountId() == accountId)
+                    .findFirst()
+                    .orElse(null);
+            account = accountDAO.getById(request.getAccountId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Connection connection = DataBase.getConnection();
         try {
             account.setLocked(false);
             connection.setAutoCommit(false);
-            connection.commit();
             accountDAO.update(account);
             unlockAccountRequestDAO.delete(request.getId());
             connection.commit();
@@ -128,6 +173,7 @@ public class AdminServiceImpl implements AdminService {
         } catch (SQLException e) {
             try {
                 connection.rollback();
+                connection.setAutoCommit(true);
             } catch (SQLException e1) {
                 System.out.println("SQL exception");
             }
@@ -138,22 +184,46 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Collection<Account> getAllAccounts() {
-        return accountDAO.getAll();
+        Collection<Account> accounts = null;
+        try {
+            accounts = accountDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
     @Override
     public Collection<Card> getAllCards() {
-        return cardDAO.getAll();
+        Collection<Card> cards = null;
+        try {
+            cards = cardDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 
     @Override
     public Collection<News> getAllGeneralNews() {
-        return newsDAO.getAll();
+        Collection<News> temp = null;
+        try {
+            temp = newsDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public Collection<ClientNews> getAllClientNews() {
-        return clientNewsDAO.getAll();
+        Collection<ClientNews> temp = null;
+        try {
+            temp = clientNewsDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
@@ -163,23 +233,45 @@ public class AdminServiceImpl implements AdminService {
             ClientNews clientNews = new ClientNews();
             clientNews.setClientId(clientId);
             clientNews.setNewsId(news.getId());
-            newsCollection.add(clientNewsDAO.add(clientNews));
+            try {
+                newsCollection.add(clientNewsDAO.add(clientNews));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return newsCollection;
     }
 
     @Override
     public News addGeneralNews(News news) {
-        return newsDAO.add(news);
+        News temp = null;
+        try {
+            temp = newsDAO.add(news);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public Collection<UnlockAccountRequest> getAllAccountRequest() {
-        return unlockAccountRequestDAO.getAll();
+        Collection<UnlockAccountRequest> temp = null;
+        try {
+            temp = unlockAccountRequestDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public Collection<UnlockCardRequest> getAllCardRequest() {
-        return unlockCardRequestDAO.getAll();
+        Collection<UnlockCardRequest> temp = null;
+        try {
+            temp = unlockCardRequestDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 }

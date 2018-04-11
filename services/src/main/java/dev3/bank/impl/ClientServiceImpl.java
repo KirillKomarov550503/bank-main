@@ -26,10 +26,6 @@ public class ClientServiceImpl implements ClientService {
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
     private TransactionDAO transactionDAO;
 
-    public void setTransactionDAO(TransactionDAO transactionDAO) {
-        this.transactionDAO = transactionDAO;
-    }
-
     private ClientServiceImpl() {
     }
 
@@ -39,6 +35,10 @@ public class ClientServiceImpl implements ClientService {
         }
         return clientService;
 
+    }
+
+    public void setTransactionDAO(TransactionDAO transactionDAO) {
+        this.transactionDAO = transactionDAO;
     }
 
     public void setAccountDAO(AccountDAO accountDAO) {
@@ -72,109 +72,177 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Account createAccount(Account account, long clientId) {
         account.setClientId(clientId);
-        return accountDAO.add(account);
+        Account temp = null;
+        try {
+            temp = accountDAO.add(account);
+        } catch (SQLException e) {
+            System.out.println("SQL exception");
+        }
+        return temp;
     }
 
     @Override
     public Card createCard(Card card, long accountId) {
         card.setAccountId(accountId);
-        return cardDAO.add(card);
+        Card temp = null;
+        try {
+            temp = cardDAO.add(card);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
 
     @Override
     public Collection<Account> getLockAccounts(long clientId) {
-        return accountDAO.getLockedAccountsByClientId(clientId);
+        Collection<Account> accounts = null;
+        try {
+            accounts = accountDAO.getLockedAccountsByClientId(clientId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
     @Override
     public Collection<Card> getLockCards(long clientId) {
-        return cardDAO.getLockedCardsByClientId(clientId);
+        Collection<Card> cards = null;
+        try {
+            cards = cardDAO.getLockedCardsByClientId(clientId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 
     @Override
     public Collection<Account> getUnlockAccounts(long clientId) {
-        return accountDAO.getUnlockedAccountsByClientId(clientId);
+        Collection<Account> accounts = null;
+        try {
+            accounts = accountDAO.getUnlockedAccountsByClientId(clientId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
 
     @Override
     public Collection<Card> getUnlockCards(long clientId) {
-        return cardDAO.getUnlockedCardsByClientId(clientId);
+        Collection<Card> cards = null;
+        try {
+            cards = cardDAO.getUnlockedCardsByClientId(clientId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 
     @Override
     public Collection<Card> getAllCardsByAccount(long accountId) {
-        return cardDAO.getCardsByAccountId(accountId);
+        Collection<Card> cards = null;
+        try {
+            cards = cardDAO.getCardsByAccountId(accountId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 
 
     @Override
     public Collection<Transaction> showStories(long clientId) {
-        return transactionDAO.getByClientId(clientId);
+        Collection<Transaction> transactions = null;
+        try {
+            transactions = transactionDAO.getByClientId(clientId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactions;
     }
 
     @Override
     public Card lockCard(long cardId) {
-        Card card = cardDAO.getById(cardId);
-        card.setLocked(true);
-        return cardDAO.update(card);
+        Card temp = null;
+        try {
+            Card card = cardDAO.getById(cardId);
+            card.setLocked(true);
+            temp = cardDAO.update(card);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public Account lockAccount(long accountId) {
-        Account account = accountDAO.getById(accountId);
-        account.setLocked(true);
-        return accountDAO.update(account);
+        Account temp = null;
+        try {
+            Account account = accountDAO.getById(accountId);
+            account.setLocked(true);
+            temp = accountDAO.update(account);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public UnlockCardRequest unlockCardRequest(long cardId) {
-        if (unlockCardRequestDAO.getByCardId(cardId) == null) {
-            UnlockCardRequest request = new UnlockCardRequest();
-            request.setCardId(cardId);
-            return unlockCardRequestDAO.add(request);
-        } else {
-            return null;
+        UnlockCardRequest temp = null;
+        try {
+            if (unlockCardRequestDAO.getByCardId(cardId) == null) {
+                UnlockCardRequest request = new UnlockCardRequest();
+                request.setCardId(cardId);
+                temp = unlockCardRequestDAO.add(request);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return temp;
     }
 
     @Override
     public UnlockAccountRequest unlockAccountRequest(long accountId) {
-        if (unlockAccountRequestDAO.getByAccountId(accountId) == null) {
-            UnlockAccountRequest request = new UnlockAccountRequest();
-            request.setAccountId(accountId);
-            return unlockAccountRequestDAO.add(request);
-        } else {
-            return null;
+        UnlockAccountRequest temp = null;
+        try {
+            if (unlockAccountRequestDAO.getByAccountId(accountId) == null) {
+                UnlockAccountRequest request = new UnlockAccountRequest();
+                request.setAccountId(accountId);
+                temp = unlockAccountRequestDAO.add(request);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return temp;
     }
 
     @Override
     public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
-        Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
-        if (accountFrom.getClientId() == transactionDTO.getClientId()) {
-            Account accountTo = accountDAO.getById(transactionDTO.getAccountToId());
-            if (accountFrom.isLocked()) {
-                throw new TransactionException("Your account is lock");
-            }
-            if (accountTo.isLocked()) {
-                throw new TransactionException("Other account is lock");
-            }
-            double moneyFrom = accountFrom.getBalance();
-            double transactionMoney = transactionDTO.getMoney();
-            if (moneyFrom < transactionMoney) {
-                throw new TransactionException("Not enough money on your account");
-            }
-            double moneyTo = accountTo.getBalance();
-            accountFrom.setBalance(moneyFrom - transactionMoney);
-            accountTo.setBalance(moneyTo + transactionMoney);
-            Connection connection = DataBase.getConnection();
-            Transaction transaction = new Transaction();
-            Transaction newTransaction = null;
-            try {
+        Connection connection = DataBase.getConnection();
+        Transaction newTransaction = null;
+        try {
+            Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
+            if (accountFrom.getClientId() == transactionDTO.getClientId()) {
+                Account accountTo = accountDAO.getById(transactionDTO.getAccountToId());
+                if (accountFrom.isLocked()) {
+                    throw new TransactionException("Your account is lock");
+                }
+                if (accountTo.isLocked()) {
+                    throw new TransactionException("Other account is lock");
+                }
+                double moneyFrom = accountFrom.getBalance();
+                double transactionMoney = transactionDTO.getMoney();
+                if (moneyFrom < transactionMoney) {
+                    throw new TransactionException("Not enough money on your account");
+                }
+                double moneyTo = accountTo.getBalance();
+                accountFrom.setBalance(moneyFrom - transactionMoney);
+                accountTo.setBalance(moneyTo + transactionMoney);
+                Transaction transaction = new Transaction();
+
                 connection.setAutoCommit(false);
-                connection.commit();
                 accountDAO.update(accountFrom);
                 accountDAO.update(accountTo);
 
@@ -186,37 +254,63 @@ public class ClientServiceImpl implements ClientService {
                 newTransaction = transactionDAO.add(transaction);
                 connection.commit();
                 connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    System.out.println("SQL exception");
-                }
-                System.out.println("SQL exception");
             }
-            return newTransaction;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+                connection.setAutoCommit(true);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
         }
-        return null;
+        return newTransaction;
     }
 
     @Override
     public Account refill(long accountId) {
-        Account account = accountDAO.getById(accountId);
-        double balance = account.getBalance();
-        account.setBalance(balance + 100.0);
-        return accountDAO.update(account);
+        Account temp = null;
+        try {
+            Account account = accountDAO.getById(accountId);
+            double balance = account.getBalance();
+            account.setBalance(balance + 100.0);
+            temp = accountDAO.update(account);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     @Override
     public Collection<News> getAllPersonalNews(long clientId) {
-        return clientNewsDAO.getAllByClientId(clientId)
-                .stream()
-                .flatMap(clientNews -> Stream.of(newsDAO.getById(clientNews.getNewsId())))
-                .collect(Collectors.toList());
+        Collection<News> newsCollection = null;
+        try {
+            newsCollection = clientNewsDAO.getAllByClientId(clientId)
+                    .stream()
+                    .flatMap(clientNews -> {
+                        Stream<News> stream = null;
+                        try {
+                            stream = Stream.of(newsDAO.getById(clientNews.getNewsId()));
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        return stream;
+                    })
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newsCollection;
     }
 
     @Override
     public News getPersonalNews(long newsId) {
-        return newsDAO.getById(newsId);
+        News temp = null;
+        try {
+            temp = newsDAO.getById(newsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 }

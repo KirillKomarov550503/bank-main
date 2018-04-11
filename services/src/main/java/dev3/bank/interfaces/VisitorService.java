@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface VisitorService {
     Collection<News> getAllNews();
 
-    Person registration(Client client);
+    Person registration(Person person);
 
     Person signIn(Person person);
 }

@@ -1,10 +1,7 @@
 package utils;
 
 import dev3.bank.dto.TransactionDTO;
-import dev3.bank.entity.Client;
-import dev3.bank.entity.News;
-import dev3.bank.entity.NewsStatus;
-import dev3.bank.entity.Role;
+import dev3.bank.entity.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,24 +15,27 @@ public class Input {
         System.out.print("\n" + message);
     }
 
-    public static Client inputClient() {
+    public static Person inputClient() {
         Scanner scanner = new Scanner(System.in);
-        Client client = new Client();
+        Person person = new Person();
         print("Input your name: ");
         String name = scanner.nextLine();
-        client.setName(name);
+        person.setName(name);
         print("Input your surname: ");
         String surname = scanner.nextLine();
-        client.setSurname(surname);
+        person.setSurname(surname);
+        print("Input your passport ID: ");
+        int passportId = scanner.nextInt();
         print("Input your phone number: ");
+        person.setPassportId(passportId);
         int phoneNumber = scanner.nextInt();
         try {
-            client.setPhoneNumber(phoneNumber);
+            person.setPhoneNumber(phoneNumber);
         } catch (NumberFormatException e) {
             System.out.println("Wrong input phone number");
         }
-        client.setRole(Role.CLIENT);
-        return client;
+        person.setRole(Role.CLIENT);
+        return person;
     }
 
     public static long inputClientId() {
@@ -108,7 +108,7 @@ public class Input {
         String text = scanner.nextLine();
         news.setText(text);
 
-        news.setAdmin(null);
+        news.setAdminId(0);
     }
 
 

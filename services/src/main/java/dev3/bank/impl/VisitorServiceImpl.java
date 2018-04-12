@@ -65,11 +65,11 @@ public class VisitorServiceImpl implements VisitorService {
             addRes = clientDAO.add(client);
             connection.commit();
             connection.setAutoCommit(true);
-
         } catch (SQLException e) {
             try {
                 System.out.println("ROLLBACK");
                 connection.rollback();
+                connection.setAutoCommit(true);
             } catch (SQLException e1) {
                 System.out.println("SQL exception");
             }

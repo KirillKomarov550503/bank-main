@@ -87,7 +87,7 @@ public class ClientDAOImpl implements ClientDAO {
         preparedStatement.execute();
         preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM Client WHERE person_id=?");
-//            preparedStatement.setLong(1, entity.getPersonId());
+        preparedStatement.setLong(1, entity.getPersonId());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             client = getClient(resultSet);

@@ -1,3 +1,4 @@
+import dev3.bank.dao.utils.DataBase;
 import menu.FabricMethod;
 import menu.Menu;
 import menu.Role;
@@ -17,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-
+        DataBase.initTables();
         while (!exit) {
             printMainMenu();
             Scanner scanner = new Scanner(System.in);
@@ -35,7 +36,7 @@ public class Main {
                         role = Role.ADMIN;
                         break;
                     case 0:
-                        CrudDAOImpl.writeEntitiesMap(getPathToDB());
+                        DataBase.closeConnection();
                         System.exit(0);
                         break;
                     default:

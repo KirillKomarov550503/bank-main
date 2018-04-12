@@ -73,20 +73,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Collection<Card> getAllUnlockCardRequest() {
-        Collection<Card> cards = null;
+        Collection<Card> cards = new ArrayList<>();
         try {
-            cards = unlockCardRequestDAO.getAll()
-                    .stream()
-                    .flatMap(unlockCardRequest -> {
-                        Stream<Card> stream = null;
-                        try {
-                            stream = Stream.of(cardDAO.getByCardId(unlockCardRequest.getCardId()));
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return stream;
-                    })
-                    .collect(Collectors.toList());
+            Collection<UnlockCardRequest> requests = unlockCardRequestDAO.getAll();
+            for (UnlockCardRequest request : requests) {
+                cards.add(cardDAO.getById(request.getCardId()));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -95,20 +87,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Collection<Account> getAllUnlockAccountRequest() {
-        Collection<Account> accounts = null;
+        Collection<Account> accounts = new ArrayList<>();
         try {
-            accounts = unlockAccountRequestDAO.getAll()
-                    .stream()
-                    .flatMap(accountRequest -> {
-                        Stream<Account> stream = null;
-                        try {
-                            stream = Stream.of(accountDAO.getByAccountId(accountRequest.getAccountId()));
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                        return stream;
-                    })
-                    .collect(Collectors.toList());
+            Collection<UnlockAccountRequest> requests = unlockAccountRequestDAO.getAll();
+            for (UnlockAccountRequest request : requests) {
+                accounts.add(accountDAO.getById(request.getAccountId()));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -1,15 +1,20 @@
 package menu;
 
+import dev3.bank.dao.impl.*;
+import dev3.bank.dao.utils.DataBase;
 import dev3.bank.entity.News;
 import dev3.bank.impl.AdminServiceImpl;
+import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.interfaces.AdminService;
+import dev3.bank.interfaces.ClientService;
 import utils.Input;
 
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.Scanner;
 
 public class AdminMenu implements Menu {
-    private AdminService adminService = new AdminServiceImpl();
+    private AdminService adminService;
 
     @Override
     public void printTextMenu() {
@@ -29,9 +34,25 @@ public class AdminMenu implements Menu {
     }
 
     @Override
+    public void initService() {
+        Connection connection = DataBase.getConnection();
+        adminService = AdminServiceImpl.getAdminService();
+        ((AdminServiceImpl) adminService).setAccountDAO(AccountDAOImpl.getAccountDAO(connection));
+        ((AdminServiceImpl) adminService).setCardDAO(CardDAOImpl.getCardDAO(connection));
+        ((AdminServiceImpl) adminService).setClientDAO(ClientDAOImpl.getClientDAO(connection));
+        ((AdminServiceImpl) adminService).setClientNewsDAO(ClientNewsDAOImpl.getClientNewsDAO(connection));
+        ((AdminServiceImpl) adminService).setNewsDAO(NewsDAOImpl.getNewsDAO(connection));
+        ((AdminServiceImpl) adminService).setUnlockAccountRequestDAO(UnlockAccountRequestDAOImpl
+                .getUnlcokAccountRequestDAO(connection));
+        ((AdminServiceImpl) adminService).setUnlockCardRequestDAO(UnlockCardRequestDAOImpl
+                .getUnlockCardRequestDAO(connection));
+    }
+
+    @Override
     public void printMenu() {
         boolean flag = true;
         Scanner scanner = new Scanner(System.in);
+        initService();
         while (flag) {
             printTextMenu();
             switch (scanner.nextInt()) {

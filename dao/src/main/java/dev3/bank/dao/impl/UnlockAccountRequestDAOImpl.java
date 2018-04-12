@@ -105,7 +105,7 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     public Collection<UnlockAccountRequest> getAll() throws SQLException {
         Collection<UnlockAccountRequest> requests = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM UnlockAccountRequest");
+                "SELECT * FROM unlockaccountrequest");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             requests.add(getUnlockAccountRequest(resultSet));

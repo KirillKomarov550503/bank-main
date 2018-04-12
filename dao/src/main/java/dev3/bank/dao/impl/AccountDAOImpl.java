@@ -65,6 +65,7 @@ public class AccountDAOImpl implements AccountDAO {
         preparedStatement.execute();
         preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM Account WHERE id=?");
+        preparedStatement.setLong(1, entity.getId());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             account = getAccount(resultSet);

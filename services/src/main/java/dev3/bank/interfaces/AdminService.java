@@ -16,7 +16,7 @@ public interface AdminService {
 
     Collection<ClientNews> getAllClientNews();
 
-
+    Collection<News> getAllNewsByStatus(NewsStatus newsStatus);
 
     void unlockCard(long cardId);
 
@@ -26,11 +26,15 @@ public interface AdminService {
 
     Collection<Account> getAllUnlockAccountRequest();
 
-    News addGeneralNews(News news);
+    News addGeneralNews(News news, long adminId);
 
-    Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news);
+    Collection<ClientNews> addClientNews(Collection<Long> clientIds, long newsId);
 
     Collection<UnlockAccountRequest> getAllAccountRequest();
 
     Collection<UnlockCardRequest> getAllCardRequest();
+
+    Admin addAdmin(Person person);
+
+    Collection<Admin> getAllAdmin();
 }

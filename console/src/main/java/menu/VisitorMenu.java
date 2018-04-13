@@ -4,6 +4,7 @@ import dev3.bank.dao.impl.ClientDAOImpl;
 import dev3.bank.dao.impl.NewsDAOImpl;
 import dev3.bank.dao.impl.PersonDAOImpl;
 import dev3.bank.dao.utils.DataBase;
+import dev3.bank.entity.Role;
 import dev3.bank.impl.VisitorServiceImpl;
 import dev3.bank.interfaces.VisitorService;
 import utils.Input;
@@ -44,7 +45,7 @@ public class VisitorMenu implements Menu {
                     visitorService.getAllNews().forEach(Output::printNews);
                     break;
                 case 2:
-                    visitorService.registration(Input.inputClient());
+                    visitorService.registration(Input.inputPerson(dev3.bank.entity.Role.CLIENT));
                     break;
                 case 0:
                     flag = false;

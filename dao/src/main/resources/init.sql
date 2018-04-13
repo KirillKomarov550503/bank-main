@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS News (
 CREATE TABLE IF NOT EXISTS ClientNews (
   id        BIGSERIAL NOT NULL PRIMARY KEY,
   news_id   BIGINT    NOT NULL REFERENCES News (id),
-  client_id BIGINT    NOT NULL REFERENCES Client (id)
+  client_id BIGINT    NOT NULL
 );
 
 

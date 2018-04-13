@@ -72,11 +72,7 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
                 "INSERT INTO ClientNews(news_id, client_id) VALUES(?, ?)");
         preparedStatement.setLong(1, entity.getNewsId());
         preparedStatement.setLong(2, entity.getClientId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            clientNews = getClientNews(resultSet);
-        }
-        resultSet.close();
+        preparedStatement.execute();
         preparedStatement.close();
         return clientNews;
     }

@@ -21,6 +21,8 @@ public class AdminServiceImpl implements AdminService {
     private ClientNewsDAO clientNewsDAO;
     private UnlockCardRequestDAO unlockCardRequestDAO;
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
+    private AdminDAO adminDAO;
+    private PersonDAO personDAO;
 
     private AdminServiceImpl() {
     }
@@ -58,6 +60,14 @@ public class AdminServiceImpl implements AdminService {
 
     public void setUnlockAccountRequestDAO(UnlockAccountRequestDAO unlockAccountRequestDAO) {
         this.unlockAccountRequestDAO = unlockAccountRequestDAO;
+    }
+
+    public void setAdminDAO(AdminDAO adminDAO) {
+        this.adminDAO = adminDAO;
+    }
+
+    public void setPersonDAO(PersonDAO personDAO) {
+        this.personDAO = personDAO;
     }
 
     @Override
@@ -211,25 +221,41 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news) {
+    public Collection<ClientNews> addClientNews(Collection<Long> clientIds, long newsId) {
+        Connection connection = DataBase.getConnection();
         Collection<ClientNews> newsCollection = new ArrayList<>();
-        for (Long clientId : clientIds) {
-            ClientNews clientNews = new ClientNews();
-            clientNews.setClientId(clientId);
-            clientNews.setNewsId(news.getId());
+        try {
+            connection.setAutoCommit(false);
+            for (Long clientId : clientIds) {
+                ClientNews clientNews = new ClientNews();
+                clientNews.setClientId(clientId);
+                clientNews.setNewsId(newsId);
+                clientNewsDAO.add(clientNews);
+                newsCollection.add(clientNews);
+            }
+            connection.commit();
+        } catch (SQLException e) {
             try {
-                newsCollection.add(clientNewsDAO.add(clientNews));
+                connection.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("SQL exception");
             }
         }
         return newsCollection;
     }
 
     @Override
-    public News addGeneralNews(News news) {
+    public News addGeneralNews(News news, long adminId) {
         News temp = null;
         try {
+            news.setAdminId(adminId);
             temp = newsDAO.add(news);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -257,5 +283,50 @@ public class AdminServiceImpl implements AdminService {
             e.printStackTrace();
         }
         return temp;
+    }
+
+    @Override
+    public Admin addAdmin(Person person) {
+        Connection connection = DataBase.getConnection();
+        Admin adminRes = null;
+        try {
+            connection.setAutoCommit(false);
+            Admin admin = new Admin();
+            admin.setPersonId(personDAO.add(person).getId());
+            adminRes = adminDAO.add(admin);
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+                connection.setAutoCommit(true);
+            } catch (SQLException e1) {
+                System.out.println("SQL exception");
+            }
+            System.out.println("SQL exception");
+        }
+        return adminRes;
+    }
+
+    @Override
+    public Collection<Admin> getAllAdmin() {
+        Collection<Admin> admins = null;
+        try {
+            admins = adminDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return admins;
+    }
+
+    @Override
+    public Collection<News> getAllNewsByStatus(NewsStatus newsStatus) {
+        Collection<News> newsCollection = null;
+        try {
+            newsCollection = newsDAO.getNewsByStatus(newsStatus);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newsCollection;
     }
 }

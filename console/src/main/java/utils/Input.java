@@ -15,7 +15,7 @@ public class Input {
         System.out.print("\n" + message);
     }
 
-    public static Person inputClient() {
+    public static Person inputPerson(Role role) {
         Scanner scanner = new Scanner(System.in);
         Person person = new Person();
         print("Input your name: ");
@@ -34,7 +34,7 @@ public class Input {
         } catch (NumberFormatException e) {
             System.out.println("Wrong input phone number");
         }
-        person.setRole(Role.CLIENT);
+        person.setRole(role);
         return person;
     }
 
@@ -80,23 +80,10 @@ public class Input {
         return transactionDTO;
     }
 
-    public static News createGeneralNews() {
-        News news = new News();
-        inputNews(news);
-        news.setNewsStatus(NewsStatus.GENERAL);
-        return news;
 
-    }
-
-    public static News createClientNews() {
-        News news = new News();
-        inputNews(news);
-        news.setNewsStatus(NewsStatus.CLIENT);
-        return news;
-    }
-
-    private static void inputNews(News news) {
+    public static News inputNews() {
         Scanner scanner = new Scanner(System.in);
+        News news = new News();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         news.setDate(simpleDateFormat.format(new Date()));
 
@@ -108,7 +95,14 @@ public class Input {
         String text = scanner.nextLine();
         news.setText(text);
 
-        news.setAdminId(0);
+        print("Input symbol of news status ('general' or 'client'): ");
+        String status = scanner.nextLine().toLowerCase();
+        if (status.equals("general")) {
+            news.setNewsStatus(NewsStatus.GENERAL);
+        } else if (status.equals("client")) {
+            news.setNewsStatus(NewsStatus.CLIENT);
+        }
+        return news;
     }
 
 
@@ -135,5 +129,41 @@ public class Input {
         print("Input ID of card that you want to lock: ");
         long cardId = scanner.nextLong();
         return cardId;
+    }
+
+    public static long inputAdminId() {
+        Scanner scanner = new Scanner(System.in);
+        print("Input admin ID: ");
+        long adminId = scanner.nextLong();
+        return adminId;
+    }
+
+    public static Admin inputAdmin() {
+        Admin admin = new Admin();
+        Scanner scanner = new Scanner(System.in);
+
+        print("Input name: ");
+        String name = scanner.nextLine();
+        admin.setName(name);
+
+        print("Input surname: ");
+        String surname = scanner.nextLine();
+        admin.setSurname(surname);
+
+        print("Input your passport ID: ");
+        long passportID = scanner.nextLong();
+        admin.setPassportId(passportID);
+
+        print("Input your phone number: ");
+        long phoneNumber = scanner.nextLong();
+        admin.setPhoneNumber(phoneNumber);
+        return admin;
+    }
+
+    public static long inputNewsId() {
+        print("Input news ID that you want to send clients: ");
+        Scanner scanner = new Scanner(System.in);
+        long newsId = scanner.nextLong();
+        return newsId;
     }
 }

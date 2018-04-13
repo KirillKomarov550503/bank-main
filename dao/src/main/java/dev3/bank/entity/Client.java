@@ -14,12 +14,14 @@ public class Client extends Person {
     @Override
     public String toString() {
         return "Client{" +
-                "name='" + name + '\'' +
+                "personId=" + personId +
+                ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 ", role=" + role +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
+                ", passportId=" + passportId +
                 ", id=" + id +
                 '}';
     }

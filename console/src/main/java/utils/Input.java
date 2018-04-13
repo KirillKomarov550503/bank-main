@@ -2,10 +2,7 @@ package utils;
 
 
 import dev3.bank.dto.TransactionDTO;
-import dev3.bank.entity.Client;
-import dev3.bank.entity.News;
-import dev3.bank.entity.NewsStatus;
-import dev3.bank.entity.Role;
+import dev3.bank.entity.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -136,5 +133,30 @@ public class Input {
         print("Input ID of card that you want to lock: ");
         long cardId = scanner.nextLong();
         return cardId;
+    }
+
+    public static long inputAdminId() {
+        Scanner scanner = new Scanner(System.in);
+        print("Input admin ID: ");
+        long adminId = scanner.nextLong();
+        return adminId;
+    }
+
+    public static Admin inputAdmin() {
+        Admin admin = new Admin();
+        Scanner scanner = new Scanner(System.in);
+
+        print("Input name: ");
+        String name = scanner.nextLine();
+        admin.setName(name);
+
+        print("Input surname: ");
+        String surname = scanner.nextLine();
+        admin.setSurname(surname);
+
+        print("Input your phone number: ");
+        long phoneNumber = scanner.nextLong();
+        admin.setPhoneNumber(phoneNumber);
+        return admin;
     }
 }

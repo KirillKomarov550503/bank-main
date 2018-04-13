@@ -24,11 +24,15 @@ public interface AdminService {
 
     Collection<Account> getAllUnlockAccountRequest();
 
-    News addGeneralNews(News news);
+    News addGeneralNews(News news, long adminId);
 
     Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news);
 
     Collection<UnlockAccountRequest> getAllAccountRequest();
 
     Collection<UnlockCardRequest> getAllCardRequest();
+
+    Admin addAdmin(Admin admin);
+
+    Collection<Admin> getAllAdmin();
 }

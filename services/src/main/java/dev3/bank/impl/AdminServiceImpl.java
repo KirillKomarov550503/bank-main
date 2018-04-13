@@ -114,8 +114,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public News addGeneralNews(News news) {
+    public News addGeneralNews(News news, long adminId) {
         NewsDAO newsDAO = new NewsDAOImpl();
+        AdminDAO adminDAO = new AdminDAOImpl();
+        news.setAdmin(adminDAO.getById(adminId));
         return newsDAO.add(news);
     }
 
@@ -129,5 +131,17 @@ public class AdminServiceImpl implements AdminService {
     public Collection<UnlockCardRequest> getAllCardRequest() {
         UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
         return requestDAO.getAll();
+    }
+
+    @Override
+    public Admin addAdmin(Admin admin) {
+        AdminDAO adminDAO = new AdminDAOImpl();
+        return adminDAO.add(admin);
+    }
+
+    @Override
+    public Collection<Admin> getAllAdmin() {
+        AdminDAO adminDAO = new AdminDAOImpl();
+        return adminDAO.getAll();
     }
 }

@@ -24,6 +24,8 @@ public class AdminMenu implements Menu {
         System.out.println("9-Get all client news");
         System.out.println("10-Get all unlock account requests");
         System.out.println("11-Get all unlock card requests");
+        System.out.println("12-Add new admin");
+        System.out.println("13-Get all admins");
         System.out.println("0-Back");
         System.out.println("\n\nInput your variant: ");
     }
@@ -44,7 +46,7 @@ public class AdminMenu implements Menu {
                     adminService.unlockCard(Input.inputCardId());
                     break;
                 case 3:
-                    adminService.addGeneralNews(Input.createGeneralNews());
+                    adminService.addGeneralNews(Input.createGeneralNews(), Input.inputAdminId());
                     break;
                 case 4:
                     News news = Input.createClientNews();
@@ -71,6 +73,12 @@ public class AdminMenu implements Menu {
                     break;
                 case 11:
                     adminService.getAllUnlockCardRequest().forEach(System.out::println);
+                    break;
+                case 12:
+                    adminService.addAdmin(Input.inputAdmin());
+                    break;
+                case 13:
+                    adminService.getAllAdmin().forEach(System.out::println);
                     break;
                 case 0:
                     flag = false;

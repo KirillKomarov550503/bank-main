@@ -53,11 +53,11 @@ CREATE TABLE IF NOT EXISTS ClientNews (
 
 
 CREATE TABLE IF NOT EXISTS Transaction (
-  id      BIGSERIAL  NOT NULL PRIMARY KEY,
-  date    VARCHAR(30)  NOT NULL,
-  from_id BIGINT     NOT NULL REFERENCES Account (id),
-  to_id   BIGINT     NOT NULL REFERENCES Account (id),
-  money   DECIMAL(2) NOT NULL
+  id      BIGSERIAL   NOT NULL PRIMARY KEY,
+  date    VARCHAR(30) NOT NULL,
+  from_id BIGINT      NOT NULL REFERENCES Account (id),
+  to_id   BIGINT      NOT NULL REFERENCES Account (id),
+  money   DECIMAL(2)  NOT NULL
 );
 
 CREATE TABlE IF NOT EXISTS UnlockAccountRequest (

@@ -152,7 +152,7 @@ public class CardDAOImpl implements CardDAO {
     public Collection<Card> getCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Card WHERE account_id IN (SELECT id FROM Account2 WHERE client_id=?)");
+                "SELECT * FROM Card WHERE account_id IN (SELECT id FROM Account WHERE client_id=?)");
         preparedStatement.setLong(1, clientId);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
@@ -212,7 +212,8 @@ public class CardDAOImpl implements CardDAO {
     public Collection<Card> getUnlockedCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Card WHERE id=? and locked=FALSE");
+                "SELECT * FROM Card WHERE account_id IN (SELECT id FROM account WHERE client_id =?) " +
+                "AND locked=FALSE");
         preparedStatement.setLong(1, clientId);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {

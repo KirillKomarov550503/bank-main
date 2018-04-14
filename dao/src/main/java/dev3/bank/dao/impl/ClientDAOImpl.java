@@ -81,9 +81,13 @@ public class ClientDAOImpl implements ClientDAO {
     @Override
     public Client add(Client entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO Client(person_id) VALUES(?)");
+                "INSERT INTO Client(person_id) VALUES(?) RETURNING id");
         preparedStatement.setLong(1, entity.getPersonId());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

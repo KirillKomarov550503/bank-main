@@ -72,9 +72,13 @@ public class UnlockCardRequestDAOImpl implements UnlockCardRequestDAO {
     @Override
     public UnlockCardRequest add(UnlockCardRequest entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO UnlockCardRequest(card_id) VALUES(?)");
+                "INSERT INTO UnlockCardRequest(card_id) VALUES(?) RETURNING id");
         preparedStatement.setLong(1, entity.getCardId());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

@@ -1,17 +1,14 @@
 package menu;
 
-import dev3.bank.dao.impl.*;
-import dev3.bank.dao.utils.DataBase;
 import dev3.bank.entity.Account;
 import dev3.bank.entity.Card;
 import dev3.bank.exception.TransactionException;
-import dev3.bank.impl.ClientServiceImpl;
+import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import utils.Input;
 import utils.Output;
 
-import java.sql.Connection;
 import java.util.Scanner;
 
 public class ClientMenu implements Menu {
@@ -36,18 +33,8 @@ public class ClientMenu implements Menu {
 
     @Override
     public void initService() {
-        Connection connection = DataBase.getConnection();
         clientService = ClientServiceImpl.getClientService();
-        ((ClientServiceImpl) clientService).setAccountDAO(AccountDAOImpl.getAccountDAO(connection));
-        ((ClientServiceImpl) clientService).setCardDAO(CardDAOImpl.getCardDAO(connection));
-        ((ClientServiceImpl) clientService).setClientDAO(ClientDAOImpl.getClientDAO(connection));
-        ((ClientServiceImpl) clientService).setClientNewsDAO(ClientNewsDAOImpl.getClientNewsDAO(connection));
-        ((ClientServiceImpl) clientService).setNewsDAO(NewsDAOImpl.getNewsDAO(connection));
-        ((ClientServiceImpl) clientService).setUnlockAccountRequestDAO(UnlockAccountRequestDAOImpl
-                .getUnlcokAccountRequestDAO(connection));
-        ((ClientServiceImpl) clientService).setUnlockCardRequestDAO(UnlockCardRequestDAOImpl
-                .getUnlockCardRequestDAO(connection));
-        ((ClientServiceImpl) clientService).setTransactionDAO(TransactionDAOImpl.getTransactionDAO(connection));
+        clientService.setDAO(PostgreSQLDAOFactory.getPostgreSQLDAOFactory());
     }
 
     @Override

@@ -6,7 +6,7 @@ import dev3.bank.exception.TransactionException;
 
 import java.util.Collection;
 
-public interface ClientService {
+public interface ClientService extends BaseService {
     Account createAccount(Account account, long clientId);
 
     Card createCard(Card card, long accountId);

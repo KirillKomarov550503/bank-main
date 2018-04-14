@@ -8,11 +8,11 @@ import dev3.bank.entity.Client;
 import dev3.bank.entity.News;
 import dev3.bank.entity.NewsStatus;
 import dev3.bank.entity.Person;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.VisitorService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.util.Collection;
 
 public class VisitorServiceImpl implements VisitorService {
@@ -31,16 +31,11 @@ public class VisitorServiceImpl implements VisitorService {
         return visitorService;
     }
 
-    public void setNewsDAO(NewsDAO newsDAO) {
-        this.newsDAO = newsDAO;
-    }
-
-    public void setClientDAO(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
-    }
-
-    public void setPersonDAO(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    @Override
+    public void setDAO(DAOFactory daoFactory) {
+        clientDAO = daoFactory.getClientDAO();
+        newsDAO = daoFactory.getNewsDAO();
+        personDAO = daoFactory.getPersonDAO();
     }
 
     @Override
@@ -72,8 +67,10 @@ public class VisitorServiceImpl implements VisitorService {
                 connection.setAutoCommit(true);
             } catch (SQLException e1) {
                 System.out.println("SQL exception");
+                e1.printStackTrace();
             }
             System.out.println("SQL exception");
+            e.printStackTrace();
         }
 
         return addRes;

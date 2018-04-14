@@ -6,7 +6,7 @@ import dev3.bank.entity.Person;
 
 import java.util.Collection;
 
-public interface VisitorService {
+public interface VisitorService extends BaseService {
     Collection<News> getAllNews();
 
     Person registration(Person person);

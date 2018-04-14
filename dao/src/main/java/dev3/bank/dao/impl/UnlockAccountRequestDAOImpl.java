@@ -72,9 +72,13 @@ public class UnlockAccountRequestDAOImpl implements UnlockAccountRequestDAO {
     @Override
     public UnlockAccountRequest add(UnlockAccountRequest entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO UnlockAccountRequest(account_id) VALUES(?)");
+                "INSERT INTO UnlockAccountRequest(account_id) VALUES(?) RETURNING id");
         preparedStatement.setLong(1, entity.getAccountId());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

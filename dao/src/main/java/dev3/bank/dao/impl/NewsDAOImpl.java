@@ -106,13 +106,18 @@ public class NewsDAOImpl implements NewsDAO {
     @Override
     public News add(News entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO News(admin_id, date, title, body, news_status) VALUES(?, ?, ?, ?, ?)");
+                "INSERT INTO News(admin_id, date, title, body, news_status) VALUES(?, ?, ?, ?, ?)" +
+                "RETURNING id");
         preparedStatement.setLong(1, entity.getAdminId());
         preparedStatement.setString(2, entity.getDate());
         preparedStatement.setString(3, entity.getTitle());
         preparedStatement.setString(4, entity.getText());
         preparedStatement.setString(5, entity.getNewsStatus().toString());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

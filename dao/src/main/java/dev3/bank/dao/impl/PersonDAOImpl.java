@@ -115,7 +115,7 @@ public class PersonDAOImpl implements PersonDAO {
     public Person add(Person entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO Person(name, surname, login, password, phone_number, passport_id, role)" +
-                "VALUES(?, ?, ?, ?, ?, ?, ?)");
+                "VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING id");
         preparedStatement.setString(1, entity.getName());
         preparedStatement.setString(2, entity.getSurname());
         preparedStatement.setString(3, entity.getLogin());
@@ -123,7 +123,11 @@ public class PersonDAOImpl implements PersonDAO {
         preparedStatement.setLong(5, entity.getPhoneNumber());
         preparedStatement.setLong(6, entity.getPassportId());
         preparedStatement.setString(7, entity.getRole().toString());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

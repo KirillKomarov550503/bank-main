@@ -4,7 +4,7 @@ import dev3.bank.entity.*;
 
 import java.util.Collection;
 
-public interface AdminService {
+public interface AdminService extends BaseService{
 
     Collection<Client> getAllClients();
 

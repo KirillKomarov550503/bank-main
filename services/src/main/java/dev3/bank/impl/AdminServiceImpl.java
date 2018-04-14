@@ -3,14 +3,13 @@ package dev3.bank.impl;
 import dev3.bank.dao.interfaces.*;
 import dev3.bank.dao.utils.DataBase;
 import dev3.bank.entity.*;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.AdminService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AdminServiceImpl implements AdminService {
     private static AdminServiceImpl adminService;
@@ -34,40 +33,17 @@ public class AdminServiceImpl implements AdminService {
         return adminService;
     }
 
-    public void setAccountDAO(AccountDAO accountDAO) {
-        this.accountDAO = accountDAO;
-    }
-
-    public void setCardDAO(CardDAO cardDAO) {
-        this.cardDAO = cardDAO;
-    }
-
-    public void setClientDAO(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
-    }
-
-    public void setNewsDAO(NewsDAO newsDAO) {
-        this.newsDAO = newsDAO;
-    }
-
-    public void setClientNewsDAO(ClientNewsDAO clientNewsDAO) {
-        this.clientNewsDAO = clientNewsDAO;
-    }
-
-    public void setUnlockCardRequestDAO(UnlockCardRequestDAO unlockCardRequestDAO) {
-        this.unlockCardRequestDAO = unlockCardRequestDAO;
-    }
-
-    public void setUnlockAccountRequestDAO(UnlockAccountRequestDAO unlockAccountRequestDAO) {
-        this.unlockAccountRequestDAO = unlockAccountRequestDAO;
-    }
-
-    public void setAdminDAO(AdminDAO adminDAO) {
-        this.adminDAO = adminDAO;
-    }
-
-    public void setPersonDAO(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    @Override
+    public void setDAO(DAOFactory daoFactory) {
+        accountDAO = daoFactory.getAccountDAO();
+        cardDAO = daoFactory.getCardDAO();
+        clientDAO = daoFactory.getClientDAO();
+        newsDAO = daoFactory.getNewsDAO();
+        clientNewsDAO = daoFactory.getClientNewsDAO();
+        unlockCardRequestDAO = daoFactory.getUnlockCardRequestDAO();
+        unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+        adminDAO = daoFactory.getAdminDAO();
+        personDAO = daoFactory.getPersonDAO();
     }
 
     @Override

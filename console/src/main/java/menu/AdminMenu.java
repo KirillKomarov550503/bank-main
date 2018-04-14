@@ -1,16 +1,11 @@
 package menu;
 
-import dev3.bank.dao.impl.*;
-import dev3.bank.dao.utils.DataBase;
-import dev3.bank.entity.News;
 import dev3.bank.entity.NewsStatus;
+import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.AdminServiceImpl;
-import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.interfaces.AdminService;
-import dev3.bank.interfaces.ClientService;
 import utils.Input;
 
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -38,19 +33,8 @@ public class AdminMenu implements Menu {
 
     @Override
     public void initService() {
-        Connection connection = DataBase.getConnection();
         adminService = AdminServiceImpl.getAdminService();
-        ((AdminServiceImpl) adminService).setAccountDAO(AccountDAOImpl.getAccountDAO(connection));
-        ((AdminServiceImpl) adminService).setCardDAO(CardDAOImpl.getCardDAO(connection));
-        ((AdminServiceImpl) adminService).setClientDAO(ClientDAOImpl.getClientDAO(connection));
-        ((AdminServiceImpl) adminService).setClientNewsDAO(ClientNewsDAOImpl.getClientNewsDAO(connection));
-        ((AdminServiceImpl) adminService).setNewsDAO(NewsDAOImpl.getNewsDAO(connection));
-        ((AdminServiceImpl) adminService).setUnlockAccountRequestDAO(UnlockAccountRequestDAOImpl
-                .getUnlcokAccountRequestDAO(connection));
-        ((AdminServiceImpl) adminService).setUnlockCardRequestDAO(UnlockCardRequestDAOImpl
-                .getUnlockCardRequestDAO(connection));
-        ((AdminServiceImpl) adminService).setAdminDAO(AdminDAOImpl.getAdminDAO(connection));
-        ((AdminServiceImpl) adminService).setPersonDAO(PersonDAOImpl.getPersonDAO(connection));
+        adminService.setDAO(PostgreSQLDAOFactory.getPostgreSQLDAOFactory());
     }
 
     @Override

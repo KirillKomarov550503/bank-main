@@ -76,12 +76,17 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public Transaction add(Transaction entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO Transaction(date, from_id, to_id, money) VALUES(?, ?, ?, ?)");
+                "INSERT INTO Transaction(date, from_id, to_id, money) VALUES(?, ?, ?, ?)" +
+                "RETURNING id");
         preparedStatement.setString(1, entity.getDate());
         preparedStatement.setLong(2, entity.getAccountFromId());
         preparedStatement.setLong(3, entity.getAccountToId());
         preparedStatement.setDouble(4, entity.getMoney());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

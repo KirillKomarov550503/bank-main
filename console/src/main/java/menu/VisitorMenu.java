@@ -1,16 +1,11 @@
 package menu;
 
-import dev3.bank.dao.impl.ClientDAOImpl;
-import dev3.bank.dao.impl.NewsDAOImpl;
-import dev3.bank.dao.impl.PersonDAOImpl;
-import dev3.bank.dao.utils.DataBase;
-import dev3.bank.entity.Role;
+import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.VisitorServiceImpl;
 import dev3.bank.interfaces.VisitorService;
 import utils.Input;
 import utils.Output;
 
-import java.sql.Connection;
 import java.util.Scanner;
 
 public class VisitorMenu implements Menu {
@@ -27,10 +22,7 @@ public class VisitorMenu implements Menu {
     @Override
     public void initService() {
         visitorService = VisitorServiceImpl.getVisitorService();
-        Connection connection = DataBase.getConnection();
-        ((VisitorServiceImpl) visitorService).setClientDAO(ClientDAOImpl.getClientDAO(connection));
-        ((VisitorServiceImpl) visitorService).setNewsDAO(NewsDAOImpl.getNewsDAO(connection));
-        ((VisitorServiceImpl) visitorService).setPersonDAO(PersonDAOImpl.getPersonDAO(connection));
+        visitorService.setDAO(PostgreSQLDAOFactory.getPostgreSQLDAOFactory());
     }
 
     @Override

@@ -68,10 +68,14 @@ public class ClientNewsDAOImpl implements ClientNewsDAO {
     @Override
     public ClientNews add(ClientNews entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO ClientNews(news_id, client_id) VALUES(?, ?)");
+                "INSERT INTO ClientNews(news_id, client_id) VALUES(?, ?) RETURNING id");
         preparedStatement.setLong(1, entity.getNewsId());
         preparedStatement.setLong(2, entity.getClientId());
-        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

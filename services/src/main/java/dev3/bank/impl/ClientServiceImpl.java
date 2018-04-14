@@ -5,6 +5,7 @@ import dev3.bank.dao.utils.DataBase;
 import dev3.bank.dto.TransactionDTO;
 import dev3.bank.entity.*;
 import dev3.bank.exception.TransactionException;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.ClientService;
 
 import java.sql.Connection;
@@ -37,36 +38,16 @@ public class ClientServiceImpl implements ClientService {
 
     }
 
-    public void setTransactionDAO(TransactionDAO transactionDAO) {
-        this.transactionDAO = transactionDAO;
-    }
-
-    public void setAccountDAO(AccountDAO accountDAO) {
-        this.accountDAO = accountDAO;
-    }
-
-    public void setCardDAO(CardDAO cardDAO) {
-        this.cardDAO = cardDAO;
-    }
-
-    public void setClientDAO(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
-    }
-
-    public void setNewsDAO(NewsDAO newsDAO) {
-        this.newsDAO = newsDAO;
-    }
-
-    public void setClientNewsDAO(ClientNewsDAO clientNewsDAO) {
-        this.clientNewsDAO = clientNewsDAO;
-    }
-
-    public void setUnlockCardRequestDAO(UnlockCardRequestDAO unlockCardRequestDAO) {
-        this.unlockCardRequestDAO = unlockCardRequestDAO;
-    }
-
-    public void setUnlockAccountRequestDAO(UnlockAccountRequestDAO unlockAccountRequestDAO) {
-        this.unlockAccountRequestDAO = unlockAccountRequestDAO;
+    @Override
+    public void setDAO(DAOFactory daoFactory) {
+        accountDAO = daoFactory.getAccountDAO();
+        cardDAO = daoFactory.getCardDAO();
+        clientDAO = daoFactory.getClientDAO();
+        newsDAO = daoFactory.getNewsDAO();
+        clientNewsDAO = daoFactory.getClientNewsDAO();
+        unlockCardRequestDAO = daoFactory.getUnlockCardRequestDAO();
+        unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+        transactionDAO = daoFactory.getTransactionDAO();
     }
 
     @Override

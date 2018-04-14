@@ -72,14 +72,20 @@ public class AdminDAOImpl implements AdminDAO {
                 "DELETE FROM admin WHERE id=?");
         preparedStatement.setLong(1, id);
         preparedStatement.execute();
+        preparedStatement.close();
     }
 
     @Override
     public Admin add(Admin entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO admin(person_id) VALUES(?)");
+                "INSERT INTO admin(person_id) VALUES(?) RETURNING id");
         preparedStatement.setLong(1, entity.getPersonId());
         preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            entity.setId(resultSet.getLong("id"));
+        }
+        resultSet.close();
         preparedStatement.close();
         return entity;
     }

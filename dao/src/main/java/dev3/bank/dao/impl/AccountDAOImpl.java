@@ -86,7 +86,6 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account add(Account entity) throws SQLException {
-        Account account = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO ACCOUNT(balance, locked, client_id, account_id) VALUES(?, ?, ?, ?)");
         preparedStatement.setDouble(1, entity.getBalance());
@@ -94,16 +93,8 @@ public class AccountDAOImpl implements AccountDAO {
         preparedStatement.setLong(3, entity.getClientId());
         preparedStatement.setLong(4, entity.getAccountId());
         preparedStatement.execute();
-        preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM ACCOUNT WHERE account_id=?");
-        preparedStatement.setLong(1, entity.getAccountId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            account = getAccount(resultSet);
-        }
         preparedStatement.close();
-        resultSet.close();
-        return account;
+        return entity;
     }
 
     @Override

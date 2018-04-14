@@ -84,7 +84,6 @@ public class CardDAOImpl implements CardDAO {
 
     @Override
     public Card add(Card entity) throws SQLException {
-        Card card = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO Card (locked, pin, card_id, account_id) VALUES(?, ?, ?, ?)");
         preparedStatement.setBoolean(1, entity.isLocked());
@@ -92,16 +91,8 @@ public class CardDAOImpl implements CardDAO {
         preparedStatement.setLong(3, entity.getCardId());
         preparedStatement.setLong(4, entity.getAccountId());
         preparedStatement.execute();
-        preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Card WHERE card_id=?");
-        preparedStatement.setLong(1, entity.getCardId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            card = getCard(resultSet);
-        }
-        resultSet.close();
         preparedStatement.close();
-        return card;
+        return entity;
     }
 
 

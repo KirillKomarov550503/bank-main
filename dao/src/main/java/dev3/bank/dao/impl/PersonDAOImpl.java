@@ -113,7 +113,6 @@ public class PersonDAOImpl implements PersonDAO {
 
     @Override
     public Person add(Person entity) throws SQLException {
-        Person person = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO Person(name, surname, login, password, phone_number, passport_id, role)" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?)");
@@ -125,16 +124,8 @@ public class PersonDAOImpl implements PersonDAO {
         preparedStatement.setLong(6, entity.getPassportId());
         preparedStatement.setString(7, entity.getRole().toString());
         preparedStatement.execute();
-        preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Person WHERE passport_id=?");
-        preparedStatement.setLong(1, entity.getPassportId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            person = getPerson(resultSet);
-        }
-        resultSet.close();
         preparedStatement.close();
-        return person;
+        return entity;
     }
 
     @Override

@@ -76,21 +76,12 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public Admin add(Admin entity) throws SQLException {
-        Admin admin = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO admin(person_id) VALUES(?)");
         preparedStatement.setLong(1, entity.getPersonId());
         preparedStatement.execute();
-        preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM admin WHERE person_id=?");
-        preparedStatement.setLong(1, entity.getPersonId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            admin = getAdmin(resultSet);
-        }
-        resultSet.close();
         preparedStatement.close();
-        return admin;
+        return entity;
     }
 
     @Override

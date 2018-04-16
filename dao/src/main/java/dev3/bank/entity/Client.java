@@ -1,6 +1,8 @@
 package dev3.bank.entity;
 
-public class Client extends Person {
+import java.util.Objects;
+
+public class Client extends BaseEntity {
     private long personId;
 
     public long getPersonId() {
@@ -12,16 +14,32 @@ public class Client extends Person {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Client client = (Client) o;
+        return personId == client.personId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), personId);
+    }
+
+    public Client() {
+    }
+
+    public Client(long id, long personId) {
+        super(id);
+        this.personId = personId;
+    }
+
+    @Override
     public String toString() {
         return "Client{" +
                 "personId=" + personId +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", role=" + role +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", passportId=" + passportId +
                 ", id=" + id +
                 '}';
     }

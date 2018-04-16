@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-        DataBase.executeProperty("init.table.path");
+        DataBase.executeProperty("init.table.path", "dao\\src\\main\\resources\\path.properties");
         while (!exit) {
             printMainMenu();
             Scanner scanner = new Scanner(System.in);

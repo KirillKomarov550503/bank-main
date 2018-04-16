@@ -17,6 +17,7 @@ public class AdminMenu implements Menu {
     private ClientService clientService;
     private NewsService newsService;
     private ClientNewsService clientNewsService;
+    private PersonService personService;
 
     public AdminMenu() {
         adminService = AdminServiceImpl.getAdminService();
@@ -25,6 +26,7 @@ public class AdminMenu implements Menu {
         clientService = ClientServiceImpl.getClientService();
         newsService = NewsServiceImpl.getNewsService();
         clientNewsService = ClientNewsServiceImpl.getClientNewsService();
+        personService = PersonServiceImpl.getPersonService();
     }
 
     @Override
@@ -33,15 +35,16 @@ public class AdminMenu implements Menu {
         System.out.println("2-Unlock card");
         System.out.println("3-Add news");
         System.out.println("4-Send news to client");
-        System.out.println("5-Get all clients");
-        System.out.println("6-Get all accounts");
-        System.out.println("7-Get all cards");
-        System.out.println("8-Get all news");
-        System.out.println("9-Get all client news");
-        System.out.println("10-Get all requests to unlock account");
-        System.out.println("11-Get all requests to unlock card");
-        System.out.println("12-Add new admin");
-        System.out.println("13-Get all admins");
+        System.out.println("5-Get all people");
+        System.out.println("6-Get all clients");
+        System.out.println("7-Get all accounts");
+        System.out.println("8-Get all cards");
+        System.out.println("9-Get all news");
+        System.out.println("10-Get all client news");
+        System.out.println("11-Get all requests to unlock account");
+        System.out.println("12-Get all requests to unlock card");
+        System.out.println("13-Add new admin");
+        System.out.println("14-Get all admins");
         System.out.println("0-Back");
         System.out.println("\n\nInput your variant: ");
     }
@@ -55,6 +58,7 @@ public class AdminMenu implements Menu {
         clientService.setDAO(daoFactory);
         newsService.setDAO(daoFactory);
         clientNewsService.setDAO(daoFactory);
+        personService.setDAO(daoFactory);
     }
 
     @Override
@@ -83,30 +87,33 @@ public class AdminMenu implements Menu {
                     clientNewsService.addClientNews(clientIds, newsId);
                     break;
                 case 5:
-                    clientService.getAllClients().forEach(System.out::println);
+                    personService.getAllPeople().forEach(System.out::println);
                     break;
                 case 6:
-                    accountService.getAllAccounts().forEach(System.out::println);
+                    clientService.getAllClients().forEach(System.out::println);
                     break;
                 case 7:
-                    cardService.getAllCards().forEach(System.out::println);
+                    accountService.getAllAccounts().forEach(System.out::println);
                     break;
                 case 8:
-                    newsService.getAllGeneralNews().forEach(System.out::println);
+                    cardService.getAllCards().forEach(System.out::println);
                     break;
                 case 9:
-                    clientNewsService.getAllClientNews().forEach(System.out::println);
+                    newsService.getAllGeneralNews().forEach(System.out::println);
                     break;
                 case 10:
-                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    clientNewsService.getAllClientNews().forEach(System.out::println);
                     break;
                 case 11:
-                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
+                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
                     break;
                 case 12:
-                    adminService.addAdmin(Input.inputPerson(dev3.bank.entity.Role.ADMIN));
+                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
                     break;
                 case 13:
+                    adminService.addAdmin(Input.inputPerson(dev3.bank.entity.Role.ADMIN));
+                    break;
+                case 14:
                     adminService.getAllAdmin().forEach(System.out::println);
                     break;
                 case 0:

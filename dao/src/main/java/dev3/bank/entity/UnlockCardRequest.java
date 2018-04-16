@@ -25,6 +25,7 @@ public class UnlockCardRequest extends BaseEntity{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         UnlockCardRequest request = (UnlockCardRequest) o;
         return cardId == request.cardId;
     }
@@ -32,6 +33,17 @@ public class UnlockCardRequest extends BaseEntity{
     @Override
     public int hashCode() {
 
-        return Objects.hash(cardId);
+        return Objects.hash(super.hashCode(), cardId);
     }
+
+    public UnlockCardRequest(long id, long cardId) {
+
+        super(id);
+        this.cardId = cardId;
+    }
+
+    public UnlockCardRequest() {
+
+    }
+
 }

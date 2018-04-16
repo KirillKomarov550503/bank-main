@@ -2,7 +2,7 @@ package dev3.bank.entity;
 
 import java.util.Objects;
 
-public class Admin extends Person {
+public class Admin extends BaseEntity {
     private long personId;
 
     public long getPersonId() {
@@ -11,21 +11,6 @@ public class Admin extends Person {
 
     public void setPersonId(long personId) {
         this.personId = personId;
-    }
-
-    @Override
-    public String toString() {
-        return "Admin{" +
-                "personId=" + personId +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", role=" + role +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", passportId=" + passportId +
-                ", id=" + id +
-                '}';
     }
 
     @Override
@@ -42,4 +27,20 @@ public class Admin extends Person {
 
         return Objects.hash(super.hashCode(), personId);
     }
+
+    public Admin(){}
+
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "personId=" + personId +
+                ", id=" + id +
+                '}';
+    }
+
+    public Admin(long id, long personId) {
+        super(id);
+        this.personId = personId;
+    }
+
 }

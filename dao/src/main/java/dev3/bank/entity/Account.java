@@ -8,6 +8,17 @@ public class Account extends BaseEntity {
     private long clientId;
     private long accountId;
 
+    public Account() {
+    }
+
+    public Account(long id, double balance, boolean locked, long clientId, long accountId) {
+        super(id);
+        this.balance = balance;
+        this.locked = locked;
+        this.clientId = clientId;
+        this.accountId = accountId;
+    }
+
     public long getAccountId() {
         return accountId;
     }
@@ -54,6 +65,7 @@ public class Account extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Account account = (Account) o;
         return Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
@@ -64,6 +76,6 @@ public class Account extends BaseEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash(balance, locked, clientId, accountId);
+        return Objects.hash(super.hashCode(), balance, locked, clientId, accountId);
     }
 }

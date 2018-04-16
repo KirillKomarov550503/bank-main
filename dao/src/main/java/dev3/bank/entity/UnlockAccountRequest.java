@@ -13,6 +13,15 @@ public class UnlockAccountRequest extends BaseEntity {
         this.accountId = accountId;
     }
 
+    public UnlockAccountRequest(long id, long accountId) {
+        super(id);
+        this.accountId = accountId;
+    }
+
+    public UnlockAccountRequest() {
+
+    }
+
     @Override
     public String toString() {
         return "UnlockAccountRequest{" +
@@ -25,6 +34,7 @@ public class UnlockAccountRequest extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         UnlockAccountRequest request = (UnlockAccountRequest) o;
         return accountId == request.accountId;
     }
@@ -32,6 +42,6 @@ public class UnlockAccountRequest extends BaseEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash(accountId);
+        return Objects.hash(super.hashCode(), accountId);
     }
 }

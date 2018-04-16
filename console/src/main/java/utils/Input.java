@@ -138,26 +138,26 @@ public class Input {
         return adminId;
     }
 
-    public static Admin inputAdmin() {
-        Admin admin = new Admin();
+    public static Person inputAdmin() {
+        Person person = new Person();
         Scanner scanner = new Scanner(System.in);
 
         print("Input name: ");
         String name = scanner.nextLine();
-        admin.setName(name);
+        person.setName(name);
 
         print("Input surname: ");
         String surname = scanner.nextLine();
-        admin.setSurname(surname);
+        person.setSurname(surname);
 
         print("Input your passport ID: ");
         long passportID = scanner.nextLong();
-        admin.setPassportId(passportID);
+        person.setPassportId(passportID);
 
         print("Input your phone number: ");
         long phoneNumber = scanner.nextLong();
-        admin.setPhoneNumber(phoneNumber);
-        return admin;
+        person.setPhoneNumber(phoneNumber);
+        return person;
     }
 
     public static long inputNewsId() {

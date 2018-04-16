@@ -2,17 +2,33 @@ package menu;
 
 import dev3.bank.entity.Account;
 import dev3.bank.entity.Card;
+import dev3.bank.entity.UnlockAccountRequest;
 import dev3.bank.exception.TransactionException;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
-import dev3.bank.impl.ClientServiceImpl;
-import dev3.bank.interfaces.ClientService;
+import dev3.bank.impl.*;
+import dev3.bank.interfaces.*;
 import utils.Input;
 import utils.Output;
 
 import java.util.Scanner;
 
 public class ClientMenu implements Menu {
-    private ClientService clientService;
+    private AccountService accountService;
+    private CardService cardService;
+    private NewsService newsService;
+    private TransactionService transactionService;
+    private UnlockAccountRequestService unlockAccountRequestService;
+    private UnlockCardRequestService unlockCardRequestService;
+
+    public ClientMenu() {
+        accountService = AccountServiceImpl.getAccountService();
+        cardService = CardServiceImpl.getCardService();
+        newsService = NewsServiceImpl.getNewsService();
+        transactionService = TransactionServiceImpl.getTransactionService();
+        unlockAccountRequestService = UnlockAccountRequestServiceImpl.getUnlockAccountRequestService();
+        unlockCardRequestService = UnlockCardRequestServiceImpl.getUnlockCardRequestService();
+    }
 
     @Override
     public void printTextMenu() {
@@ -33,8 +49,13 @@ public class ClientMenu implements Menu {
 
     @Override
     public void initService() {
-        clientService = ClientServiceImpl.getClientService();
-        clientService.setDAO(PostgreSQLDAOFactory.getPostgreSQLDAOFactory());
+        DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
+        accountService.setDAO(daoFactory);
+        cardService.setDAO(daoFactory);
+        newsService.setDAO(daoFactory);
+        transactionService.setDAO(daoFactory);
+        unlockCardRequestService.setDAO(daoFactory);
+        unlockAccountRequestService.setDAO(daoFactory);
     }
 
     @Override
@@ -49,46 +70,46 @@ public class ClientMenu implements Menu {
                     Account account = new Account();
                     account.setBalance(0.0);
                     account.setLocked(false);
-                    clientService.createAccount(account, Input.inputClientId());
+                    accountService.createAccount(account, Input.inputClientId());
                     break;
                 case 2:
                     Card card = new Card();
                     card.setLocked(false);
                     card.setPin(Input.inputCardPIN());
-                    clientService.createCard(card, Input.inputAccountId());
+                    cardService.createCard(card, Input.inputAccountId());
                     break;
                 case 3:
                     try {
-                        clientService.createTransaction(Input.inputTransactionDTO());
+                        transactionService.createTransaction(Input.inputTransactionDTO());
                     } catch (TransactionException e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case 4:
-                    clientService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    clientService.lockAccount(Input.inputAccountId());
+                    accountService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
+                    accountService.lockAccount(Input.inputAccountId());
                     break;
 
                 case 5:
-                    clientService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
-                    clientService.lockCard(Input.inputCardId());
+                    cardService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
+                    cardService.lockCard(Input.inputCardId());
                     break;
                 case 6:
-                    clientService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    clientService.unlockAccountRequest(Input.inputAccountId());
+                    accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
+                    unlockAccountRequestService.unlockAccountRequest(Input.inputAccountId());
                     break;
                 case 7:
-                    clientService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
-                    clientService.unlockCardRequest(Input.inputCardId());
+                    cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
+                    unlockCardRequestService.unlockCardRequest(Input.inputCardId());
                     break;
                 case 8:
-                    clientService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
+                    transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
                     break;
                 case 9:
-                    clientService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
+                    newsService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
                     break;
                 case 10:
-                    clientService.refill(Input.inputAccountId());
+                    accountService.refill(Input.inputAccountId());
                     break;
                 case 0:
                     flag = false;

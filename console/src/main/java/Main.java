@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-        DataBase.initTables();
+        DataBase.executeProperty("init.table.path");
         while (!exit) {
             printMainMenu();
             Scanner scanner = new Scanner(System.in);

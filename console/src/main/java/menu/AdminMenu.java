@@ -1,9 +1,10 @@
 package menu;
 
 import dev3.bank.entity.NewsStatus;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
-import dev3.bank.impl.AdminServiceImpl;
-import dev3.bank.interfaces.AdminService;
+import dev3.bank.impl.*;
+import dev3.bank.interfaces.*;
 import utils.Input;
 
 import java.util.Collection;
@@ -11,6 +12,20 @@ import java.util.Scanner;
 
 public class AdminMenu implements Menu {
     private AdminService adminService;
+    private AccountService accountService;
+    private CardService cardService;
+    private ClientService clientService;
+    private NewsService newsService;
+    private ClientNewsService clientNewsService;
+
+    public AdminMenu() {
+        adminService = AdminServiceImpl.getAdminService();
+        accountService = AccountServiceImpl.getAccountService();
+        cardService = CardServiceImpl.getCardService();
+        clientService = ClientServiceImpl.getClientService();
+        newsService = NewsServiceImpl.getNewsService();
+        clientNewsService = ClientNewsServiceImpl.getClientNewsService();
+    }
 
     @Override
     public void printTextMenu() {
@@ -23,8 +38,8 @@ public class AdminMenu implements Menu {
         System.out.println("7-Get all cards");
         System.out.println("8-Get all news");
         System.out.println("9-Get all client news");
-        System.out.println("10-Get all unlock account requests");
-        System.out.println("11-Get all unlock card requests");
+        System.out.println("10-Get all requests to unlock account");
+        System.out.println("11-Get all requests to unlock card");
         System.out.println("12-Add new admin");
         System.out.println("13-Get all admins");
         System.out.println("0-Back");
@@ -33,8 +48,13 @@ public class AdminMenu implements Menu {
 
     @Override
     public void initService() {
-        adminService = AdminServiceImpl.getAdminService();
-        adminService.setDAO(PostgreSQLDAOFactory.getPostgreSQLDAOFactory());
+        DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
+        adminService.setDAO(daoFactory);
+        accountService.setDAO(daoFactory);
+        cardService.setDAO(daoFactory);
+        clientService.setDAO(daoFactory);
+        newsService.setDAO(daoFactory);
+        clientNewsService.setDAO(daoFactory);
     }
 
     @Override
@@ -46,42 +66,42 @@ public class AdminMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    adminService.getAllUnlockAccountRequest().forEach(System.out::println);
-                    adminService.unlockAccount(Input.inputAccountId());
+                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    accountService.unlockAccount(Input.inputAccountId());
                     break;
                 case 2:
-                    adminService.getAllUnlockCardRequest().forEach(System.out::println);
-                    adminService.unlockCard(Input.inputCardId());
+                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
+                    cardService.unlockCard(Input.inputCardId());
                     break;
                 case 3:
-                    adminService.addGeneralNews(Input.inputNews(), Input.inputAdminId());
+                    newsService.addGeneralNews(Input.inputNews(), Input.inputAdminId());
                     break;
                 case 4:
-                    adminService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
+                    newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
                     long newsId = Input.inputNewsId();
                     Collection<Long> clientIds = Input.inputClientIds();
-                    adminService.addClientNews(clientIds, newsId);
+                    clientNewsService.addClientNews(clientIds, newsId);
                     break;
                 case 5:
-                    adminService.getAllClients().forEach(System.out::println);
+                    clientService.getAllClients().forEach(System.out::println);
                     break;
                 case 6:
-                    adminService.getAllAccounts().forEach(System.out::println);
+                    accountService.getAllAccounts().forEach(System.out::println);
                     break;
                 case 7:
-                    adminService.getAllCards().forEach(System.out::println);
+                    cardService.getAllCards().forEach(System.out::println);
                     break;
                 case 8:
-                    adminService.getAllGeneralNews().forEach(System.out::println);
+                    newsService.getAllGeneralNews().forEach(System.out::println);
                     break;
                 case 9:
-                    adminService.getAllClientNews().forEach(System.out::println);
+                    clientNewsService.getAllClientNews().forEach(System.out::println);
                     break;
                 case 10:
-                    adminService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
                     break;
                 case 11:
-                    adminService.getAllUnlockCardRequest().forEach(System.out::println);
+                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
                     break;
                 case 12:
                     adminService.addAdmin(Input.inputPerson(dev3.bank.entity.Role.ADMIN));

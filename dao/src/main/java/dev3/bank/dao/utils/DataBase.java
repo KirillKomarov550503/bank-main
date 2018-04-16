@@ -33,22 +33,10 @@ public class DataBase {
         }
     }
 
-    public static String getURL() {
-        return URL;
-    }
-
-    public static String getNAME() {
-        return NAME;
-    }
-
-    public static String getPASSWORD() {
-        return PASSWORD;
-    }
-
-    public static void initTables() {
+    public static void executeProperty(String propertyName) {
         PropertyDB propertyDB = new PropertyDB();
         try {
-            String initTableSQL = Files.readAllLines(Paths.get(propertyDB.getProperty("init.table.path")))
+            String initTableSQL = Files.readAllLines(Paths.get(propertyDB.getProperty(propertyName)))
                     .stream()
                     .reduce("", (acc, string) -> acc + string);
             PreparedStatement preparedStatement = getConnection().prepareStatement(initTableSQL);
@@ -57,4 +45,6 @@ public class DataBase {
             e.printStackTrace();
         }
     }
+
+
 }

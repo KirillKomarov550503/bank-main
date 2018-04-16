@@ -192,7 +192,8 @@ public class CardDAOImpl implements CardDAO {
     public Collection<Card> getLockedCardsByClientId(long clientId) throws SQLException {
         Collection<Card> cards = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Card WHERE id=? and locked=TRUE");
+                "SELECT * FROM Card WHERE account_id IN (SELECT id FROM account WHERE id=?)" +
+                " and locked=TRUE");
         preparedStatement.setLong(1, clientId);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {

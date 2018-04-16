@@ -10,4 +10,12 @@ public class UnlockAccountRequest extends BaseEntity {
     public void setAccount(Account account) {
         this.account = account;
     }
+
+    @Override
+    public String toString() {
+        return "UnlockAccountRequest{" +
+                "account=" + account +
+                ", id=" + id +
+                '}';
+    }
 }

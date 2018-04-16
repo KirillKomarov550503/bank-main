@@ -28,4 +28,14 @@ public class Card extends BaseEntity {
     public void setPin(int pin) {
         this.pin = pin;
     }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "locked=" + locked +
+                ", pin=" + pin +
+                ", account=" + account +
+                ", id=" + id +
+                '}';
+    }
 }

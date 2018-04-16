@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
@@ -46,5 +48,22 @@ public class Account extends BaseEntity {
                 ", clientId=" + clientId +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Double.compare(account.balance, balance) == 0 &&
+                locked == account.locked &&
+                clientId == account.clientId &&
+                accountId == account.accountId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(balance, locked, clientId, accountId);
     }
 }

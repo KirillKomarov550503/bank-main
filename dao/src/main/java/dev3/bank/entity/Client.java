@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class Client extends Person {
     private long personId;
 
@@ -24,5 +26,20 @@ public class Client extends Person {
                 ", passportId=" + passportId +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Client client = (Client) o;
+        return personId == client.personId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), personId);
     }
 }

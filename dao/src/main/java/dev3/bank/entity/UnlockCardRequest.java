@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class UnlockCardRequest extends BaseEntity{
     private long cardId;
 
@@ -17,5 +19,19 @@ public class UnlockCardRequest extends BaseEntity{
                 "cardId=" + cardId +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnlockCardRequest request = (UnlockCardRequest) o;
+        return cardId == request.cardId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(cardId);
     }
 }

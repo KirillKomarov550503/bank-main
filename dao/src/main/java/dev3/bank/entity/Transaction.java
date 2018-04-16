@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class Transaction extends BaseEntity {
     private String date;
     private long accountFromId;
@@ -47,5 +49,22 @@ public class Transaction extends BaseEntity {
                 ", money=" + money +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return accountFromId == that.accountFromId &&
+                accountToId == that.accountToId &&
+                Double.compare(that.money, money) == 0 &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(date, accountFromId, accountToId, money);
     }
 }

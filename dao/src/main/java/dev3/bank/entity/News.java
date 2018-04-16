@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class News extends BaseEntity {
     private String date;
     private String title;
@@ -58,5 +60,23 @@ public class News extends BaseEntity {
                 ", newsStatus=" + newsStatus +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        News news = (News) o;
+        return adminId == news.adminId &&
+                Objects.equals(date, news.date) &&
+                Objects.equals(title, news.title) &&
+                Objects.equals(text, news.text) &&
+                newsStatus == news.newsStatus;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(date, title, text, adminId, newsStatus);
     }
 }

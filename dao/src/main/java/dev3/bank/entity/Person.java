@@ -1,5 +1,7 @@
 package dev3.bank.entity;
 
+import java.util.Objects;
+
 public class Person extends BaseEntity {
     protected String name;
     protected String surname;
@@ -77,5 +79,25 @@ public class Person extends BaseEntity {
                 ", passportId=" + passportId +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return phoneNumber == person.phoneNumber &&
+                passportId == person.passportId &&
+                Objects.equals(name, person.name) &&
+                Objects.equals(surname, person.surname) &&
+                role == person.role &&
+                Objects.equals(login, person.login) &&
+                Objects.equals(password, person.password);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(name, surname, phoneNumber, role, login, password, passportId);
     }
 }

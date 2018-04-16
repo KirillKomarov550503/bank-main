@@ -8,9 +8,8 @@ public class PropertyDB {
     private Properties properties;
     private String filename;
 
-
-    public PropertyDB() {
-        this.filename = "dao\\src\\main\\resources\\path.properties";
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getProperty(String propertyName) {

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Person (
 
 CREATE TABLE IF NOT EXISTS Client (
   id        BIGSERIAL NOT NULL PRIMARY KEY,
-  person_id BIGINT    NOT NULL REFERENCES Person (id)
+  person_id BIGINT    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Account (
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Account (
   locked     BOOLEAN   NOT NULL,
   balance    DECIMAL   NOT NULL,
   account_id BIGINT    NOT NULL,
-  client_id  BIGINT    NOT NULL REFERENCES Client (id)
+  client_id  BIGINT    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Card (
@@ -27,18 +27,18 @@ CREATE TABLE IF NOT EXISTS Card (
   locked     BOOLEAN   NOT NULL,
   pin        INT       NOT NULL,
   card_id    BIGINT    NOT NULL,
-  account_id BIGINT    NOT NULL REFERENCES Account (id)
+  account_id BIGINT    NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS Admin (
   id        BIGSERIAL NOT NULL PRIMARY KEY,
-  person_id BIGINT    NOT NULL REFERENCES Person (id)
+  person_id BIGINT    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS News (
   id          BIGSERIAL     NOT NULL PRIMARY KEY,
-  admin_id    BIGINT        NOT NULL REFERENCES Admin (id),
+  admin_id    BIGINT        NOT NULL,
   date        VARCHAR(30)   NOT NULL,
   title       VARCHAR(100)  NOT NULL,
   body        VARCHAR(1000) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS News (
 
 CREATE TABLE IF NOT EXISTS ClientNews (
   id        BIGSERIAL NOT NULL PRIMARY KEY,
-  news_id   BIGINT    NOT NULL REFERENCES News (id),
+  news_id   BIGINT    NOT NULL,
   client_id BIGINT    NOT NULL
 );
 
@@ -55,19 +55,19 @@ CREATE TABLE IF NOT EXISTS ClientNews (
 CREATE TABLE IF NOT EXISTS Transaction (
   id      BIGSERIAL   NOT NULL PRIMARY KEY,
   date    VARCHAR(30) NOT NULL,
-  from_id BIGINT      NOT NULL REFERENCES Account (id),
-  to_id   BIGINT      NOT NULL REFERENCES Account (id),
+  from_id BIGINT      NOT NULL,
+  to_id   BIGINT      NOT NULL,
   money   DECIMAL(2)  NOT NULL
 );
 
 CREATE TABlE IF NOT EXISTS UnlockAccountRequest (
   id         BIGSERIAL NOT NULL PRIMARY KEY,
-  account_id BIGINT    NOT NULL REFERENCES Account (id)
+  account_id BIGINT    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS UnlockCardRequest (
   id      BIGSERIAL NOT NULL PRIMARY KEY,
-  card_id BIGINT    NOT NULL REFERENCES Card (id)
+  card_id BIGINT    NOT NULL
 );
 
 

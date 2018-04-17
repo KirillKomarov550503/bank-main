@@ -37,7 +37,7 @@ public class NewsServiceImpl implements NewsService {
     public Collection<News> getAllNews() {
         Collection<News> temp = null;
         try {
-            temp = newsDAO.getNewsByStatus(NewsStatus.GENERAL);
+            temp = newsDAO.getAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,7 +93,7 @@ public class NewsServiceImpl implements NewsService {
     public Collection<News> getAllGeneralNews() {
         Collection<News> temp = null;
         try {
-            temp = newsDAO.getAll();
+            temp = newsDAO.getNewsByStatus(NewsStatus.GENERAL);
         } catch (SQLException e) {
             e.printStackTrace();
         }

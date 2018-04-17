@@ -63,7 +63,7 @@ public class DataBase {
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS Client (\n" +
                     "  id        BIGSERIAL NOT NULL PRIMARY KEY,\n" +
-                    "  person_id BIGINT    NOT NULL REFERENCES Person (id)\n" +
+                    "  person_id BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS Account (\n" +
@@ -71,7 +71,7 @@ public class DataBase {
                     "  locked     BOOLEAN   NOT NULL,\n" +
                     "  balance    DECIMAL   NOT NULL,\n" +
                     "  account_id BIGINT    NOT NULL,\n" +
-                    "  client_id  BIGINT    NOT NULL REFERENCES Client (id)\n" +
+                    "  client_id  BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS Card (\n" +
@@ -79,18 +79,18 @@ public class DataBase {
                     "  locked     BOOLEAN   NOT NULL,\n" +
                     "  pin        INT       NOT NULL,\n" +
                     "  card_id    BIGINT    NOT NULL,\n" +
-                    "  account_id BIGINT    NOT NULL REFERENCES Account (id)\n" +
+                    "  account_id BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS Admin (\n" +
                     "  id        BIGSERIAL NOT NULL PRIMARY KEY,\n" +
-                    "  person_id BIGINT    NOT NULL REFERENCES Person (id)\n" +
+                    "  person_id BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS News (\n" +
                     "  id          BIGSERIAL     NOT NULL PRIMARY KEY,\n" +
-                    "  admin_id    BIGINT        NOT NULL REFERENCES Admin (id),\n" +
+                    "  admin_id    BIGINT        NOT NULL ,\n" +
                     "  date        VARCHAR(30)   NOT NULL,\n" +
                     "  title       VARCHAR(100)  NOT NULL,\n" +
                     "  body        VARCHAR(1000) NOT NULL,\n" +
@@ -99,7 +99,7 @@ public class DataBase {
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS ClientNews (\n" +
                     "  id        BIGSERIAL NOT NULL PRIMARY KEY,\n" +
-                    "  news_id   BIGINT    NOT NULL REFERENCES News (id),\n" +
+                    "  news_id   BIGINT    NOT NULL ,\n" +
                     "  client_id BIGINT    NOT NULL\n" +
                     ");\n" +
                     "\n" +
@@ -107,19 +107,19 @@ public class DataBase {
                     "CREATE TABLE IF NOT EXISTS Transaction (\n" +
                     "  id      BIGSERIAL   NOT NULL PRIMARY KEY,\n" +
                     "  date    VARCHAR(30) NOT NULL,\n" +
-                    "  from_id BIGINT      NOT NULL REFERENCES Account (id),\n" +
-                    "  to_id   BIGINT      NOT NULL REFERENCES Account (id),\n" +
+                    "  from_id BIGINT      NOT NULL ,\n" +
+                    "  to_id   BIGINT      NOT NULL ,\n" +
                     "  money   DECIMAL(2)  NOT NULL\n" +
                     ");\n" +
                     "\n" +
                     "CREATE TABlE IF NOT EXISTS UnlockAccountRequest (\n" +
                     "  id         BIGSERIAL NOT NULL PRIMARY KEY,\n" +
-                    "  account_id BIGINT    NOT NULL REFERENCES Account (id)\n" +
+                    "  account_id BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "CREATE TABLE IF NOT EXISTS UnlockCardRequest (\n" +
                     "  id      BIGSERIAL NOT NULL PRIMARY KEY,\n" +
-                    "  card_id BIGINT    NOT NULL REFERENCES Card (id)\n" +
+                    "  card_id BIGINT    NOT NULL \n" +
                     ");\n" +
                     "\n" +
                     "\n";

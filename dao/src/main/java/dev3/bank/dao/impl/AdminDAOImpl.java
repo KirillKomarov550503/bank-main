@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AdminDAOImpl implements AdminDAO {
@@ -80,7 +81,6 @@ public class AdminDAOImpl implements AdminDAO {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "INSERT INTO admin(person_id) VALUES(?) RETURNING id");
         preparedStatement.setLong(1, entity.getPersonId());
-        preparedStatement.execute();
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             entity.setId(resultSet.getLong("id"));
@@ -92,7 +92,7 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public Collection<Admin> getAll() throws SQLException {
-        Collection<Admin> admins = null;
+        Collection<Admin> admins = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM admin");
         ResultSet resultSet = preparedStatement.executeQuery();

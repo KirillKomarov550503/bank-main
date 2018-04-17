@@ -1,5 +1,5 @@
 package menu;
 
-public enum Role{
+public enum Role {
     ADMIN, CLIENT, VISITOR
 }

@@ -2,21 +2,17 @@ package dev3.bank.dao.interfaces;
 
 import dev3.bank.entity.BaseEntity;
 
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public interface CrudDAO<T extends BaseEntity> {
-    Map<Class<? extends BaseEntity>, Map<Long, ? extends BaseEntity>> memoryMap = new HashMap<>();
+    T getById(long id) throws SQLException;
 
-    T getById(long id);
+    T update(T entity) throws SQLException;
 
-    T add(T entity);
+    void delete(long id) throws SQLException;
 
-    T update(T entity);
+    T add(T entity) throws SQLException;
 
-    void delete(long id);
-
-    Collection<T> getAll();
-
+    Collection<T> getAll() throws SQLException;
 }

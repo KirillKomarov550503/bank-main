@@ -1,6 +1,5 @@
 package utils;
 
-
 import dev3.bank.dto.TransactionDTO;
 import dev3.bank.entity.*;
 
@@ -16,24 +15,27 @@ public class Input {
         System.out.print("\n" + message);
     }
 
-    public static Client inputClient() {
+    public static Person inputPerson(Role role) {
         Scanner scanner = new Scanner(System.in);
-        Client client = new Client();
+        Person person = new Person();
         print("Input your name: ");
         String name = scanner.nextLine();
-        client.setName(name);
+        person.setName(name);
         print("Input your surname: ");
         String surname = scanner.nextLine();
-        client.setSurname(surname);
+        person.setSurname(surname);
+        print("Input your passport ID: ");
+        int passportId = scanner.nextInt();
         print("Input your phone number: ");
+        person.setPassportId(passportId);
         int phoneNumber = scanner.nextInt();
         try {
-            client.setPhoneNumber(phoneNumber);
+            person.setPhoneNumber(phoneNumber);
         } catch (NumberFormatException e) {
             System.out.println("Wrong input phone number");
         }
-        client.setRole(Role.CLIENT);
-        return client;
+        person.setRole(role);
+        return person;
     }
 
     public static long inputClientId() {
@@ -78,23 +80,10 @@ public class Input {
         return transactionDTO;
     }
 
-    public static News createGeneralNews() {
-        News news = new News();
-        inputNews(news);
-        news.setNewsStatus(NewsStatus.GENERAL);
-        return news;
 
-    }
-
-    public static News createClientNews() {
-        News news = new News();
-        inputNews(news);
-        news.setNewsStatus(NewsStatus.CLIENT);
-        return news;
-    }
-
-    private static void inputNews(News news) {
+    public static News inputNews() {
         Scanner scanner = new Scanner(System.in);
+        News news = new News();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         news.setDate(simpleDateFormat.format(new Date()));
 
@@ -106,7 +95,14 @@ public class Input {
         String text = scanner.nextLine();
         news.setText(text);
 
-        news.setAdmin(null);
+        print("Input symbol of news status ('general' or 'client'): ");
+        String status = scanner.nextLine().toLowerCase();
+        if (status.equals("general")) {
+            news.setNewsStatus(NewsStatus.GENERAL);
+        } else if (status.equals("client")) {
+            news.setNewsStatus(NewsStatus.CLIENT);
+        }
+        return news;
     }
 
 
@@ -142,21 +138,32 @@ public class Input {
         return adminId;
     }
 
-    public static Admin inputAdmin() {
-        Admin admin = new Admin();
+    public static Person inputAdmin() {
+        Person person = new Person();
         Scanner scanner = new Scanner(System.in);
 
         print("Input name: ");
         String name = scanner.nextLine();
-        admin.setName(name);
+        person.setName(name);
 
         print("Input surname: ");
         String surname = scanner.nextLine();
-        admin.setSurname(surname);
+        person.setSurname(surname);
+
+        print("Input your passport ID: ");
+        long passportID = scanner.nextLong();
+        person.setPassportId(passportID);
 
         print("Input your phone number: ");
         long phoneNumber = scanner.nextLong();
-        admin.setPhoneNumber(phoneNumber);
-        return admin;
+        person.setPhoneNumber(phoneNumber);
+        return person;
+    }
+
+    public static long inputNewsId() {
+        print("Input news ID that you want to send clients: ");
+        Scanner scanner = new Scanner(System.in);
+        long newsId = scanner.nextLong();
+        return newsId;
     }
 }

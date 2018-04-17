@@ -1,31 +1,59 @@
 package dev3.bank.entity;
 
-public class ClientNews extends BaseEntity {
-    private Client client;
-    private News news;
+import java.util.Objects;
 
-    public Client getClient() {
-        return client;
+public class ClientNews extends BaseEntity{
+    private long clientId;
+    private long newsId;
+
+    public ClientNews(){}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ClientNews that = (ClientNews) o;
+        return clientId == that.clientId &&
+                newsId == that.newsId;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), clientId, newsId);
     }
 
-    public News getNews() {
-        return news;
+    public ClientNews(long id, long clientId, long newsId) {
+
+        super(id);
+        this.clientId = clientId;
+        this.newsId = newsId;
     }
 
-    public void setNews(News news) {
-        this.news = news;
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
+
+    public long getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(long newsId) {
+        this.newsId = newsId;
     }
 
     @Override
     public String toString() {
         return "ClientNews{" +
-                "client=" + client +
-                ", news=" + news +
+                "clientId=" + clientId +
+                ", newsId=" + newsId +
                 ", id=" + id +
                 '}';
     }
+
 }

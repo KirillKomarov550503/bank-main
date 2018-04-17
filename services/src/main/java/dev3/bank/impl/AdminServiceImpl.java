@@ -1,147 +1,69 @@
 package dev3.bank.impl;
 
-import dev3.bank.dao.impl.*;
-import dev3.bank.dao.interfaces.*;
-import dev3.bank.entity.*;
+import dev3.bank.dao.interfaces.AdminDAO;
+import dev3.bank.dao.interfaces.PersonDAO;
+import dev3.bank.dao.utils.DataBase;
+import dev3.bank.entity.Admin;
+import dev3.bank.entity.Person;
+import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.AdminService;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class AdminServiceImpl implements AdminService {
+    private static AdminServiceImpl adminService;
+    private AdminDAO adminDAO;
+    private PersonDAO personDAO;
 
-    @Override
-    public Collection<Client> getAllClients() {
-        ClientDAO clientDAO = new ClientDAOImpl();
-        return clientDAO.getAll();
+    private AdminServiceImpl() {
     }
 
-    @Override
-    public Collection<Card> getAllUnlockCardRequest() {
-        UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
-        return requestDAO.getAll()
-                .stream()
-                .map(UnlockCardRequest::getCard)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<Account> getAllUnlockAccountRequest() {
-        UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
-        return requestDAO.getAll()
-                .stream()
-                .map(UnlockAccountRequest::getAccount)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void unlockCard(long cardId) {
-        UnlockCardRequestDAO unlockCardRequestDAO = new UnlockCardRequestDAOImpl();
-        UnlockCardRequest request = unlockCardRequestDAO.getAll()
-                .stream()
-                .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
-                .findFirst().orElse(null);
-
-        CardDAO cardDAO = new CardDAOImpl();
-        Card card = cardDAO.getById(request.getCard().getId());
-        card.setLocked(false);
-        cardDAO.update(card);
-
-        unlockCardRequestDAO.delete(request.getId());
-    }
-
-    @Override
-    public void unlockAccount(long accountId) {
-        UnlockAccountRequestDAO unlockAccountRequestDAO = new UnlockAccountRequestDAOImpl();
-        UnlockAccountRequest request = unlockAccountRequestDAO.getAll()
-                .stream()
-                .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
-                .collect(Collectors.toList())
-                .get(0);
-
-        AccountDAO accountDAO = new AccountDAOImpl();
-        Account account = accountDAO.getById(request.getAccount().getId());
-        account.setLocked(false);
-        accountDAO.update(account);
-
-        unlockAccountRequestDAO.delete(request.getId());
-    }
-
-
-    @Override
-    public Collection<Account> getAllAccounts() {
-        AccountDAO accountDAO = new AccountDAOImpl();
-        return accountDAO.getAll();
-    }
-
-    @Override
-    public Collection<Card> getAllCards() {
-        CardDAO cardDAO = new CardDAOImpl();
-        return cardDAO.getAll();
-    }
-
-    @Override
-    public Collection<News> getAllGeneralNews() {
-        NewsDAO newsDAO = new NewsDAOImpl();
-        return newsDAO.getAll();
-    }
-
-    @Override
-    public Collection<ClientNews> getAllClientNews() {
-        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
-        return clientNewsDAO.getAll();
-    }
-
-    @Override
-    public Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news) {
-        Collection<ClientNews> newsCollection = new ArrayList<>();
-        ClientNewsDAO clientNewsDAO = new ClientNewsDAOImpl();
-        ClientDAO clientDAO = new ClientDAOImpl();
-        for (Long clientId : clientIds) {
-            ClientNews clientNews = new ClientNews();
-            if (clientId > 0) {
-                clientNews.setClient(clientDAO.getById(clientId));
-            } else {
-                Client client = new Client();
-                client.setId(0L);
-                clientNews.setClient(client);
-            }
-            clientNews.setNews(news);
-            newsCollection.add(clientNewsDAO.add(clientNews));
+    public static synchronized AdminServiceImpl getAdminService() {
+        if (adminService == null) {
+            adminService = new AdminServiceImpl();
         }
-        return newsCollection;
+        return adminService;
     }
 
     @Override
-    public News addGeneralNews(News news, long adminId) {
-        NewsDAO newsDAO = new NewsDAOImpl();
-        AdminDAO adminDAO = new AdminDAOImpl();
-        news.setAdmin(adminDAO.getById(adminId));
-        return newsDAO.add(news);
+    public void setDAO(DAOFactory daoFactory) {
+        adminDAO = daoFactory.getAdminDAO();
+        personDAO = daoFactory.getPersonDAO();
     }
 
     @Override
-    public Collection<UnlockAccountRequest> getAllAccountRequest() {
-        UnlockAccountRequestDAO requestDAO = new UnlockAccountRequestDAOImpl();
-        return requestDAO.getAll();
-    }
-
-    @Override
-    public Collection<UnlockCardRequest> getAllCardRequest() {
-        UnlockCardRequestDAO requestDAO = new UnlockCardRequestDAOImpl();
-        return requestDAO.getAll();
-    }
-
-    @Override
-    public Admin addAdmin(Admin admin) {
-        AdminDAO adminDAO = new AdminDAOImpl();
-        return adminDAO.add(admin);
+    public Admin addAdmin(Person person) {
+        Connection connection = DataBase.getConnection();
+        Admin adminRes = null;
+        try {
+            connection.setAutoCommit(false);
+            Admin admin = new Admin();
+            admin.setPersonId(personDAO.add(person).getId());
+            adminRes = adminDAO.add(admin);
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+                connection.setAutoCommit(true);
+            } catch (SQLException e1) {
+                System.out.println("SQL exception");
+            }
+            System.out.println("SQL exception");
+        }
+        return adminRes;
     }
 
     @Override
     public Collection<Admin> getAllAdmin() {
-        AdminDAO adminDAO = new AdminDAOImpl();
-        return adminDAO.getAll();
+        Collection<Admin> admins = null;
+        try {
+            admins = adminDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return admins;
     }
 }

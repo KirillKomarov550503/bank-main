@@ -36,8 +36,8 @@ public class Output {
 
     public static void printTransaction(Transaction transaction) {
         System.out.print("\n\nID: " + transaction.getId() + "\t");
-        System.out.print("Account from ID: " + transaction.getAccountFrom().getId() + "\t");
-        System.out.print("Account to ID: " + transaction.getAccountTo().getId() + "\t");
+        System.out.print("Account from ID: " + transaction.getAccountFromId() + "\t");
+        System.out.print("Account to ID: " + transaction.getAccountToId() + "\t");
         System.out.print("Money: " + transaction.getMoney() + "\t");
         System.out.print("Date of transaction: " + transaction.getDate());
     }

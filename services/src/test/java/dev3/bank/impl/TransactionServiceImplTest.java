@@ -8,10 +8,7 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.AccountService;
 import dev3.bank.interfaces.TransactionService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 
 import javax.xml.crypto.Data;
@@ -30,7 +27,6 @@ public class TransactionServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
@@ -40,9 +36,14 @@ public class TransactionServiceImplTest {
         accountService.setDAO(daoFactory);
     }
 
+    @After
+    public void destroy() {
+        DataBase.dropTable();
+    }
+
     @Test
     public void showStories() {
-        TransactionDTO transactionDTO1 = new TransactionDTO(1,2, 13, 1);
+        TransactionDTO transactionDTO1 = new TransactionDTO(1, 2, 13, 1);
         TransactionDTO transactionDTO2 = new TransactionDTO(3, 1, 24.9, 3);
         TransactionDTO transactionDTO3 = new TransactionDTO(2, 3, 20, 1);
         accountService.refill(1);
@@ -73,17 +74,9 @@ public class TransactionServiceImplTest {
         transactionDTO.setAccountToId(2);
         transactionDTO.setClientId(3);
         transactionDTO.setMoney(23.5);
-        Transaction transaction = new Transaction();
-        transaction.setId(1);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        transaction.setId(1);
-        transaction.setDate(simpleDateFormat.format(new Date()));
-        transaction.setAccountFromId(3);
-        transaction.setAccountToId(2);
-        transaction.setMoney(23.5);
-        try{
-            Assert.assertEquals(transaction, transactionService.createTransaction(transactionDTO));
-        } catch (TransactionException e){
+        try {
+            Assert.assertNull(transactionService.createTransaction(transactionDTO));
+        } catch (TransactionException e) {
             System.out.println("Transaction exception");
         }
     }

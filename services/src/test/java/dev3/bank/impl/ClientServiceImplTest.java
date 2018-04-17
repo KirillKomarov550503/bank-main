@@ -7,6 +7,7 @@ import dev3.bank.entity.Role;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.ClientService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +20,16 @@ public class ClientServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
         clientService = ClientServiceImpl.getClientService();
         clientService.setDAO(daoFactory);
+    }
+
+    @After
+    public void destroy() {
+        DataBase.dropTable();
     }
 
     @Test

@@ -6,6 +6,7 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.CardService;
 import dev3.bank.interfaces.UnlockCardRequestService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +21,6 @@ public class UnlockCardRequestServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
@@ -28,6 +28,11 @@ public class UnlockCardRequestServiceImplTest {
         cardRequestService.setDAO(daoFactory);
         cardService = CardServiceImpl.getCardService();
         cardService.setDAO(daoFactory);
+    }
+
+    @After
+    public void destroy() {
+        DataBase.dropTable();
     }
 
     @Test

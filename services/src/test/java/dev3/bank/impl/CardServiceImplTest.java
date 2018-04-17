@@ -6,6 +6,7 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.CardService;
 import dev3.bank.interfaces.UnlockCardRequestService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,6 @@ public class CardServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
@@ -30,6 +30,11 @@ public class CardServiceImplTest {
         cardService.setDAO(daoFactory);
         cardRequestService = UnlockCardRequestServiceImpl.getUnlockCardRequestService();
         cardRequestService.setDAO(daoFactory);
+    }
+
+    @After
+    public void destroy() {
+        DataBase.dropTable();
     }
 
     @Test
@@ -95,7 +100,7 @@ public class CardServiceImplTest {
         cardRequestService.unlockCardRequest(1);
         cardService.unlockCard(1);
         Collection<Card> accounts = new ArrayList<>();
-        Card card1 = new Card(1,  false,4234, 3, 100);
+        Card card1 = new Card(1, false, 4234, 3, 100);
         Card card2 = new Card(2, false, 1111, 1, 128989);
         Card card3 = new Card(3, false, 4004, 1, 101);
         accounts.add(card2);
@@ -106,7 +111,7 @@ public class CardServiceImplTest {
 
     @Test
     public void getAllCards() {
-        Card card1 = new Card(1,  false,4234, 3, 100);
+        Card card1 = new Card(1, false, 4234, 3, 100);
         Card card2 = new Card(2, false, 1111, 1, 128989);
         Card card3 = new Card(3, false, 4004, 1, 101);
         Collection<Card> cards = new ArrayList<>();

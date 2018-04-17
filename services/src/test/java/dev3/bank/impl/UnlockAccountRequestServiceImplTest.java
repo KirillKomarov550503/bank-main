@@ -6,6 +6,7 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.AccountService;
 import dev3.bank.interfaces.UnlockAccountRequestService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,6 @@ public class UnlockAccountRequestServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
@@ -31,6 +31,10 @@ public class UnlockAccountRequestServiceImplTest {
         accountService.setDAO(daoFactory);
     }
 
+    @After
+    public void destroy() {
+        DataBase.dropTable();
+    }
 
     @Test
     public void getAllAccountRequest() {

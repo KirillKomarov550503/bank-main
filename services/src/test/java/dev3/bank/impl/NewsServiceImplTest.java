@@ -7,6 +7,7 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.ClientNewsService;
 import dev3.bank.interfaces.NewsService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,6 @@ public class NewsServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
@@ -50,6 +50,11 @@ public class NewsServiceImplTest {
         clientIds2.add(1L);
         clientIds2.add(3L);
         clientNewsService.addClientNews(clientIds2, news3.getId());
+    }
+
+    @After
+    public void destroy() {
+        DataBase.dropTable();
     }
 
     @Test

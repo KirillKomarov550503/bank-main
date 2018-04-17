@@ -7,6 +7,7 @@ import dev3.bank.entity.Role;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.interfaces.AdminService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +22,16 @@ public class AdminServiceImplTest {
 
     @Before
     public void init() {
-        DataBase.dropTable();
         DataBase.initTable();
         DataBase.insertValues();
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
         adminService = AdminServiceImpl.getAdminService();
         adminService.setDAO(daoFactory);
+    }
+
+    @After
+    public void destroy() {
+        DataBase.dropTable();
     }
 
     @Test
@@ -44,7 +49,7 @@ public class AdminServiceImplTest {
     @Test
     public void getAllAdmin() {
         Collection<Admin> admins = new ArrayList<>();
-        admins.add(new Admin(1,4));
+        admins.add(new Admin(1, 4));
         Assert.assertEquals("Must return one Admin", admins, adminService.getAllAdmin());
         Admin admin = new Admin(2, 5);
         Person person = new Person();

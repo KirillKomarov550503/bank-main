@@ -69,7 +69,7 @@ public class TransactionServiceImplTest {
     public void createTransaction() throws TransactionException {
         TransactionDTO transactionDTO = new TransactionDTO();
         accountService.refill(3);
-        transactionDTO.setAccountFromId(3);
+        transactionDTO.setAccountFromId(1);
         transactionDTO.setAccountToId(2);
         transactionDTO.setClientId(3);
         transactionDTO.setMoney(23.5);

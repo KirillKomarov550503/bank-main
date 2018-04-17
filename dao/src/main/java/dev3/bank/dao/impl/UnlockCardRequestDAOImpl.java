@@ -85,7 +85,7 @@ public class UnlockCardRequestDAOImpl implements UnlockCardRequestDAO {
 
     private UnlockCardRequest getUnlockCardRequest(ResultSet resultSet) throws SQLException {
         UnlockCardRequest request = new UnlockCardRequest();
-        request.setId(resultSet.getLong("card_id"));
+        request.setId(resultSet.getLong("id"));
         request.setCardId(resultSet.getLong("card_id"));
         return request;
     }

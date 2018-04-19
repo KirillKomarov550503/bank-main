@@ -1,38 +1,12 @@
 package dev3.bank.interfaces;
 
-import dev3.bank.entity.*;
+import dev3.bank.entity.Admin;
+import dev3.bank.entity.Person;
 
 import java.util.Collection;
 
-public interface AdminService {
-
-    Collection<Client> getAllClients();
-
-    Collection<Account> getAllAccounts();
-
-    Collection<Card> getAllCards();
-
-    Collection<News> getAllGeneralNews();
-
-    Collection<ClientNews> getAllClientNews();
-
-    void unlockCard(long cardId);
-
-    Collection<Card> getAllUnlockCardRequest();
-
-    void unlockAccount(long accountId);
-
-    Collection<Account> getAllUnlockAccountRequest();
-
-    News addGeneralNews(News news, long adminId);
-
-    Collection<ClientNews> addClientNews(Collection<Long> clientIds, News news);
-
-    Collection<UnlockAccountRequest> getAllAccountRequest();
-
-    Collection<UnlockCardRequest> getAllCardRequest();
-
-    Admin addAdmin(Admin admin);
+public interface AdminService extends BaseService {
+    Admin addAdmin(Person person);
 
     Collection<Admin> getAllAdmin();
 }

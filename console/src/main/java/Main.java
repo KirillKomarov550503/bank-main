@@ -1,8 +1,8 @@
-import dev3.bank.dao.impl.CrudDAOImpl;
+import dev3.bank.dao.utils.DataBase;
 import menu.FabricMethod;
 import menu.Menu;
 import menu.Role;
-import utils.PropertyDB;
+import dev3.bank.dao.utils.PropertyDB;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -18,8 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         boolean exit = false;
-        CrudDAOImpl.readEntitiesMap(getPathToDB());
-
+        DataBase.executeProperty("init.table.path", "dao\\src\\main\\resources\\path.properties");
         while (!exit) {
             printMainMenu();
             Scanner scanner = new Scanner(System.in);
@@ -37,7 +36,7 @@ public class Main {
                         role = Role.ADMIN;
                         break;
                     case 0:
-                        CrudDAOImpl.writeEntitiesMap(getPathToDB());
+                        DataBase.closeConnection();
                         System.exit(0);
                         break;
                     default:

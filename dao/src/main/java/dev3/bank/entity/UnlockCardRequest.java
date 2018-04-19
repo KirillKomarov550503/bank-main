@@ -1,21 +1,49 @@
 package dev3.bank.entity;
 
-public class UnlockCardRequest extends BaseEntity {
-    private Card card;
+import java.util.Objects;
 
-    public Card getCard() {
-        return card;
+public class UnlockCardRequest extends BaseEntity{
+    private long cardId;
+
+    public long getCardId() {
+        return cardId;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
     }
 
     @Override
     public String toString() {
         return "UnlockCardRequest{" +
-                "card=" + card +
+                "cardId=" + cardId +
                 ", id=" + id +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        UnlockCardRequest request = (UnlockCardRequest) o;
+        return cardId == request.cardId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), cardId);
+    }
+
+    public UnlockCardRequest(long id, long cardId) {
+
+        super(id);
+        this.cardId = cardId;
+    }
+
+    public UnlockCardRequest() {
+
+    }
+
 }

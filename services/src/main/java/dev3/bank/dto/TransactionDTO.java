@@ -8,6 +8,15 @@ public class TransactionDTO implements Serializable {
     private double money;
     private long clientId;
 
+    public TransactionDTO(){ }
+
+    public TransactionDTO(long accountFromId, long accountToId, double money, long clientId) {
+        this.accountFromId = accountFromId;
+        this.accountToId = accountToId;
+        this.money = money;
+        this.clientId = clientId;
+    }
+
     public long getAccountFromId() {
         return accountFromId;
     }

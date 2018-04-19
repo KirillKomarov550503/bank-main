@@ -1,10 +1,44 @@
 package dev3.bank.entity;
 
+import dev3.bank.dao.interfaces.TransactionDAO;
+
+import java.util.Objects;
+
 public class Transaction extends BaseEntity {
     private String date;
-    private Account accountFrom;
-    private Account accountTo;
+    private long accountFromId;
+    private long accountToId;
     private double money;
+
+    public Transaction() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Transaction that = (Transaction) o;
+        return accountFromId == that.accountFromId &&
+                accountToId == that.accountToId &&
+                Double.compare(that.money, money) == 0 &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), date, accountFromId, accountToId, money);
+    }
+
+    public Transaction(long id, String date, long accountFromId, long accountToId, double money) {
+
+        super(id);
+        this.date = date;
+        this.accountFromId = accountFromId;
+        this.accountToId = accountToId;
+        this.money = money;
+    }
 
     public String getDate() {
         return date;
@@ -14,22 +48,21 @@ public class Transaction extends BaseEntity {
         this.date = date;
     }
 
-    public Account getAccountFrom() {
-        return accountFrom;
+    public long getAccountFromId() {
+        return accountFromId;
     }
 
-    public void setAccountFrom(Account accountFrom) {
-        this.accountFrom = accountFrom;
+    public void setAccountFromId(long accountFromId) {
+        this.accountFromId = accountFromId;
     }
 
-    public Account getAccountTo() {
-        return accountTo;
+    public long getAccountToId() {
+        return accountToId;
     }
 
-    public void setAccountTo(Account accountTo) {
-        this.accountTo = accountTo;
+    public void setAccountToId(long accountToId) {
+        this.accountToId = accountToId;
     }
-
 
     public double getMoney() {
         return money;
@@ -43,10 +76,11 @@ public class Transaction extends BaseEntity {
     public String toString() {
         return "Transaction{" +
                 "date='" + date + '\'' +
-                ", accountFrom=" + accountFrom +
-                ", accountTo=" + accountTo +
+                ", accountFromId=" + accountFromId +
+                ", accountToId=" + accountToId +
                 ", money=" + money +
                 ", id=" + id +
                 '}';
     }
+
 }

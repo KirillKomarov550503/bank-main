@@ -7,12 +7,14 @@ import dev3.bank.entity.Card;
 import dev3.bank.entity.UnlockCardRequest;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.CardService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Service
 public class CardServiceImpl implements CardService {
     private UnlockCardRequestDAO unlockCardRequestDAO;
     private CardDAO cardDAO;

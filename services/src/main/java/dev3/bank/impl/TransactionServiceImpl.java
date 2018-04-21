@@ -9,6 +9,7 @@ import dev3.bank.entity.Transaction;
 import dev3.bank.exception.TransactionException;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.TransactionService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
+@Service
 public class TransactionServiceImpl implements TransactionService {
     private TransactionDAO transactionDAO;
     private AccountDAO accountDAO;

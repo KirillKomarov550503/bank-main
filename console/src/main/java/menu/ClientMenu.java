@@ -1,5 +1,6 @@
 package menu;
 
+import dev3.bank.AppContext;
 import dev3.bank.entity.Account;
 import dev3.bank.entity.Card;
 import dev3.bank.entity.UnlockAccountRequest;
@@ -8,6 +9,9 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.*;
 import dev3.bank.interfaces.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import utils.Input;
 import utils.Output;
@@ -22,15 +26,6 @@ public class ClientMenu implements Menu {
     private TransactionService transactionService;
     private UnlockAccountRequestService unlockAccountRequestService;
     private UnlockCardRequestService unlockCardRequestService;
-
-    public ClientMenu() {
-        accountService = AccountServiceImpl.getAccountService();
-        cardService = CardServiceImpl.getCardService();
-        newsService = NewsServiceImpl.getNewsService();
-        transactionService = TransactionServiceImpl.getTransactionService();
-        unlockAccountRequestService = UnlockAccountRequestServiceImpl.getUnlockAccountRequestService();
-        unlockCardRequestService = UnlockCardRequestServiceImpl.getUnlockCardRequestService();
-    }
 
     @Override
     public void printTextMenu() {
@@ -51,6 +46,13 @@ public class ClientMenu implements Menu {
 
     @Override
     public void initService() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppContext.class);
+        accountService = context.getBean(AccountService.class);
+        cardService = context.getBean(CardService.class);
+        newsService = context.getBean(NewsService.class);
+        transactionService = context.getBean(TransactionService.class);
+        unlockAccountRequestService = context.getBean(UnlockAccountRequestService.class);
+        unlockCardRequestService = context.getBean(UnlockCardRequestService.class);
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
         accountService.setDAO(daoFactory);
         cardService.setDAO(daoFactory);

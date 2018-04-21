@@ -3,9 +3,11 @@ package dev3.bank.factory;
 import dev3.bank.dao.impl.*;
 import dev3.bank.dao.interfaces.*;
 import dev3.bank.dao.utils.DataBase;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 
+@Component
 public class PostgreSQLDAOFactory implements DAOFactory {
 
     private static PostgreSQLDAOFactory postgreSQLDAOFactory;

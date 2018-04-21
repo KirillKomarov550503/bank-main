@@ -7,11 +7,13 @@ import dev3.bank.entity.Client;
 import dev3.bank.entity.Person;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.ClientService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
+@Service
 public class ClientServiceImpl implements ClientService {
     private static ClientServiceImpl clientService;
     private PersonDAO personDAO;

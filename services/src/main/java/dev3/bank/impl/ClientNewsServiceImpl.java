@@ -5,12 +5,14 @@ import dev3.bank.dao.utils.DataBase;
 import dev3.bank.entity.ClientNews;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.ClientNewsService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Service
 public class ClientNewsServiceImpl implements ClientNewsService {
     private ClientNewsDAO clientNewsDAO;
     private static ClientNewsServiceImpl clientNewsService;

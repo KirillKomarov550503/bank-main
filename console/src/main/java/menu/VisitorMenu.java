@@ -1,11 +1,13 @@
 package menu;
 
+import dev3.bank.AppContext;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
-import dev3.bank.impl.ClientServiceImpl;
-import dev3.bank.impl.NewsServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import dev3.bank.interfaces.NewsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import utils.Input;
 import utils.Output;
@@ -17,11 +19,6 @@ public class VisitorMenu implements Menu {
     private NewsService newsService;
     private ClientService clientService;
 
-    public VisitorMenu() {
-        newsService = NewsServiceImpl.getNewsService();
-        clientService = ClientServiceImpl.getClientService();
-    }
-
     @Override
     public void printTextMenu() {
         System.out.println("1-Get all news");
@@ -32,6 +29,9 @@ public class VisitorMenu implements Menu {
 
     @Override
     public void initService() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppContext.class);
+        newsService = context.getBean(NewsService.class);
+        clientService = context.getBean(ClientService.class);
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
         newsService.setDAO(daoFactory);
         clientService.setDAO(daoFactory);

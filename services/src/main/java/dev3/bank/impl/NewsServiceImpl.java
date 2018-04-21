@@ -6,12 +6,14 @@ import dev3.bank.entity.News;
 import dev3.bank.entity.NewsStatus;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.NewsService;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Service
 public class NewsServiceImpl implements NewsService {
     private NewsDAO newsDAO;
     private ClientNewsDAO clientNewsDAO;

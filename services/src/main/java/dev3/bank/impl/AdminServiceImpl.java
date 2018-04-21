@@ -7,11 +7,14 @@ import dev3.bank.entity.Admin;
 import dev3.bank.entity.Person;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.AdminService;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
+@Component
 public class AdminServiceImpl implements AdminService {
     private static AdminServiceImpl adminService;
     private AdminDAO adminDAO;

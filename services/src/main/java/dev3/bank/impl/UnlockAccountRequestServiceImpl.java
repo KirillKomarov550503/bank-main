@@ -4,10 +4,12 @@ import dev3.bank.dao.interfaces.UnlockAccountRequestDAO;
 import dev3.bank.entity.UnlockAccountRequest;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.UnlockAccountRequestService;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Collection;
 
+@Service
 public class UnlockAccountRequestServiceImpl implements UnlockAccountRequestService {
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
     private static UnlockAccountRequestServiceImpl unlockAccountRequestService;

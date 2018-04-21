@@ -7,26 +7,19 @@ import dev3.bank.entity.Account;
 import dev3.bank.entity.UnlockAccountRequest;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Service
 public class AccountServiceImpl implements AccountService {
     private AccountDAO accountDAO;
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
-    private static AccountServiceImpl accountService;
-
-    private AccountServiceImpl() {
-    }
-
-    public static synchronized AccountServiceImpl getAccountService() {
-        if (accountService == null) {
-            accountService = new AccountServiceImpl();
-        }
-        return accountService;
-    }
 
     @Override
     public void setDAO(DAOFactory daoFactory) {

@@ -1,15 +1,20 @@
 package menu;
 
+import dev3.bank.AppContext;
 import dev3.bank.entity.NewsStatus;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.*;
 import dev3.bank.interfaces.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import utils.Input;
 
 import java.util.Collection;
 import java.util.Scanner;
+
 @Controller
 public class AdminMenu implements Menu {
     private AdminService adminService;
@@ -19,16 +24,6 @@ public class AdminMenu implements Menu {
     private NewsService newsService;
     private ClientNewsService clientNewsService;
     private PersonService personService;
-
-    public AdminMenu() {
-        adminService = AdminServiceImpl.getAdminService();
-        accountService = AccountServiceImpl.getAccountService();
-        cardService = CardServiceImpl.getCardService();
-        clientService = ClientServiceImpl.getClientService();
-        newsService = NewsServiceImpl.getNewsService();
-        clientNewsService = ClientNewsServiceImpl.getClientNewsService();
-        personService = PersonServiceImpl.getPersonService();
-    }
 
     @Override
     public void printTextMenu() {
@@ -52,6 +47,14 @@ public class AdminMenu implements Menu {
 
     @Override
     public void initService() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppContext.class);
+        adminService = context.getBean(AdminService.class);
+        accountService = context.getBean(AccountService.class);
+        cardService = context.getBean(CardService.class);
+        clientService = context.getBean(ClientService.class);
+        newsService = context.getBean(NewsService.class);
+        clientNewsService = context.getBean(ClientNewsService.class);
+        personService = context.getBean(PersonService.class);
         DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
         adminService.setDAO(daoFactory);
         accountService.setDAO(daoFactory);

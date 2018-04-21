@@ -8,11 +8,13 @@ import dev3.bank.factory.DAOFactory;
 import dev3.bank.factory.PostgreSQLDAOFactory;
 import dev3.bank.impl.*;
 import dev3.bank.interfaces.*;
+import org.springframework.stereotype.Controller;
 import utils.Input;
 import utils.Output;
 
 import java.util.Scanner;
 
+@Controller
 public class ClientMenu implements Menu {
     private AccountService accountService;
     private CardService cardService;

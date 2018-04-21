@@ -6,11 +6,13 @@ import dev3.bank.impl.ClientServiceImpl;
 import dev3.bank.impl.NewsServiceImpl;
 import dev3.bank.interfaces.ClientService;
 import dev3.bank.interfaces.NewsService;
+import org.springframework.stereotype.Controller;
 import utils.Input;
 import utils.Output;
 
 import java.util.Scanner;
 
+@Controller
 public class VisitorMenu implements Menu {
     private NewsService newsService;
     private ClientService clientService;

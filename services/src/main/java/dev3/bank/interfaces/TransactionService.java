@@ -6,7 +6,7 @@ import dev3.bank.exception.TransactionException;
 
 import java.util.Collection;
 
-public interface TransactionService extends BaseService {
+public interface TransactionService {
     Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException;
 
     Collection<Transaction> showStories(long clientId);

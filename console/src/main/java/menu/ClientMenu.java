@@ -53,13 +53,6 @@ public class ClientMenu implements Menu {
         transactionService = context.getBean(TransactionService.class);
         unlockAccountRequestService = context.getBean(UnlockAccountRequestService.class);
         unlockCardRequestService = context.getBean(UnlockCardRequestService.class);
-        DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
-        accountService.setDAO(daoFactory);
-        cardService.setDAO(daoFactory);
-        newsService.setDAO(daoFactory);
-        transactionService.setDAO(daoFactory);
-        unlockCardRequestService.setDAO(daoFactory);
-        unlockAccountRequestService.setDAO(daoFactory);
     }
 
     @Override

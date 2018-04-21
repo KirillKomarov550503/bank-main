@@ -6,6 +6,7 @@ import dev3.bank.entity.News;
 import dev3.bank.entity.NewsStatus;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.NewsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -17,22 +18,11 @@ import java.util.stream.Stream;
 public class NewsServiceImpl implements NewsService {
     private NewsDAO newsDAO;
     private ClientNewsDAO clientNewsDAO;
-    private static NewsServiceImpl newsService;
 
-    private NewsServiceImpl() {
-    }
-
-    public static synchronized NewsServiceImpl getNewsService() {
-        if (newsService == null) {
-            newsService = new NewsServiceImpl();
-        }
-        return newsService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        newsDAO = daoFactory.getNewsDAO();
-        clientNewsDAO = daoFactory.getClientNewsDAO();
+    @Autowired
+    public NewsServiceImpl(DAOFactory daoFactory) {
+        this.newsDAO = daoFactory.getNewsDAO();
+        this.clientNewsDAO = daoFactory.getClientNewsDAO();
     }
 
     @Override

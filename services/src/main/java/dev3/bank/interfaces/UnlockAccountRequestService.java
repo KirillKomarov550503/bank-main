@@ -4,7 +4,7 @@ import dev3.bank.entity.UnlockAccountRequest;
 
 import java.util.Collection;
 
-public interface UnlockAccountRequestService extends BaseService {
+public interface UnlockAccountRequestService {
     UnlockAccountRequest unlockAccountRequest(long accountId);
 
     Collection<UnlockAccountRequest> getAllAccountRequest();

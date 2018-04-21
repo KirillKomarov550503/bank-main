@@ -4,7 +4,7 @@ import dev3.bank.entity.Account;
 
 import java.util.Collection;
 
-public interface AccountService extends BaseService {
+public interface AccountService {
     Account createAccount(Account account, long clientId);
 
     Account lockAccount(long accountId);

@@ -55,14 +55,6 @@ public class AdminMenu implements Menu {
         newsService = context.getBean(NewsService.class);
         clientNewsService = context.getBean(ClientNewsService.class);
         personService = context.getBean(PersonService.class);
-        DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
-        adminService.setDAO(daoFactory);
-        accountService.setDAO(daoFactory);
-        cardService.setDAO(daoFactory);
-        clientService.setDAO(daoFactory);
-        newsService.setDAO(daoFactory);
-        clientNewsService.setDAO(daoFactory);
-        personService.setDAO(daoFactory);
     }
 
     @Override

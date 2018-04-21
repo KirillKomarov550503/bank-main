@@ -7,6 +7,7 @@ import dev3.bank.entity.Card;
 import dev3.bank.entity.UnlockCardRequest;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.CardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -18,24 +19,12 @@ import java.util.Collection;
 public class CardServiceImpl implements CardService {
     private UnlockCardRequestDAO unlockCardRequestDAO;
     private CardDAO cardDAO;
-    private static CardServiceImpl cardService;
 
-    private CardServiceImpl() {
+    @Autowired
+    public CardServiceImpl(DAOFactory daoFactory) {
+        this.unlockCardRequestDAO = daoFactory.getUnlockCardRequestDAO();
+        this.cardDAO = daoFactory.getCardDAO();
     }
-
-    public static synchronized CardServiceImpl getCardService() {
-        if (cardService == null) {
-            cardService = new CardServiceImpl();
-        }
-        return cardService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        unlockCardRequestDAO = daoFactory.getUnlockCardRequestDAO();
-        cardDAO = daoFactory.getCardDAO();
-    }
-
 
     @Override
     public Card lockCard(long cardId) {

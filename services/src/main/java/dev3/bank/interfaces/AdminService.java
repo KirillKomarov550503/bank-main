@@ -5,7 +5,7 @@ import dev3.bank.entity.Person;
 
 import java.util.Collection;
 
-public interface AdminService extends BaseService {
+public interface AdminService {
     Admin addAdmin(Person person);
 
     Collection<Admin> getAllAdmin();

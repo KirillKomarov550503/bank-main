@@ -21,10 +21,10 @@ public class AccountServiceImpl implements AccountService {
     private AccountDAO accountDAO;
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
 
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        accountDAO = daoFactory.getAccountDAO();
-        unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+    @Autowired
+    public AccountServiceImpl(DAOFactory daoFactory) {
+        this.accountDAO = daoFactory.getAccountDAO();
+        this.unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
     }
 
     @Override

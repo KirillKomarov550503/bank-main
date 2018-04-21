@@ -4,6 +4,6 @@ import dev3.bank.entity.Person;
 
 import java.util.Collection;
 
-public interface PersonService extends BaseService {
+public interface PersonService {
     Collection<Person> getAllPeople();
 }

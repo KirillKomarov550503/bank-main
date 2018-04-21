@@ -5,7 +5,7 @@ import dev3.bank.entity.NewsStatus;
 
 import java.util.Collection;
 
-public interface NewsService extends BaseService {
+public interface NewsService {
     Collection<News> getAllPersonalNews(long clientId);
 
     News getPersonalNews(long newsId);

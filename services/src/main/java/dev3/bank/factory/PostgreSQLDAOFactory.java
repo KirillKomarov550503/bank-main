@@ -5,72 +5,56 @@ import dev3.bank.dao.interfaces.*;
 import dev3.bank.dao.utils.DataBase;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-
 @Component
 public class PostgreSQLDAOFactory implements DAOFactory {
 
-    private static PostgreSQLDAOFactory postgreSQLDAOFactory;
-    private Connection connection;
-
-    private PostgreSQLDAOFactory() {
-        this.connection = DataBase.getConnection();
-    }
-
-    public static synchronized PostgreSQLDAOFactory getPostgreSQLDAOFactory() {
-        if (postgreSQLDAOFactory == null) {
-            postgreSQLDAOFactory = new PostgreSQLDAOFactory();
-        }
-        return postgreSQLDAOFactory;
-    }
-
     @Override
     public AccountDAO getAccountDAO() {
-        return AccountDAOImpl.getAccountDAO(connection);
+        return AccountDAOImpl.getAccountDAO(DataBase.getConnection());
     }
 
     @Override
     public AdminDAO getAdminDAO() {
-        return AdminDAOImpl.getAdminDAO(connection);
+        return AdminDAOImpl.getAdminDAO(DataBase.getConnection());
     }
 
     @Override
     public CardDAO getCardDAO() {
-        return CardDAOImpl.getCardDAO(connection);
+        return CardDAOImpl.getCardDAO(DataBase.getConnection());
     }
 
     @Override
     public ClientDAO getClientDAO() {
-        return ClientDAOImpl.getClientDAO(connection);
+        return ClientDAOImpl.getClientDAO(DataBase.getConnection());
     }
 
     @Override
     public ClientNewsDAO getClientNewsDAO() {
-        return ClientNewsDAOImpl.getClientNewsDAO(connection);
+        return ClientNewsDAOImpl.getClientNewsDAO(DataBase.getConnection());
     }
 
     @Override
     public NewsDAO getNewsDAO() {
-        return NewsDAOImpl.getNewsDAO(connection);
+        return NewsDAOImpl.getNewsDAO(DataBase.getConnection());
     }
 
     @Override
     public PersonDAO getPersonDAO() {
-        return PersonDAOImpl.getPersonDAO(connection);
+        return PersonDAOImpl.getPersonDAO(DataBase.getConnection());
     }
 
     @Override
     public TransactionDAO getTransactionDAO() {
-        return TransactionDAOImpl.getTransactionDAO(connection);
+        return TransactionDAOImpl.getTransactionDAO(DataBase.getConnection());
     }
 
     @Override
     public UnlockAccountRequestDAO getUnlockAccountRequestDAO() {
-        return UnlockAccountRequestDAOImpl.getUnlcokAccountRequestDAO(connection);
+        return UnlockAccountRequestDAOImpl.getUnlcokAccountRequestDAO(DataBase.getConnection());
     }
 
     @Override
     public UnlockCardRequestDAO getUnlockCardRequestDAO() {
-        return UnlockCardRequestDAOImpl.getUnlockCardRequestDAO(connection);
+        return UnlockCardRequestDAOImpl.getUnlockCardRequestDAO(DataBase.getConnection());
     }
 }

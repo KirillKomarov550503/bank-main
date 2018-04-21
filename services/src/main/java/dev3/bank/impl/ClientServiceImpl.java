@@ -7,6 +7,7 @@ import dev3.bank.entity.Client;
 import dev3.bank.entity.Person;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,32 +16,19 @@ import java.util.Collection;
 
 @Service
 public class ClientServiceImpl implements ClientService {
-    private static ClientServiceImpl clientService;
     private PersonDAO personDAO;
     private ClientDAO clientDAO;
 
-    private ClientServiceImpl() {
-    }
-
-    public static synchronized ClientServiceImpl getClientService() {
-        if (clientService == null) {
-            clientService = new ClientServiceImpl();
-        }
-        return clientService;
-
+    @Autowired
+    public ClientServiceImpl(DAOFactory daoFactory) {
+        this.personDAO = daoFactory.getPersonDAO();
+        this.clientDAO = daoFactory.getClientDAO();
     }
 
     @Override
     public Client signIn(Person person) {
         return null;
     }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        clientDAO = daoFactory.getClientDAO();
-        personDAO = daoFactory.getPersonDAO();
-    }
-
 
     @Override
     public Client registration(Person person) {

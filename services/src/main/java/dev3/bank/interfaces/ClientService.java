@@ -5,7 +5,7 @@ import dev3.bank.entity.Person;
 
 import java.util.Collection;
 
-public interface ClientService extends BaseService {
+public interface ClientService {
     Client signIn(Person person);
 
     Client registration(Person person);

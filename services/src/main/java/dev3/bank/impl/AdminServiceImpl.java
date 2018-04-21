@@ -7,8 +7,8 @@ import dev3.bank.entity.Admin;
 import dev3.bank.entity.Person;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,24 +16,13 @@ import java.util.Collection;
 
 @Component
 public class AdminServiceImpl implements AdminService {
-    private static AdminServiceImpl adminService;
     private AdminDAO adminDAO;
     private PersonDAO personDAO;
 
-    private AdminServiceImpl() {
-    }
-
-    public static synchronized AdminServiceImpl getAdminService() {
-        if (adminService == null) {
-            adminService = new AdminServiceImpl();
-        }
-        return adminService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        adminDAO = daoFactory.getAdminDAO();
-        personDAO = daoFactory.getPersonDAO();
+    @Autowired
+    public AdminServiceImpl(DAOFactory daoFactory) {
+        this.adminDAO = daoFactory.getAdminDAO();
+        this.personDAO = daoFactory.getPersonDAO();
     }
 
     @Override

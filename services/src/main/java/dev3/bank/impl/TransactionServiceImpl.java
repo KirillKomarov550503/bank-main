@@ -9,6 +9,7 @@ import dev3.bank.entity.Transaction;
 import dev3.bank.exception.TransactionException;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -21,22 +22,11 @@ import java.util.Date;
 public class TransactionServiceImpl implements TransactionService {
     private TransactionDAO transactionDAO;
     private AccountDAO accountDAO;
-    private static TransactionServiceImpl transactionService;
 
-    private TransactionServiceImpl() {
-    }
-
-    public static synchronized TransactionServiceImpl getTransactionService() {
-        if (transactionService == null) {
-            transactionService = new TransactionServiceImpl();
-        }
-        return transactionService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        transactionDAO = daoFactory.getTransactionDAO();
-        accountDAO = daoFactory.getAccountDAO();
+    @Autowired
+    public TransactionServiceImpl(DAOFactory daoFactory) {
+        this.transactionDAO = daoFactory.getTransactionDAO();
+        this.accountDAO = daoFactory.getAccountDAO();
     }
 
     @Override

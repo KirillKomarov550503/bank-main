@@ -4,7 +4,7 @@ import dev3.bank.entity.Card;
 
 import java.util.Collection;
 
-public interface CardService extends BaseService {
+public interface CardService {
     Card createCard(Card card, long accountId);
 
     Card lockCard(long cardId);

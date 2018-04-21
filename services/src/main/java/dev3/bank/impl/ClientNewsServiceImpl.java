@@ -5,6 +5,7 @@ import dev3.bank.dao.utils.DataBase;
 import dev3.bank.entity.ClientNews;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.ClientNewsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,21 +16,10 @@ import java.util.Collection;
 @Service
 public class ClientNewsServiceImpl implements ClientNewsService {
     private ClientNewsDAO clientNewsDAO;
-    private static ClientNewsServiceImpl clientNewsService;
 
-    private ClientNewsServiceImpl() {
-    }
-
-    public static synchronized ClientNewsServiceImpl getClientNewsService() {
-        if (clientNewsService == null) {
-            clientNewsService = new ClientNewsServiceImpl();
-        }
-        return clientNewsService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        clientNewsDAO = daoFactory.getClientNewsDAO();
+    @Autowired
+    public ClientNewsServiceImpl(DAOFactory daoFactory) {
+        this.clientNewsDAO = daoFactory.getClientNewsDAO();
     }
 
     @Override

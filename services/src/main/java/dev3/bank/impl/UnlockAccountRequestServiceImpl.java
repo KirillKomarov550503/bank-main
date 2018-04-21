@@ -4,6 +4,7 @@ import dev3.bank.dao.interfaces.UnlockAccountRequestDAO;
 import dev3.bank.entity.UnlockAccountRequest;
 import dev3.bank.factory.DAOFactory;
 import dev3.bank.interfaces.UnlockAccountRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -12,21 +13,10 @@ import java.util.Collection;
 @Service
 public class UnlockAccountRequestServiceImpl implements UnlockAccountRequestService {
     private UnlockAccountRequestDAO unlockAccountRequestDAO;
-    private static UnlockAccountRequestServiceImpl unlockAccountRequestService;
 
-    private UnlockAccountRequestServiceImpl() {
-    }
-
-    public static synchronized UnlockAccountRequestServiceImpl getUnlockAccountRequestService() {
-        if (unlockAccountRequestService == null) {
-            unlockAccountRequestService = new UnlockAccountRequestServiceImpl();
-        }
-        return unlockAccountRequestService;
-    }
-
-    @Override
-    public void setDAO(DAOFactory daoFactory) {
-        unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+    @Autowired
+    public UnlockAccountRequestServiceImpl(DAOFactory daoFactory) {
+        this.unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
     }
 
     @Override

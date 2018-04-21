@@ -4,7 +4,7 @@ import dev3.bank.entity.UnlockCardRequest;
 
 import java.util.Collection;
 
-public interface UnlockCardRequestService extends BaseService {
+public interface UnlockCardRequestService {
     UnlockCardRequest unlockCardRequest(long cardId);
 
     Collection<UnlockCardRequest> getAllCardRequest();

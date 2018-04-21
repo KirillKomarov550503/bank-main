@@ -32,9 +32,6 @@ public class VisitorMenu implements Menu {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppContext.class);
         newsService = context.getBean(NewsService.class);
         clientService = context.getBean(ClientService.class);
-        DAOFactory daoFactory = PostgreSQLDAOFactory.getPostgreSQLDAOFactory();
-        newsService.setDAO(daoFactory);
-        clientService.setDAO(daoFactory);
     }
 
     @Override

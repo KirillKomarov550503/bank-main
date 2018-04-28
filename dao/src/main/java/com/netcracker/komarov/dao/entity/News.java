@@ -130,7 +130,6 @@ public class News {
                 ", date='" + date + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
-                ", clients=" + clients +
                 ", admin=" + admin +
                 ", newsStatus=" + newsStatus +
                 '}';

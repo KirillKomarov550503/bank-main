@@ -4,12 +4,14 @@ import com.netcracker.komarov.console.utils.Input;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.interfaces.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.Scanner;
 
-@Controller
+@Component
 public class AdminMenu implements Menu {
     private AdminService adminService;
     private AccountService accountService;
@@ -17,6 +19,17 @@ public class AdminMenu implements Menu {
     private ClientService clientService;
     private NewsService newsService;
     private PersonService personService;
+
+    @Autowired
+    public AdminMenu(AdminService adminService, AccountService accountService, CardService cardService,
+                     ClientService clientService, NewsService newsService, PersonService personService) {
+        this.adminService = adminService;
+        this.accountService = accountService;
+        this.cardService = cardService;
+        this.clientService = clientService;
+        this.newsService = newsService;
+        this.personService = personService;
+    }
 
     @Override
     public void printTextMenu() {

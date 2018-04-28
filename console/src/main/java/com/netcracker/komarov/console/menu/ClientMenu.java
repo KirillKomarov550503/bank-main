@@ -9,6 +9,7 @@ import com.netcracker.komarov.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 @Component
@@ -84,12 +85,18 @@ public class ClientMenu implements Menu {
                     cardService.lockCard(Input.inputCardId());
                     break;
                 case 6:
-                    accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    unlockAccountRequestService.addAccountRequest(Input.inputAccountId());
+                    Collection<Account> accounts = accountService.getLockAccounts(Input.inputClientId());
+                    accounts.forEach(Output::printAccount);
+                    if (accounts.size() != 0) {
+                        unlockAccountRequestService.addAccountRequest(Input.inputAccountId());
+                    }
                     break;
                 case 7:
-                    cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
-                    unlockCardRequestService.addCardRequest(Input.inputCardId());
+                    Collection<Card> cards = cardService.getLockCards(Input.inputClientId());
+                    cards.forEach(Output::printCard);
+                    if (cards.size() != 0) {
+                        unlockCardRequestService.addCardRequest(Input.inputCardId());
+                    }
                     break;
                 case 8:
                     transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);

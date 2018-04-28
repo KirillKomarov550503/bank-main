@@ -61,17 +61,17 @@ public class AccountServiceImpl implements AccountService {
                 .stream()
                 .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
                 .findFirst();
-        UnlockAccountRequest request;
         if (optionalRequest.isPresent()) {
-            request = optionalRequest.get();
             Optional<Account> optionalAccount = accountRepository.findById(accountId);
             if (optionalAccount.isPresent()) {
                 Account account = optionalAccount.get();
                 account.setLocked(false);
                 accountRepository.save(account);
-                unlockAccountRequestRepository.deleteById(request.getId());
+                unlockAccountRequestRepository.deleteByAccountId(accountId);
                 logger.info("Successful unlocking your account");
             }
+        } else {
+            logger.info("There is no such account in requests ");
         }
     }
 
@@ -81,13 +81,14 @@ public class AccountServiceImpl implements AccountService {
         Collection<Account> accounts = new ArrayList<>();
         Collection<UnlockAccountRequest> requests = unlockAccountRequestRepository.findAll();
         for (UnlockAccountRequest request : requests) {
-            accounts.add(accountRepository.findById(request.getAccount().getId()).get());
+            accounts.add(request.getAccount());
         }
         if (accounts.size() == 0) {
             logger.info("There is no such request to unlock account");
         } else {
             logger.info("Return all request to unlock account");
         }
+        System.out.println("Collection: " + accounts);
         return accounts;
     }
 

@@ -111,15 +111,16 @@ public class CardServiceImpl implements CardService {
                 .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
                 .findFirst();
         if (optionalRequest.isPresent()) {
-            UnlockCardRequest request = optionalRequest.get();
             Optional<Card> optionalCard = cardRepository.findById(cardId);
             if (optionalCard.isPresent()) {
                 Card card = optionalCard.get();
                 card.setLocked(false);
                 cardRepository.save(card);
-                unlockCardRequestRepository.deleteById(request.getId());
+                unlockCardRequestRepository.deleteByCardId(cardId);
                 logger.info("Card was locked");
             }
+        } else {
+            logger.info("There is no such card in requests");
         }
     }
 

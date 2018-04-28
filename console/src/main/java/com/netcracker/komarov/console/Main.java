@@ -10,16 +10,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-@SpringBootApplication
-@ComponentScan(basePackages = {"com.netcracker.komarov"})
+@SpringBootApplication(scanBasePackages = "com.netcracker.komarov")
 @EnableJpaRepositories(basePackages = "com.netcracker.komarov.dao.repository")
-@EntityScan(basePackages = "com.netcracker.komarov.dao")
+@EntityScan(basePackages = "com.netcracker.komarov.dao.entity")
 public class Main implements CommandLineRunner {
     private AdminMenu adminMenu;
     private ClientMenu clientMenu;

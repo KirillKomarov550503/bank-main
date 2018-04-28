@@ -10,15 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-@ComponentScan(basePackages = {"com.netcracker.komarov.console", "com.netcracker.komarov.services"})
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.netcracker.komarov"})
+@EnableJpaRepositories(basePackages = "com.netcracker.komarov.dao.repository")
 public class Main implements CommandLineRunner {
     private AdminMenu adminMenu;
     private ClientMenu clientMenu;

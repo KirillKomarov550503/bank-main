@@ -93,7 +93,7 @@ public class CardServiceImpl implements CardService {
         Collection<Card> cards = new ArrayList<>();
         Collection<UnlockCardRequest> requests = unlockCardRequestRepository.findAll();
         for (UnlockCardRequest request : requests) {
-            cards.add(cardRepository.findById(request.getCard().getId()).get());
+            cards.add(request.getCard());
         }
         if (cards.size() == 0) {
             logger.info("There is no such requests to unlock card");

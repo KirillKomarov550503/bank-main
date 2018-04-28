@@ -88,7 +88,6 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.info("Return all request to unlock account");
         }
-        System.out.println("Collection: " + accounts);
         return accounts;
     }
 

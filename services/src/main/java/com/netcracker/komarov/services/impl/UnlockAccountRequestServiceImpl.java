@@ -31,14 +31,16 @@ public class UnlockAccountRequestServiceImpl implements UnlockAccountRequestServ
 
     @Transactional
     @Override
-    public UnlockAccountRequest unlockAccountRequest(long accountId) {
+    public UnlockAccountRequest addAccountRequest(long accountId) {
         UnlockAccountRequest temp = null;
         if (unlockAccountRequestRepository.findUnlockAccountRequestByAccountId(accountId) == null) {
             UnlockAccountRequest request = new UnlockAccountRequest();
             request.getAccount().setId(accountId);
             temp = unlockAccountRequestRepository.save(request);
+            logger.info("Account was unlocked");
+        } else {
+            logger.info("You had already sent request to unlock account");
         }
-        logger.info("Account was unlocked");
         return temp;
     }
 }

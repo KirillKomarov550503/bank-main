@@ -5,6 +5,7 @@ import com.netcracker.komarov.console.menu.ClientMenu;
 import com.netcracker.komarov.console.menu.Menu;
 import com.netcracker.komarov.console.menu.VisitorMenu;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +40,9 @@ public class Main implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication application = new SpringApplication(Main.class);
+        application.setBannerMode(Banner.Mode.OFF);
+        application.run(args);
     }
 
     private void enterLike() {

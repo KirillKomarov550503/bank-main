@@ -85,11 +85,11 @@ public class ClientMenu implements Menu {
                     break;
                 case 6:
                     accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    unlockAccountRequestService.unlockAccountRequest(Input.inputAccountId());
+                    unlockAccountRequestService.addAccountRequest(Input.inputAccountId());
                     break;
                 case 7:
                     cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
-                    unlockCardRequestService.unlockCardRequest(Input.inputCardId());
+                    unlockCardRequestService.addCardRequest(Input.inputCardId());
                     break;
                 case 8:
                     transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);

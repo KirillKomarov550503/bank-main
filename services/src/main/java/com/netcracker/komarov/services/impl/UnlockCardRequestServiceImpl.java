@@ -31,14 +31,16 @@ public class UnlockCardRequestServiceImpl implements UnlockCardRequestService {
 
     @Transactional
     @Override
-    public UnlockCardRequest unlockCardRequest(long cardId) {
+    public UnlockCardRequest addCardRequest(long cardId) {
         UnlockCardRequest temp = null;
         if (unlockCardRequestRepository.longByCardId(cardId) == null) {
             UnlockCardRequest request = new UnlockCardRequest();
             request.getCard().setId(cardId);
             temp = unlockCardRequestRepository.save(request);
+            logger.info("Card was unlocked");
+        } else {
+            logger.info("You had already sent request to unlock card");
         }
-        logger.info("Card was unlocked");
         return temp;
     }
 }

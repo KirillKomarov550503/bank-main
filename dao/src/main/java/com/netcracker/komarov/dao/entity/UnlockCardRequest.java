@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "unlockcardrequest")
 public class UnlockCardRequest {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @OneToOne

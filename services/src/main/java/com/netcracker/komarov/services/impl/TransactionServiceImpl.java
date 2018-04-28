@@ -48,14 +48,17 @@ public class TransactionServiceImpl implements TransactionService {
             if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
                 Account accountTo = accountRepository.findById(transactionDTO.getAccountToId()).get();
                 if (accountFrom.isLocked()) {
+                    logger.info("Your account is lock");
                     throw new TransactionException("Your account is lock");
                 }
                 if (accountTo.isLocked()) {
+                    logger.info("Other account is lock");
                     throw new TransactionException("Other account is lock");
                 }
                 double moneyFrom = accountFrom.getBalance();
                 double transactionMoney = transactionDTO.getMoney();
                 if (moneyFrom < transactionMoney) {
+                    logger.info("Not enough money on your account");
                     throw new TransactionException("Not enough money on your account");
                 }
                 double moneyTo = accountTo.getBalance();
@@ -72,9 +75,11 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.setAccountToId(accountTo.getId());
                 transaction.setMoney(transactionMoney);
                 newTransaction = transactionRepository.save(transaction);
+                logger.info("Transaction was completed");
             }
+        } else {
+            logger.info("Wrong input account from ID");
         }
-        logger.info("Transaction was completed");
         return newTransaction;
     }
 }

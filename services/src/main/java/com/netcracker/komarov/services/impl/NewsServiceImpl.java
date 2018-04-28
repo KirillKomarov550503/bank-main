@@ -1,9 +1,11 @@
 package com.netcracker.komarov.services.impl;
 
+import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.News;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.NewsRepository;
 import com.netcracker.komarov.services.interfaces.NewsService;
@@ -15,18 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService {
     private NewsRepository newsRepository;
     private ClientRepository clientRepository;
+    private AdminRepository adminRepository;
     private Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
 
     @Autowired
-    public NewsServiceImpl(RepositoryFactory repositoryFactory, ClientRepository clientRepository) {
+    public NewsServiceImpl(RepositoryFactory repositoryFactory) {
         this.newsRepository = repositoryFactory.getNewsRepository();
-        this.clientRepository = clientRepository;
+        this.clientRepository = repositoryFactory.getClientRepository();
+        this.adminRepository = repositoryFactory.getAdminRepository();
     }
 
     @Transactional
@@ -39,20 +44,25 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     @Override
     public Collection<News> getAllClientNewsById(long clientId) {
-        Collection<News> clientsNews = newsRepository.findAll()
-                .stream()
-                .filter(news -> news.getNewsStatus().equals(NewsStatus.CLIENT))
-                .collect(Collectors.toList());
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
         Collection<News> resultCollection = new ArrayList<>();
-        for (News news : clientsNews) {
-            Collection<Client> clients = news.getClients();
-            for (Client client : clients) {
-                if (client.getId() == clientId) {
-                    resultCollection.add(news);
+        if (optionalClient.isPresent()) {
+            Collection<News> clientsNews = newsRepository.findAll()
+                    .stream()
+                    .filter(news -> news.getNewsStatus().equals(NewsStatus.CLIENT))
+                    .collect(Collectors.toList());
+            for (News news : clientsNews) {
+                Collection<Client> clients = news.getClients();
+                for (Client client : clients) {
+                    if (client.getId() == clientId) {
+                        resultCollection.add(news);
+                    }
                 }
             }
+            logger.info("Return all client news By client ID");
+        } else {
+            logger.info("There is no such client in database");
         }
-        logger.info("Return all client news By client ID");
         return resultCollection;
     }
 
@@ -66,9 +76,18 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     @Override
     public News addGeneralNews(News news, long adminId) {
-        news.getAdmin().setId(adminId);
-        logger.info("Addition new general new to database");
-        return newsRepository.save(news);
+        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
+        News temp = null;
+        if (optionalAdmin.isPresent()) {
+            Admin admin = optionalAdmin.get();
+            news.setAdmin(admin);
+            admin.getNews().add(news);
+            logger.info("Addition new general new to database");
+            temp = newsRepository.save(news);
+        } else {
+            logger.info("There is no such admin in database");
+        }
+        return temp;
     }
 
     @Transactional
@@ -85,22 +104,33 @@ public class NewsServiceImpl implements NewsService {
         return newsRepository.findNewsByNewsStatus(newsStatus);
     }
 
+    @Transactional
     @Override
     public News addClientNews(Collection<Long> clientIds, long newsId) {
         Collection<Client> clients = clientRepository.findAll();
-        News news = newsRepository.findById(newsId).get();
-        if (clientIds.size() == 0) {
-            for (Client client : clients) {
-                news.getClients().add(client);
-                client.getNewsSet().add(news);
+        Optional<News> optionalNews = newsRepository.findById(newsId);
+        News news;
+        News temp = null;
+        if (optionalNews.isPresent()) {
+            news = optionalNews.get();
+            if (clientIds.size() == 0) {
+                for (Client client : clients) {
+                    news.getClients().add(client);
+                    client.getNewsSet().add(news);
+                }
+            } else {
+                for (long clientId : clientIds) {
+                    Client client = clientRepository.findById(clientId).get();
+                    news.getClients().add(client);
+                    client.getNewsSet().add(news);
+
+                }
             }
+            temp = newsRepository.save(news);
+            logger.info("Send news to client");
         } else {
-            for (long clientId : clientIds) {
-                Client client = clientRepository.findById(clientId).get();
-                news.getClients().add(client);
-                client.getNewsSet().add(news);
-            }
+            logger.info("There is no such news in database");
         }
-        return news;
+        return temp;
     }
 }

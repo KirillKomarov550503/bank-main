@@ -5,7 +5,7 @@ import com.netcracker.komarov.dao.entity.UnlockCardRequest;
 import java.util.Collection;
 
 public interface UnlockCardRequestService {
-    UnlockCardRequest unlockCardRequest(long cardId);
+    UnlockCardRequest addCardRequest(long cardId);
 
     Collection<UnlockCardRequest> getAllCardRequest();
 }

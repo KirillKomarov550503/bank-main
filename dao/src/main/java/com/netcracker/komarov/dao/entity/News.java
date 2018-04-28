@@ -9,7 +9,7 @@ import java.util.Set;
 @Table(name = "news")
 public class News {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "date", length = 20)

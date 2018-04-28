@@ -36,8 +36,8 @@
 //    public void getAllAccountRequest() {
 //        accountService.lockAccount(2);
 //        accountService.lockAccount(3);
-//        accountRequestService.unlockAccountRequest(2);
-//        accountRequestService.unlockAccountRequest(3);
+//        accountRequestService.addAccountRequest(2);
+//        accountRequestService.addAccountRequest(3);
 //        Collection<UnlockAccountRequest> requests = new ArrayList<>();
 //        UnlockAccountRequest accountRequest1 = new UnlockAccountRequest(1, 2);
 //        UnlockAccountRequest accountRequest2 = new UnlockAccountRequest(2, 3);
@@ -47,9 +47,9 @@
 //    }
 //
 //    @Test
-//    public void unlockAccountRequest() {
+//    public void addAccountRequest() {
 //        accountService.lockAccount(1);
-//        UnlockAccountRequest unlockAccountRequest = new UnlockAccountRequest(1, 1);
-//        Assert.assertEquals(unlockAccountRequest, accountRequestService.unlockAccountRequest(1));
+//        UnlockAccountRequest addAccountRequest = new UnlockAccountRequest(1, 1);
+//        Assert.assertEquals(addAccountRequest, accountRequestService.addAccountRequest(1));
 //    }
 //}

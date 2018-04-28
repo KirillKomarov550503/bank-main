@@ -36,8 +36,8 @@
 //    public void getAllCardRequest() {
 //        cardService.lockCard(1);
 //        cardService.lockCard(3);
-//        cardRequestService.unlockCardRequest(1);
-//        cardRequestService.unlockCardRequest(3);
+//        cardRequestService.addCardRequest(1);
+//        cardRequestService.addCardRequest(3);
 //        Collection<UnlockCardRequest> requests = new ArrayList<>();
 //        UnlockCardRequest cardRequest1 = new UnlockCardRequest(1, 1);
 //        UnlockCardRequest cardRequest2 = new UnlockCardRequest(2, 3);
@@ -47,9 +47,9 @@
 //    }
 //
 //    @Test
-//    public void unlockCardRequest() {
+//    public void addCardRequest() {
 //        cardService.lockCard(2);
 //        UnlockCardRequest cardRequest = new UnlockCardRequest(1, 2);
-//        Assert.assertEquals(cardRequest, cardRequestService.unlockCardRequest(2));
+//        Assert.assertEquals(cardRequest, cardRequestService.addCardRequest(2));
 //    }
 //}

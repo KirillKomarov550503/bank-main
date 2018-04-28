@@ -4,7 +4,6 @@ import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AdminRepository;
-import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,23 +16,20 @@ import java.util.Collection;
 @Service
 public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
-    private PersonRepository personRepository;
     private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
     public AdminServiceImpl(RepositoryFactory repositoryFactory) {
         this.adminRepository = repositoryFactory.getAdminRepository();
-        this.personRepository = repositoryFactory.getPersonRepository();
     }
 
     @Transactional
     @Override
     public Admin addAdmin(Person person) {
         Admin admin = new Admin();
-        admin.getPerson().setId(personRepository.save(person).getId());
+        admin.setPerson(person);
+        person.setAdmin(admin);
         Admin adminRes = adminRepository.save(admin);
-        personRepository.flush();
-        adminRepository.flush();
         logger.info("Add to system new admin");
         return adminRes;
     }

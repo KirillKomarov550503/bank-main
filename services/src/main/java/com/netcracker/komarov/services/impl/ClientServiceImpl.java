@@ -4,7 +4,6 @@ import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.ClientRepository;
-import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +15,11 @@ import java.util.Collection;
 
 @Service
 public class ClientServiceImpl implements ClientService {
-    private PersonRepository personRepository;
     private ClientRepository clientRepository;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(RepositoryFactory repositoryFactory) {
-        this.personRepository = repositoryFactory.getPersonRepository();
         this.clientRepository = repositoryFactory.getClientRepository();
     }
 
@@ -36,7 +33,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client registration(Person person) {
         Client client = new Client();
-        client.getPerson().setId(personRepository.save(person).getId());
+        client.setPerson(person);
+        person.setClient(client);
         logger.info("Registration of new client");
         return clientRepository.save(client);
     }

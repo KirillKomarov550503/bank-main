@@ -79,8 +79,8 @@
 //        Assert.assertEquals("Must return empty list", cards, cardService.getAllUnlockCardRequest());
 //        cardService.lockCard(1);
 //        cardService.lockCard(3);
-//        cardRequestService.unlockCardRequest(1);
-//        cardRequestService.unlockCardRequest(3);
+//        cardRequestService.addCardRequest(1);
+//        cardRequestService.addCardRequest(3);
 //        Card card2 = new Card(1, true, 4234, 3, 100);
 //        Card card3 = new Card(3, true, 4004, 1, 101);
 //        cards.add(card2);
@@ -91,7 +91,7 @@
 //    @Test
 //    public void unlockCard() {
 //        cardService.lockCard(1);
-//        cardRequestService.unlockCardRequest(1);
+//        cardRequestService.addCardRequest(1);
 //        cardService.unlockCard(1);
 //        Collection<Card> accounts = new ArrayList<>();
 //        Card card1 = new Card(1, false, 4234, 3, 100);

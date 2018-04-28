@@ -54,7 +54,7 @@
 //    @Test
 //    public void unlockAccount() {
 //        accountService.lockAccount(1);
-//        accountRequestService.unlockAccountRequest(1);
+//        accountRequestService.addAccountRequest(1);
 //        accountService.unlockAccount(1);
 //        Collection<Account> accounts = new ArrayList<>();
 //        Account account1 = new Account(1, 0.0, false, 1, 423);
@@ -72,8 +72,8 @@
 //        Assert.assertEquals("Must return empty list", accounts, accountService.getAllUnlockAccountRequest());
 //        accountService.lockAccount(1);
 //        accountService.lockAccount(3);
-//        accountRequestService.unlockAccountRequest(1);
-//        accountRequestService.unlockAccountRequest(3);
+//        accountRequestService.addAccountRequest(1);
+//        accountRequestService.addAccountRequest(3);
 //        Account account1 = new Account(1, 0.0, true, 1, 423);
 //        Account account3 = new Account(3, 0.0, true, 3, 123);
 //        accounts.add(account1);

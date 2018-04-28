@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name="person")
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name="name", length = 50)
@@ -147,15 +147,13 @@ public class Person {
                 Objects.equals(surname, person.surname) &&
                 role == person.role &&
                 Objects.equals(login, person.login) &&
-                Objects.equals(password, person.password) &&
-                Objects.equals(admin, person.admin) &&
-                Objects.equals(client, person.client);
+                Objects.equals(password, person.password);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, surname, phoneNumber, role, login, password, passportId, admin, client);
+        return Objects.hash(id, name, surname, phoneNumber, role, login, password, passportId);
     }
 
     @Override
@@ -169,8 +167,6 @@ public class Person {
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", passportId=" + passportId +
-                ", admin=" + admin +
-                ", client=" + client +
                 '}';
     }
 }

@@ -1,46 +1,75 @@
 package com.netcracker.komarov.dao.entity;
 
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class Client extends BaseEntity {
-    private long personId;
+@Entity
+@Table(name = "client")
+public class Client {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-    public long getPersonId() {
-        return personId;
+    @OneToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<News> newsSet = new HashSet<>();
+
+    public Client() {
     }
 
-    public void setPersonId(long personId) {
-        this.personId = personId;
+    public Client(Person person) {
+        this.person = person;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public Set<News> getNewsSet() {
+        return newsSet;
+    }
+
+    public void setNewsSet(Set<News> newsSet) {
+        this.newsSet = newsSet;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Client client = (Client) o;
-        return personId == client.personId;
+        return id == client.id &&
+                Objects.equals(person, client.person);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), personId);
-    }
-
-    public Client() {
-    }
-
-    public Client(long id, long personId) {
-        super(id);
-        this.personId = personId;
+        return Objects.hash(id, person);
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "personId=" + personId +
-                ", id=" + id +
+                "id=" + id +
+                ", person=" + person +
                 '}';
     }
 }

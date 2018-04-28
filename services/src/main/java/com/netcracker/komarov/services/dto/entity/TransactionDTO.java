@@ -1,50 +1,22 @@
-package com.netcracker.komarov.dao.entity;
+package com.netcracker.komarov.services.dto.entity;
 
-import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "transaction")
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    @Column(name = "date", length = 20)
+public class TransactionDTO extends AbstractDTO {
+    private long accountFromId;
+    private long accountToId;
+    private double money;
+    private long clientId;
     private String date;
 
-    @Column(name = "from_id")
-    private long accountFromId;
-
-    @Column(name = "to_id")
-    private long accountToId;
-
-    @Column(name = "money")
-    private double money;
-
-    public Transaction() {
+    public TransactionDTO() {
     }
 
-    public Transaction(String date, long accountFromId, long accountToId, double money) {
-        this.date = date;
+    public TransactionDTO(long accountFromId, long accountToId, double money, long clientId, String date) {
         this.accountFromId = accountFromId;
         this.accountToId = accountToId;
         this.money = money;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
+        this.clientId = clientId;
         this.date = date;
     }
 
@@ -72,32 +44,48 @@ public class Transaction {
         this.money = money;
     }
 
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return id == that.id &&
-                accountFromId == that.accountFromId &&
+        TransactionDTO that = (TransactionDTO) o;
+        return accountFromId == that.accountFromId &&
                 accountToId == that.accountToId &&
                 Double.compare(that.money, money) == 0 &&
+                clientId == that.clientId &&
                 Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, date, accountFromId, accountToId, money);
+        return Objects.hash(accountFromId, accountToId, money, clientId, date);
     }
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "id=" + id +
-                ", date='" + date + '\'' +
-                ", accountFromId=" + accountFromId +
+        return "TransactionDTO{" +
+                "accountFromId=" + accountFromId +
                 ", accountToId=" + accountToId +
                 ", money=" + money +
+                ", clientId=" + clientId +
+                ", date='" + date + '\'' +
                 '}';
     }
 }

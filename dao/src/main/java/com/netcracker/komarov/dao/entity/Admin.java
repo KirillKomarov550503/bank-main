@@ -1,46 +1,76 @@
 package com.netcracker.komarov.dao.entity;
 
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class Admin extends BaseEntity {
-    private long personId;
+@Entity
+@Table(name = "admin")
+public class Admin {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-    public long getPersonId() {
-        return personId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id")
+    private Person person;
+
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<News> news = new HashSet<>();
+
+    public Admin() {
     }
 
-    public void setPersonId(long personId) {
-        this.personId = personId;
+    public Admin(Person person) {
+        this.person = person;
+    }
+
+    public Set<News> getNews() {
+        return news;
+    }
+
+    public void setNews(Set<News> news) {
+        this.news = news;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Admin admin = (Admin) o;
-        return personId == admin.personId;
+        return id == admin.id &&
+                Objects.equals(person, admin.person);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), personId);
+        return Objects.hash(id, person);
     }
-
-    public Admin(){}
 
     @Override
     public String toString() {
         return "Admin{" +
-                "personId=" + personId +
-                ", id=" + id +
+                "id=" + id +
+                ", person=" + person +
                 '}';
-    }
-
-    public Admin(long id, long personId) {
-        super(id);
-        this.personId = personId;
     }
 
 }

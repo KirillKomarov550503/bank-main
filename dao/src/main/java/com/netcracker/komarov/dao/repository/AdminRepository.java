@@ -1,9 +1,9 @@
 package com.netcracker.komarov.dao.repository;
 
-import com.netcracker.komarov.dao.Film;
+import com.netcracker.komarov.dao.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FilmRepository extends JpaRepository<Film, Long> {
+public interface AdminRepository extends JpaRepository<Admin, Long> {
 }

@@ -2,146 +2,120 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.UnlockAccountRequest;
-import com.netcracker.komarov.dao.interfaces.AccountDAO;
-import com.netcracker.komarov.dao.interfaces.UnlockAccountRequestDAO;
-import com.netcracker.komarov.dao.utils.DataBase;
-import com.netcracker.komarov.services.factory.DAOFactory;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.AccountRepository;
+import com.netcracker.komarov.dao.repository.UnlockAccountRequestRepository;
 import com.netcracker.komarov.services.interfaces.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    private AccountDAO accountDAO;
-    private UnlockAccountRequestDAO unlockAccountRequestDAO;
+    private AccountRepository accountRepository;
+    private UnlockAccountRequestRepository unlockAccountRequestRepository;
+    private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
-    public AccountServiceImpl(DAOFactory daoFactory) {
-        this.accountDAO = daoFactory.getAccountDAO();
-        this.unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+    public AccountServiceImpl(RepositoryFactory repositoryFactory) {
+        this.accountRepository = repositoryFactory.getAccountRepository();
+        this.unlockAccountRequestRepository = repositoryFactory.getUnlockAccountRequestRepository();
     }
 
+    @Transactional
     @Override
     public Account lockAccount(long accountId) {
         Account temp = null;
-        try {
-            Account account = accountDAO.getById(accountId);
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
             account.setLocked(true);
-            temp = accountDAO.update(account);
-        } catch (SQLException e) {
-            e.printStackTrace();
+            temp = accountRepository.save(account);
+            accountRepository.flush();
+            logger.info("Successful locking your account");
         }
         return temp;
     }
 
+    @Transactional
     @Override
     public Collection<Account> getAllAccounts() {
-        Collection<Account> accounts = null;
-        try {
-            accounts = accountDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return accounts;
+        return accountRepository.findAll();
     }
 
+    @Transactional
     @Override
     public void unlockAccount(long accountId) {
-        UnlockAccountRequest request = null;
-        Account account = null;
-        try {
-            request = unlockAccountRequestDAO.getAll()
-                    .stream()
-                    .filter(unlockAccountRequest -> unlockAccountRequest.getAccountId() == accountId)
-                    .findFirst()
-                    .orElse(null);
-            account = accountDAO.getById(request.getAccountId());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        Connection connection = DataBase.getConnection();
-        try {
-            account.setLocked(false);
-            connection.setAutoCommit(false);
-            accountDAO.update(account);
-            unlockAccountRequestDAO.delete(request.getId());
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-                connection.setAutoCommit(true);
-            } catch (SQLException e1) {
-                System.out.println("SQL exception");
+        Optional<UnlockAccountRequest> optionalRequest = unlockAccountRequestRepository.findAll()
+                .stream()
+                .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
+                .findFirst();
+        UnlockAccountRequest request;
+        if (optionalRequest.isPresent()) {
+            Account account;
+            request = optionalRequest.get();
+            Optional<Account> optionalAccount = accountRepository.findById(request.getId());
+            if (optionalAccount.isPresent()) {
+                account = optionalAccount.get();
+                accountRepository.save(account);
+                unlockAccountRequestRepository.deleteById(request.getId());
+                unlockAccountRequestRepository.flush();
+                logger.info("Successful unlocking your account");
             }
-            System.out.println("SQL exception");
         }
     }
 
+    @Transactional
     @Override
     public Collection<Account> getAllUnlockAccountRequest() {
         Collection<Account> accounts = new ArrayList<>();
-        try {
-            Collection<UnlockAccountRequest> requests = unlockAccountRequestDAO.getAll();
-            for (UnlockAccountRequest request : requests) {
-                accounts.add(accountDAO.getById(request.getAccountId()));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Collection<UnlockAccountRequest> requests = unlockAccountRequestRepository.findAll();
+        for (UnlockAccountRequest request : requests) {
+            accounts.add(accountRepository.findById(request.getAccount().getId()).get());
+        }
+        if (accounts.size() == 0) {
+            logger.info("There is no request to unlock account");
+        } else {
+            logger.info("Return all request to unlock account");
         }
         return accounts;
     }
 
+    @Transactional
     @Override
     public Account refill(long accountId) {
-        Account temp = null;
-        try {
-            Account account = accountDAO.getById(accountId);
-            double balance = account.getBalance();
-            account.setBalance(balance + 100.0);
-            temp = accountDAO.update(account);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return temp;
+        Account account = accountRepository.findById(accountId).get();
+        double balance = account.getBalance();
+        account.setBalance(balance + 100.0);
+        logger.info("Refill account");
+        return accountRepository.saveAndFlush(account);
     }
 
+    @Transactional
     @Override
     public Collection<Account> getLockAccounts(long clientId) {
-        Collection<Account> accounts = null;
-        try {
-            accounts = accountDAO.getLockedAccountsByClientId(clientId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return accounts;
+        logger.info("Return all locked accounts by client ID");
+        return accountRepository.findAccountsByLockedAndClientId(clientId, true);
     }
 
+    @Transactional
     @Override
     public Collection<Account> getUnlockAccounts(long clientId) {
-        Collection<Account> accounts = null;
-        try {
-            accounts = accountDAO.getUnlockedAccountsByClientId(clientId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return accounts;
+        logger.info("Return all unlocked accounts by client ID");
+        return accountRepository.findAccountsByLockedAndClientId(clientId, false);
     }
 
+    @Transactional
     @Override
     public Account createAccount(Account account, long clientId) {
-        account.setClientId(clientId);
-        Account temp = null;
-        try {
-            temp = accountDAO.add(account);
-        } catch (SQLException e) {
-            System.out.println("SQL exception");
-        }
-        return temp;
+        account.getClient().setId(clientId);
+        logger.info("Creation of account");
+        return accountRepository.saveAndFlush(account);
     }
 }

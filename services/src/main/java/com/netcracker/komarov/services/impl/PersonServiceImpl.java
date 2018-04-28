@@ -1,32 +1,32 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.interfaces.PersonDAO;
-import com.netcracker.komarov.services.factory.DAOFactory;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 @Service
 public class PersonServiceImpl implements PersonService {
-    private PersonDAO personDAO;
+    private PersonRepository personRepository;
+    private Logger logger = LoggerFactory.getLogger(PersonServiceImpl.class);
 
     @Autowired
-    public PersonServiceImpl(DAOFactory daoFactory) {
-        this.personDAO = daoFactory.getPersonDAO();
+    public PersonServiceImpl(RepositoryFactory repositoryFactory) {
+        this.personRepository = repositoryFactory.getPersonRepository();
     }
 
+    @Transactional
     @Override
     public Collection<Person> getAllPeople() {
-        Collection<Person> temp = null;
-        try {
-            temp = personDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return temp;
+        logger.info("Return all people");
+        return personRepository.findAll();
     }
 }
+

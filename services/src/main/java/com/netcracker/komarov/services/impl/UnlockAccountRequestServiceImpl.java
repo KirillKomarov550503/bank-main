@@ -1,47 +1,44 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.UnlockAccountRequest;
-import com.netcracker.komarov.dao.interfaces.UnlockAccountRequestDAO;
-import com.netcracker.komarov.services.factory.DAOFactory;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.UnlockAccountRequestRepository;
 import com.netcracker.komarov.services.interfaces.UnlockAccountRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 @Service
 public class UnlockAccountRequestServiceImpl implements UnlockAccountRequestService {
-    private UnlockAccountRequestDAO unlockAccountRequestDAO;
+    private UnlockAccountRequestRepository unlockAccountRequestRepository;
+    private Logger logger = LoggerFactory.getLogger(UnlockAccountRequestServiceImpl.class);
 
     @Autowired
-    public UnlockAccountRequestServiceImpl(DAOFactory daoFactory) {
-        this.unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+    public UnlockAccountRequestServiceImpl(RepositoryFactory repositoryFactory) {
+        this.unlockAccountRequestRepository = repositoryFactory.getUnlockAccountRequestRepository();
     }
 
+    @Transactional
     @Override
     public Collection<UnlockAccountRequest> getAllAccountRequest() {
-        Collection<UnlockAccountRequest> temp = null;
-        try {
-            temp = unlockAccountRequestDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return temp;
+        logger.info("Return all request to unlock account");
+        return unlockAccountRequestRepository.findAll();
     }
 
+    @Transactional
     @Override
     public UnlockAccountRequest unlockAccountRequest(long accountId) {
         UnlockAccountRequest temp = null;
-        try {
-            if (unlockAccountRequestDAO.getByAccountId(accountId) == null) {
-                UnlockAccountRequest request = new UnlockAccountRequest();
-                request.setAccountId(accountId);
-                temp = unlockAccountRequestDAO.add(request);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (unlockAccountRequestRepository.findUnlockAccountRequestByAccountId(accountId) == null) {
+            UnlockAccountRequest request = new UnlockAccountRequest();
+            request.getAccount().setId(accountId);
+            temp = unlockAccountRequestRepository.save(request);
         }
+        logger.info("Account was unlocked");
         return temp;
     }
 }

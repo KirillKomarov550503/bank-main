@@ -4,7 +4,7 @@ import com.netcracker.komarov.dao.entity.News;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
-import com.netcracker.komarov.services.dto.TransactionDTO;
+import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -95,7 +95,7 @@ public class ClientMenu implements Menu {
                     transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
                     break;
                 case 9:
-                    newsService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
+                    newsService.getAllClientNewsById(Input.inputClientId()).forEach(Output::printNews);
                     break;
                 case 10:
                     accountService.refill(Input.inputAccountId());

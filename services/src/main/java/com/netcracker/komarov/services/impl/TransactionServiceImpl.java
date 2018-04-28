@@ -2,52 +2,51 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Transaction;
-import com.netcracker.komarov.dao.interfaces.AccountDAO;
-import com.netcracker.komarov.dao.interfaces.TransactionDAO;
-import com.netcracker.komarov.dao.utils.DataBase;
-import com.netcracker.komarov.services.dto.TransactionDTO;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.AccountRepository;
+import com.netcracker.komarov.dao.repository.TransactionRepository;
+import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.TransactionException;
-import com.netcracker.komarov.services.factory.DAOFactory;
 import com.netcracker.komarov.services.interfaces.TransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
-    private TransactionDAO transactionDAO;
-    private AccountDAO accountDAO;
+    private TransactionRepository transactionRepository;
+    private AccountRepository accountRepository;
+    private Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
-    public TransactionServiceImpl(DAOFactory daoFactory) {
-        this.transactionDAO = daoFactory.getTransactionDAO();
-        this.accountDAO = daoFactory.getAccountDAO();
+    public TransactionServiceImpl(RepositoryFactory repositoryFactory) {
+        this.transactionRepository = repositoryFactory.getTransactionRepository();
+        this.accountRepository = repositoryFactory.getAccountRepository();
     }
 
+    @Transactional
     @Override
     public Collection<Transaction> showStories(long clientId) {
-        Collection<Transaction> transactions = null;
-        try {
-            transactions = transactionDAO.getByClientId(clientId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return transactions;
+        logger.info("Return transaction story by client ID");
+        return transactionRepository.findTransactionsByClientId(clientId);
     }
 
+    @Transactional
     @Override
     public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
-        Connection connection = DataBase.getConnection();
         Transaction newTransaction = null;
-        try {
-            Account accountFrom = accountDAO.getById(transactionDTO.getAccountFromId());
-            if (accountFrom.getClientId() == transactionDTO.getClientId()) {
-                Account accountTo = accountDAO.getById(transactionDTO.getAccountToId());
+        Optional<Account> optionalAccount = accountRepository.findById(transactionDTO.getAccountFromId());
+        if (optionalAccount.isPresent()) {
+            Account accountFrom = optionalAccount.get();
+            if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
+                Account accountTo = accountRepository.findById(transactionDTO.getAccountToId()).get();
                 if (accountFrom.isLocked()) {
                     throw new TransactionException("Your account is lock");
                 }
@@ -64,28 +63,18 @@ public class TransactionServiceImpl implements TransactionService {
                 accountTo.setBalance(moneyTo + transactionMoney);
                 Transaction transaction = new Transaction();
 
-                connection.setAutoCommit(false);
-                accountDAO.update(accountFrom);
-                accountDAO.update(accountTo);
+                accountRepository.save(accountFrom);
+                accountRepository.save(accountTo);
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                 transaction.setDate(simpleDateFormat.format(new Date()));
                 transaction.setAccountFromId(accountFrom.getId());
                 transaction.setAccountToId(accountTo.getId());
                 transaction.setMoney(transactionMoney);
-                newTransaction = transactionDAO.add(transaction);
-                connection.commit();
-                connection.setAutoCommit(true);
+                newTransaction = transactionRepository.save(transaction);
             }
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-                connection.setAutoCommit(true);
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-            e.printStackTrace();
         }
+        logger.info("Transaction was completed");
         return newTransaction;
     }
 }

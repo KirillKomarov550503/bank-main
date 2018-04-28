@@ -6,7 +6,7 @@ import com.netcracker.komarov.dao.entity.NewsStatus;
 import java.util.Collection;
 
 public interface NewsService {
-    Collection<News> getAllPersonalNews(long clientId);
+    Collection<News> getAllClientNewsById(long clientId);
 
     News getPersonalNews(long newsId);
 
@@ -17,4 +17,6 @@ public interface NewsService {
     Collection<News> getAllNewsByStatus(NewsStatus newsStatus);
 
     News addGeneralNews(News news, long adminId);
+
+    News addClientNews(Collection<Long> clientIds, long newsId);
 }

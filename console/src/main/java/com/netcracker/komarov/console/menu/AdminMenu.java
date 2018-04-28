@@ -4,34 +4,19 @@ import com.netcracker.komarov.console.utils.Input;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.interfaces.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.Scanner;
 
-@Component
+@Controller
 public class AdminMenu implements Menu {
     private AdminService adminService;
     private AccountService accountService;
     private CardService cardService;
     private ClientService clientService;
     private NewsService newsService;
-    private ClientNewsService clientNewsService;
     private PersonService personService;
-
-    @Autowired
-    public AdminMenu(AdminService adminService, AccountService accountService,
-                     CardService cardService, ClientService clientService,
-                     NewsService newsService, ClientNewsService clientNewsService, PersonService personService) {
-        this.adminService = adminService;
-        this.accountService = accountService;
-        this.cardService = cardService;
-        this.clientService = clientService;
-        this.newsService = newsService;
-        this.clientNewsService = clientNewsService;
-        this.personService = personService;
-    }
 
     @Override
     public void printTextMenu() {
@@ -75,7 +60,7 @@ public class AdminMenu implements Menu {
                     newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
                     long newsId = Input.inputNewsId();
                     Collection<Long> clientIds = Input.inputClientIds();
-                    clientNewsService.addClientNews(clientIds, newsId);
+                    newsService.addClientNews(clientIds, newsId);
                     break;
                 case 5:
                     personService.getAllPeople().forEach(System.out::println);
@@ -93,7 +78,7 @@ public class AdminMenu implements Menu {
                     newsService.getAllGeneralNews().forEach(System.out::println);
                     break;
                 case 10:
-                    clientNewsService.getAllClientNews().forEach(System.out::println);
+                    newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
                     break;
                 case 11:
                     accountService.getAllUnlockAccountRequest().forEach(System.out::println);

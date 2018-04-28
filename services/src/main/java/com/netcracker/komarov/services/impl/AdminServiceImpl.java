@@ -2,60 +2,46 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.interfaces.AdminDAO;
-import com.netcracker.komarov.dao.interfaces.PersonDAO;
-import com.netcracker.komarov.dao.utils.DataBase;
-import com.netcracker.komarov.services.factory.DAOFactory;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.AdminRepository;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.interfaces.AdminService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 
-@Component
+@Service
 public class AdminServiceImpl implements AdminService {
-    private AdminDAO adminDAO;
-    private PersonDAO personDAO;
+    private AdminRepository adminRepository;
+    private PersonRepository personRepository;
+    private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
-    public AdminServiceImpl(DAOFactory daoFactory) {
-        this.adminDAO = daoFactory.getAdminDAO();
-        this.personDAO = daoFactory.getPersonDAO();
+    public AdminServiceImpl(RepositoryFactory repositoryFactory) {
+        this.adminRepository = repositoryFactory.getAdminRepository();
+        this.personRepository = repositoryFactory.getPersonRepository();
     }
 
+    @Transactional
     @Override
     public Admin addAdmin(Person person) {
-        Connection connection = DataBase.getConnection();
-        Admin adminRes = null;
-        try {
-            connection.setAutoCommit(false);
-            Admin admin = new Admin();
-            admin.setPersonId(personDAO.add(person).getId());
-            adminRes = adminDAO.add(admin);
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-                connection.setAutoCommit(true);
-            } catch (SQLException e1) {
-                System.out.println("SQL exception");
-            }
-            System.out.println("SQL exception");
-        }
+        Admin admin = new Admin();
+        admin.getPerson().setId(personRepository.save(person).getId());
+        Admin adminRes = adminRepository.save(admin);
+        personRepository.flush();
+        adminRepository.flush();
+        logger.info("Add to system new admin");
         return adminRes;
     }
 
+    @Transactional
     @Override
     public Collection<Admin> getAllAdmin() {
-        Collection<Admin> admins = null;
-        try {
-            admins = adminDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return admins;
+        logger.info("Return all admins");
+        return adminRepository.findAll();
     }
 }

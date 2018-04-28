@@ -1,21 +1,43 @@
 package com.netcracker.komarov.dao.entity;
 
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class Account extends BaseEntity {
+@Entity
+@Table(name = "account")
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(name = "balance")
     private double balance;
+
+    @Column(name = "locked")
     private boolean locked;
-    private long clientId;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
+    @Column(name = "account_id")
     private long accountId;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Card> cards = new HashSet<>();
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UnlockAccountRequest unlockAccountRequest;
 
     public Account() {
     }
 
-    public Account(long id, double balance, boolean locked, long clientId, long accountId) {
-        super(id);
+    public Account(double balance, boolean locked, Client client, long accountId) {
         this.balance = balance;
         this.locked = locked;
-        this.clientId = clientId;
+        this.client = client;
         this.accountId = accountId;
     }
 
@@ -43,39 +65,65 @@ public class Account extends BaseEntity {
         this.locked = locked;
     }
 
-    public long getClientId() {
-        return clientId;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "balance=" + balance +
-                ", locked=" + locked +
-                ", clientId=" + clientId +
-                ", id=" + id +
-                '}';
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Set<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(Set<Card> cards) {
+        this.cards = cards;
+    }
+
+    public UnlockAccountRequest getUnlockAccountRequest() {
+        return unlockAccountRequest;
+    }
+
+    public void setUnlockAccountRequest(UnlockAccountRequest unlockAccountRequest) {
+        this.unlockAccountRequest = unlockAccountRequest;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Account account = (Account) o;
-        return Double.compare(account.balance, balance) == 0 &&
+        return id == account.id &&
+                Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
-                clientId == account.clientId &&
-                accountId == account.accountId;
+                accountId == account.accountId &&
+                Objects.equals(client, account.client);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), balance, locked, clientId, accountId);
+        return Objects.hash(id, balance, locked, client, accountId);
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", balance=" + balance +
+                ", locked=" + locked +
+                ", client=" + client +
+                ", accountId=" + accountId +
+                '}';
+    }
+
 }

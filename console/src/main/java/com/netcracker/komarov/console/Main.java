@@ -4,15 +4,11 @@ import com.netcracker.komarov.console.menu.AdminMenu;
 import com.netcracker.komarov.console.menu.ClientMenu;
 import com.netcracker.komarov.console.menu.Menu;
 import com.netcracker.komarov.console.menu.VisitorMenu;
-import com.netcracker.komarov.dao.utils.DataBase;
-import com.netcracker.komarov.dao.utils.PropertyDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -22,6 +18,7 @@ import java.util.Scanner;
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.netcracker.komarov"})
 @EnableJpaRepositories(basePackages = "com.netcracker.komarov.dao.repository")
+@EntityScan(basePackages = "com.netcracker.komarov.dao")
 public class Main implements CommandLineRunner {
     private AdminMenu adminMenu;
     private ClientMenu clientMenu;
@@ -46,7 +43,6 @@ public class Main implements CommandLineRunner {
     }
 
     private void enterLike() {
-        DataBase.executeProperty("init.table.path", "dao\\src\\main\\resources\\path.properties");
         while (true) {
             printMainMenu();
             Scanner scanner = new Scanner(System.in);
@@ -64,7 +60,6 @@ public class Main implements CommandLineRunner {
                         menu = adminMenu;
                         break;
                     case 0:
-                        DataBase.closeConnection();
                         System.exit(0);
                         break;
                     default:
@@ -77,11 +72,6 @@ public class Main implements CommandLineRunner {
                 System.out.println("Wrong input variant");
             }
         }
-    }
-
-    private static String getPathToDB() {
-        PropertyDB propertyDB = new PropertyDB();
-        return propertyDB.getProperty("database.path");
     }
 
     @Override

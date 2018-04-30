@@ -8,21 +8,20 @@ public class TransactionConverter implements Converter<TransactionDTO, Transacti
     @Override
     public TransactionDTO convertToDTO(Transaction transaction) {
         TransactionDTO dto = new TransactionDTO();
-        dto.setMoney(transaction.getMoney());
         dto.setAccountFromId(transaction.getAccountFromId());
         dto.setAccountToId(transaction.getAccountToId());
         dto.setDate(transaction.getDate());
+        dto.setMoney(transaction.getMoney());
         return dto;
     }
 
     @Override
-    public Transaction convertToEntity(TransactionDTO transactionDTO) {
+    public Transaction convertToEntity(TransactionDTO dto) {
         Transaction transaction = new Transaction();
-        transaction.setAccountFromId(transactionDTO.getAccountFromId());
-        transaction.setAccountToId(transactionDTO.getAccountToId());
-        transaction.setMoney(transactionDTO.getMoney());
-        transaction.setDate(transactionDTO.getDate());
-        return null;
+        transaction.setAccountFromId(dto.getAccountFromId());
+        transaction.setAccountToId(dto.getAccountToId());
+        transaction.setDate(dto.getDate());
+        transaction.setMoney(dto.getMoney());
+        return transaction;
     }
 }
-

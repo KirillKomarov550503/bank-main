@@ -16,14 +16,12 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
     }
 
     @Override
-    public Person convertToEntity(PersonDTO personDTO) {
+    public Person convertToEntity(PersonDTO dto) {
         Person person = new Person();
-        person.setName(personDTO.getName());
-        person.setSurname(personDTO.getSurname());
-        person.setLogin(personDTO.getLogin());
-        person.setPassword(personDTO.getPassword());
-        person.setPassportId(personDTO.getPassportId());
-        person.setPhoneNumber(personDTO.getPhoneNumber());
+        person.setName(dto.getName());
+        person.setSurname(dto.getSurname());
+        person.setPassportId(dto.getPassportId());
+        person.setPhoneNumber(dto.getPhoneNumber());
         return person;
     }
 }

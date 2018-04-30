@@ -16,7 +16,7 @@ public interface NewsService {
 
     Collection<News> getAllNewsByStatus(NewsStatus newsStatus);
 
-    News addGeneralNews(News news, long adminId);
+    News addNews(News news, long adminId, String status);
 
     News addClientNews(Collection<Long> clientIds, long newsId);
 }

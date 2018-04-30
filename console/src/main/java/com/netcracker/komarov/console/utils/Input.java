@@ -67,8 +67,6 @@ public class Input {
 
     public static TransactionDTO inputTransactionDTO() {
         Scanner scanner = new Scanner(System.in);
-        print("Input your client ID: ");
-        long clientId = scanner.nextLong();
         print("Input account from ID: ");
         long accountFromId = scanner.nextLong();
         print("Input account to ID: ");
@@ -78,7 +76,6 @@ public class Input {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setAccountFromId(accountFromId);
         transactionDTO.setAccountToId(accountToId);
-        transactionDTO.setClientId(clientId);
         transactionDTO.setMoney(money);
         return transactionDTO;
     }
@@ -97,15 +94,13 @@ public class Input {
         print("Input main text of article: ");
         String text = scanner.nextLine();
         news.setText(text);
-
-        print("Input symbol of news status ('general' or 'client'): ");
-        String status = scanner.nextLine().toLowerCase();
-        if (status.equals("general")) {
-            news.setNewsStatus(NewsStatus.GENERAL);
-        } else if (status.equals("client")) {
-            news.setNewsStatus(NewsStatus.CLIENT);
-        }
         return news;
+    }
+
+    public static String inputStatus() {
+        Scanner scanner = new Scanner(System.in);
+        print("Input status of news ('general' or 'client'): ");
+        return scanner.nextLine().toLowerCase();
     }
 
 

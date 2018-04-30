@@ -70,7 +70,7 @@ public class ClientMenu implements Menu {
                     break;
                 case 3:
                     try {
-                        transactionService.createTransaction(Input.inputTransactionDTO());
+                        transactionService.createTransaction(Input.inputTransactionDTO(), Input.inputClientId());
                     } catch (TransactionException e) {
                         System.out.println(e.getMessage());
                     }

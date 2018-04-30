@@ -6,17 +6,15 @@ public class TransactionDTO extends AbstractDTO {
     private long accountFromId;
     private long accountToId;
     private double money;
-    private long clientId;
     private String date;
 
     public TransactionDTO() {
     }
 
-    public TransactionDTO(long accountFromId, long accountToId, double money, long clientId, String date) {
+    public TransactionDTO(long accountFromId, long accountToId, double money, String date) {
         this.accountFromId = accountFromId;
         this.accountToId = accountToId;
         this.money = money;
-        this.clientId = clientId;
         this.date = date;
     }
 
@@ -44,48 +42,11 @@ public class TransactionDTO extends AbstractDTO {
         this.money = money;
     }
 
-    public long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
-    }
-
     public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransactionDTO that = (TransactionDTO) o;
-        return accountFromId == that.accountFromId &&
-                accountToId == that.accountToId &&
-                Double.compare(that.money, money) == 0 &&
-                clientId == that.clientId &&
-                Objects.equals(date, that.date);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(accountFromId, accountToId, money, clientId, date);
-    }
-
-    @Override
-    public String toString() {
-        return "TransactionDTO{" +
-                "accountFromId=" + accountFromId +
-                ", accountToId=" + accountToId +
-                ", money=" + money +
-                ", clientId=" + clientId +
-                ", date='" + date + '\'' +
-                '}';
     }
 }

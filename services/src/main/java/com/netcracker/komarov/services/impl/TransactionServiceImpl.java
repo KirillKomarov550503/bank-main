@@ -40,12 +40,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public Transaction createTransaction(TransactionDTO transactionDTO) throws TransactionException {
+    public Transaction createTransaction(TransactionDTO transactionDTO, long clientId) throws TransactionException {
         Transaction newTransaction = null;
         Optional<Account> optionalAccount = accountRepository.findById(transactionDTO.getAccountFromId());
         if (optionalAccount.isPresent()) {
             Account accountFrom = optionalAccount.get();
-            if (accountFrom.getClient().getId() == transactionDTO.getClientId()) {
+            if (accountFrom.getClient().getId() == clientId) {
                 Account accountTo = accountRepository.findById(transactionDTO.getAccountToId()).get();
                 if (accountFrom.isLocked()) {
                     logger.info("Your account is lock");

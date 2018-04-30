@@ -5,25 +5,21 @@ import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 
 public class NewsConverter implements Converter<NewsDTO, News> {
-
     @Override
-    public NewsDTO convertToDTO(News entity) {
+    public NewsDTO convertToDTO(News news) {
         NewsDTO newsDTO = new NewsDTO();
-        newsDTO.setTitle(entity.getTitle());
-        newsDTO.setText(entity.getText());
-        newsDTO.setDate(entity.getDate());
+        newsDTO.setDate(news.getDate());
+        newsDTO.setText(news.getText());
+        newsDTO.setDate(news.getDate());
         return newsDTO;
     }
 
     @Override
     public News convertToEntity(NewsDTO dto) {
         News news = new News();
-        news.setText(dto.getText());
-        news.setNewsStatus(dto.getNewsStatus());
         news.setTitle(dto.getTitle());
-        news.getAdmin().setId(dto.getAdminId());
+        news.setText(dto.getText());
         news.setDate(dto.getDate());
         return news;
     }
 }
-

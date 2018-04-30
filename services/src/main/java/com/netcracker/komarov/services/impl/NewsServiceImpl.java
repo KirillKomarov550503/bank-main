@@ -75,7 +75,12 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public News addGeneralNews(News news, long adminId) {
+    public News addNews(News news, long adminId, String status) {
+        if(status.equals("client")){
+            news.setNewsStatus(NewsStatus.CLIENT);
+        } else if(status.equals("general")){
+            news.setNewsStatus(NewsStatus.GENERAL);
+        }
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
         News temp = null;
         if (optionalAdmin.isPresent()) {

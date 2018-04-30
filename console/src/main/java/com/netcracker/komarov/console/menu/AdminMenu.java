@@ -6,7 +6,6 @@ import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.Scanner;
@@ -67,7 +66,7 @@ public class AdminMenu implements Menu {
                     cardService.unlockCard(Input.inputCardId());
                     break;
                 case 3:
-                    newsService.addGeneralNews(Input.inputNews(), Input.inputAdminId());
+                    newsService.addNews(Input.inputNews(), Input.inputAdminId(), Input.inputStatus());
                     break;
                 case 4:
                     newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);

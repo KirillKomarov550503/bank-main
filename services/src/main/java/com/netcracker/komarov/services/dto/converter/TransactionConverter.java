@@ -9,11 +9,15 @@ import org.springframework.stereotype.Component;
 public class TransactionConverter implements Converter<TransactionDTO, Transaction> {
     @Override
     public TransactionDTO convertToDTO(Transaction transaction) {
-        TransactionDTO dto = new TransactionDTO();
-        dto.setAccountFromId(transaction.getAccountFromId());
-        dto.setAccountToId(transaction.getAccountToId());
-        dto.setDate(transaction.getDate());
-        dto.setMoney(transaction.getMoney());
+        TransactionDTO dto = null;
+        if (transaction != null) {
+            dto = new TransactionDTO();
+            dto.setId(transaction.getId());
+            dto.setAccountFromId(transaction.getAccountFromId());
+            dto.setAccountToId(transaction.getAccountToId());
+            dto.setDate(transaction.getDate());
+            dto.setMoney(transaction.getMoney());
+        }
         return dto;
     }
 

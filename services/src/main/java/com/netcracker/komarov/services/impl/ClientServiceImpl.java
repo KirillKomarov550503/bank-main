@@ -2,6 +2,7 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.services.dto.converter.ClientConverter;
@@ -49,6 +50,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO registration(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
+        person.setRole(Role.CLIENT);
         Client client = new Client();
         client.setPerson(person);
         person.setClient(client);

@@ -1,9 +1,8 @@
 package com.netcracker.komarov.console.menu;
 
 import com.netcracker.komarov.console.utils.Input;
-import com.netcracker.komarov.console.utils.Output;
-import com.netcracker.komarov.dao.entity.Account;
-import com.netcracker.komarov.dao.entity.Card;
+import com.netcracker.komarov.services.dto.entity.AccountDTO;
+import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.TransactionException;
 import com.netcracker.komarov.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,16 +56,16 @@ public class ClientMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    Account account = new Account();
-                    account.setBalance(0.0);
-                    account.setLocked(false);
-                    accountService.createAccount(account, Input.inputClientId());
+                    AccountDTO accountDTO = new AccountDTO();
+                    accountDTO.setBalance(0.0);
+                    accountDTO.setLocked(false);
+                    accountService.createAccount(accountDTO, Input.inputClientId());
                     break;
                 case 2:
-                    Card card = new Card();
-                    card.setLocked(false);
-                    card.setPin(Input.inputCardPIN());
-                    cardService.createCard(card, Input.inputAccountId());
+                    CardDTO cardDTO = new CardDTO();
+                    cardDTO.setLocked(false);
+                    cardDTO.setPin(Input.inputCardPIN());
+                    cardService.createCard(cardDTO, Input.inputAccountId());
                     break;
                 case 3:
                     try {
@@ -76,33 +75,33 @@ public class ClientMenu implements Menu {
                     }
                     break;
                 case 4:
-                    accountService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
+                    accountService.getUnlockAccounts(Input.inputClientId()).forEach(System.out::println);
                     accountService.lockAccount(Input.inputAccountId());
                     break;
 
                 case 5:
-                    cardService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
+                    cardService.getUnlockCards(Input.inputClientId()).forEach(System.out::println);
                     cardService.lockCard(Input.inputCardId());
                     break;
                 case 6:
-                    Collection<Account> accounts = accountService.getLockAccounts(Input.inputClientId());
-                    accounts.forEach(Output::printAccount);
+                    Collection<AccountDTO> accounts = accountService.getLockAccounts(Input.inputClientId());
+                    accounts.forEach(System.out::println);
                     if (accounts.size() != 0) {
                         unlockAccountRequestService.addAccountRequest(Input.inputAccountId());
                     }
                     break;
                 case 7:
-                    Collection<Card> cards = cardService.getLockCards(Input.inputClientId());
-                    cards.forEach(Output::printCard);
+                    Collection<CardDTO> cards = cardService.getLockCards(Input.inputClientId());
+                    cards.forEach(System.out::println);
                     if (cards.size() != 0) {
                         unlockCardRequestService.addCardRequest(Input.inputCardId());
                     }
                     break;
                 case 8:
-                    transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
+                    transactionService.showStories(Input.inputClientId()).forEach(System.out::println);
                     break;
                 case 9:
-                    newsService.getAllClientNewsById(Input.inputClientId()).forEach(Output::printNews);
+                    newsService.getAllClientNewsById(Input.inputClientId()).forEach(System.out::println);
                     break;
                 case 10:
                     accountService.refill(Input.inputAccountId());

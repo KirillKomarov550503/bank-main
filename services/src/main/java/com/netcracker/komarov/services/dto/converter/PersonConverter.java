@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 public class PersonConverter implements Converter<PersonDTO, Person> {
     @Override
     public PersonDTO convertToDTO(Person person) {
-        PersonDTO dto = new PersonDTO();
-        dto.setName(person.getName());
-        dto.setSurname(person.getSurname());
-        dto.setPassportId(person.getPassportId());
-        dto.setPhoneNumber(person.getPhoneNumber());
+        PersonDTO dto = null;
+        if (person != null) {
+            dto = new PersonDTO();
+            dto.setName(person.getName());
+            dto.setSurname(person.getSurname());
+            dto.setPassportId(person.getPassportId());
+            dto.setPhoneNumber(person.getPhoneNumber());
+        }
         return dto;
     }
 

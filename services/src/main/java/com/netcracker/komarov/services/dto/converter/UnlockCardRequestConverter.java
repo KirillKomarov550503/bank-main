@@ -10,12 +10,15 @@ import org.springframework.stereotype.Component;
 public class UnlockCardRequestConverter implements Converter<UnlockCardRequestDTO, UnlockCardRequest> {
     @Override
     public UnlockCardRequestDTO convertToDTO(UnlockCardRequest request) {
-        UnlockCardRequestDTO dto = new UnlockCardRequestDTO();
-        Card card = request.getCard();
-        dto.setBalance(card.getAccount().getBalance());
-        dto.setCardId(card.getCardId());
-        dto.setLocked(dto.isLocked());
-        dto.setPin(dto.getPin());
+        UnlockCardRequestDTO dto = null;
+        if (request != null) {
+            dto = new UnlockCardRequestDTO();
+            Card card = request.getCard();
+            dto.setBalance(card.getAccount().getBalance());
+            dto.setCardId(card.getCardId());
+            dto.setLocked(dto.isLocked());
+            dto.setPin(dto.getPin());
+        }
         return dto;
     }
 

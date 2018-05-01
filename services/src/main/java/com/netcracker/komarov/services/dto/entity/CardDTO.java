@@ -3,19 +3,29 @@ package com.netcracker.komarov.services.dto.entity;
 import java.io.Serializable;
 
 public class CardDTO implements Serializable {
+    private long id;
     private boolean locked;
-    private long accountId;
     private double balance;
+    private long accountId;
     private int pin;
 
     public CardDTO() {
     }
 
-    public CardDTO(boolean locked, long accountId, double balance, int pin) {
+    public CardDTO(long id, boolean locked, double balance, long accountId, int pin) {
+        this.id = id;
         this.locked = locked;
-        this.accountId = accountId;
         this.balance = balance;
+        this.accountId = accountId;
         this.pin = pin;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public boolean isLocked() {
@@ -24,14 +34,6 @@ public class CardDTO implements Serializable {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
     }
 
     public double getBalance() {
@@ -48,5 +50,24 @@ public class CardDTO implements Serializable {
 
     public void setPin(int pin) {
         this.pin = pin;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
+
+    @Override
+    public String toString() {
+        return "CardDTO{" +
+                "id=" + id +
+                ", locked=" + locked +
+                ", balance=" + balance +
+                ", accountId=" + accountId +
+                ", pin=" + pin +
+                '}';
     }
 }

@@ -1,9 +1,9 @@
 package com.netcracker.komarov.console.utils;
 
-import com.netcracker.komarov.dao.entity.News;
-import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
+import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 
 import java.text.SimpleDateFormat;
@@ -18,27 +18,22 @@ public class Input {
         System.out.print("\n" + message);
     }
 
-    public static Person inputPerson(Role role) {
+    public static PersonDTO inputPerson(Role role) {
         Scanner scanner = new Scanner(System.in);
-        Person person = new Person();
+        PersonDTO personDTO = new PersonDTO();
         print("Input your name: ");
         String name = scanner.nextLine();
-        person.setName(name);
+        personDTO.setName(name);
         print("Input your surname: ");
         String surname = scanner.nextLine();
-        person.setSurname(surname);
+        personDTO.setSurname(surname);
         print("Input your passport ID: ");
         int passportId = scanner.nextInt();
         print("Input your phone number: ");
-        person.setPassportId(passportId);
+        personDTO.setPassportId(passportId);
         int phoneNumber = scanner.nextInt();
-        try {
-            person.setPhoneNumber(phoneNumber);
-        } catch (NumberFormatException e) {
-            System.out.println("Wrong input phone number");
-        }
-        person.setRole(role);
-        return person;
+        personDTO.setPhoneNumber(phoneNumber);
+        return personDTO;
     }
 
     public static long inputClientId() {
@@ -81,20 +76,20 @@ public class Input {
     }
 
 
-    public static News inputNews() {
+    public static NewsDTO inputNews() {
         Scanner scanner = new Scanner(System.in);
-        News news = new News();
+        NewsDTO newsDTO = new NewsDTO();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        news.setDate(simpleDateFormat.format(new Date()));
+        newsDTO.setDate(simpleDateFormat.format(new Date()));
 
         print("Input title of article: ");
         String title = scanner.nextLine();
-        news.setTitle(title);
+        newsDTO.setTitle(title);
 
         print("Input main text of article: ");
         String text = scanner.nextLine();
-        news.setText(text);
-        return news;
+        newsDTO.setText(text);
+        return newsDTO;
     }
 
     public static String inputStatus() {
@@ -136,26 +131,26 @@ public class Input {
         return adminId;
     }
 
-    public static Person inputAdmin() {
-        Person person = new Person();
+    public static PersonDTO inputAdmin() {
+        PersonDTO personDTO = new PersonDTO();
         Scanner scanner = new Scanner(System.in);
 
         print("Input name: ");
         String name = scanner.nextLine();
-        person.setName(name);
+        personDTO.setName(name);
 
         print("Input surname: ");
         String surname = scanner.nextLine();
-        person.setSurname(surname);
+        personDTO.setSurname(surname);
 
         print("Input your passport ID: ");
         long passportID = scanner.nextLong();
-        person.setPassportId(passportID);
+        personDTO.setPassportId(passportID);
 
         print("Input your phone number: ");
         long phoneNumber = scanner.nextLong();
-        person.setPhoneNumber(phoneNumber);
-        return person;
+        personDTO.setPhoneNumber(phoneNumber);
+        return personDTO;
     }
 
     public static long inputNewsId() {

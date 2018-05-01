@@ -9,10 +9,14 @@ import org.springframework.stereotype.Component;
 public class NewsConverter implements Converter<NewsDTO, News> {
     @Override
     public NewsDTO convertToDTO(News news) {
-        NewsDTO newsDTO = new NewsDTO();
-        newsDTO.setDate(news.getDate());
-        newsDTO.setText(news.getText());
-        newsDTO.setDate(news.getDate());
+        NewsDTO newsDTO = null;
+        if (news != null) {
+            newsDTO = new NewsDTO();
+            newsDTO.setId(news.getId());
+            newsDTO.setDate(news.getDate());
+            newsDTO.setText(news.getText());
+            newsDTO.setDate(news.getDate());
+        }
         return newsDTO;
     }
 

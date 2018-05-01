@@ -2,6 +2,7 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.services.dto.converter.AdminConverter;
@@ -42,6 +43,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminDTO addAdmin(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
+        person.setRole(Role.ADMIN);
         Admin admin = new Admin();
         admin.setPerson(person);
         person.setAdmin(admin);

@@ -5,6 +5,7 @@ import com.netcracker.komarov.dao.entity.Role;
 import java.io.Serializable;
 
 public class ClientDTO implements Serializable {
+    private long id;
     private String name;
     private String surname;
     private String login;
@@ -16,7 +17,8 @@ public class ClientDTO implements Serializable {
     public ClientDTO() {
     }
 
-    public ClientDTO(String name, String surname, String login, String password, long phoneNumber, long passportId, Role role) {
+    public ClientDTO(long id, String name, String surname, String login, String password, long phoneNumber, long passportId, Role role) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.login = login;
@@ -24,6 +26,14 @@ public class ClientDTO implements Serializable {
         this.phoneNumber = phoneNumber;
         this.passportId = passportId;
         this.role = role;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -82,5 +92,18 @@ public class ClientDTO implements Serializable {
         this.role = role;
     }
 
+    @Override
+    public String toString() {
+        return "ClientDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", passportId=" + passportId +
+                ", role=" + role +
+                '}';
+    }
 }
 

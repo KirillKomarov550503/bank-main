@@ -37,7 +37,7 @@ public class VisitorMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    newsService.getAllGeneralNews().forEach(Output::printNews);
+                    newsService.getAllGeneralNews().forEach(System.out::println);
                     break;
                 case 2:
                     clientService.registration(Input.inputPerson(Role.CLIENT));

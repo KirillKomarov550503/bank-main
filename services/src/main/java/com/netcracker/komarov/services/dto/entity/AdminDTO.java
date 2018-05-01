@@ -5,6 +5,7 @@ import com.netcracker.komarov.dao.entity.Role;
 import java.io.Serializable;
 
 public class AdminDTO implements Serializable {
+    private long id;
     private String name;
     private String surname;
     private String login;
@@ -16,7 +17,9 @@ public class AdminDTO implements Serializable {
     public AdminDTO() {
     }
 
-    public AdminDTO(String name, String surname, String login, String password, long phoneNumber, long passportId, Role role) {
+    public AdminDTO(long id, String name, String surname, String login, String password,
+                    long phoneNumber, long passportId, Role role) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.login = login;
@@ -24,6 +27,14 @@ public class AdminDTO implements Serializable {
         this.phoneNumber = phoneNumber;
         this.passportId = passportId;
         this.role = role;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -80,5 +91,19 @@ public class AdminDTO implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", passportId=" + passportId +
+                ", role=" + role +
+                '}';
     }
 }

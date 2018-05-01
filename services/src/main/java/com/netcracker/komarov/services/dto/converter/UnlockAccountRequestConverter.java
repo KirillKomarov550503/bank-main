@@ -10,11 +10,14 @@ import org.springframework.stereotype.Component;
 public class UnlockAccountRequestConverter implements Converter<UnlockAccountRequestDTO, UnlockAccountRequest> {
     @Override
     public UnlockAccountRequestDTO convertToDTO(UnlockAccountRequest request) {
-        UnlockAccountRequestDTO dto = new UnlockAccountRequestDTO();
-        Account account = request.getAccount();
-        dto.setLocked(account.isLocked());
-        dto.setAccountId(account.getAccountId());
-        dto.setBalance(account.getBalance());
+        UnlockAccountRequestDTO dto = null;
+        if (request != null) {
+            dto = new UnlockAccountRequestDTO();
+            Account account = request.getAccount();
+            dto.setLocked(account.isLocked());
+            dto.setAccountId(account.getAccountId());
+            dto.setBalance(account.getBalance());
+        }
         return dto;
     }
 

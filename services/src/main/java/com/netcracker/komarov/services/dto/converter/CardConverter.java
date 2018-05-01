@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 public class CardConverter implements Converter<CardDTO, Card> {
     @Override
     public CardDTO convertToDTO(Card card) {
-        CardDTO cardDTO = new CardDTO();
-        cardDTO.setAccountId(card.getAccount().getAccountId());
-        cardDTO.setBalance(card.getAccount().getBalance());
-        cardDTO.setLocked(card.isLocked());
-        cardDTO.setPin(card.getPin());
+        CardDTO cardDTO = null;
+        if (card != null) {
+            cardDTO = new CardDTO();
+            cardDTO.setAccountId(card.getAccount().getId());
+            cardDTO.setBalance(card.getAccount().getBalance());
+            cardDTO.setLocked(card.isLocked());
+            cardDTO.setPin(card.getPin());
+        }
         return cardDTO;
     }
 

@@ -9,7 +9,14 @@ import org.springframework.stereotype.Component;
 public class AccountConverter implements Converter<AccountDTO, Account> {
     @Override
     public AccountDTO convertToDTO(Account account) {
-        return new AccountDTO(account.isLocked(), account.getBalance(), account.getAccountId());
+        AccountDTO dto = null;
+        if (account != null) {
+            dto = new AccountDTO();
+            dto.setLocked(account.isLocked());
+            dto.setId(account.getId());
+            dto.setBalance(account.getBalance());
+        }
+        return dto;
     }
 
     @Override
@@ -17,7 +24,6 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
         Account account = new Account();
         account.setLocked(dto.isLocked());
         account.setBalance(dto.getBalance());
-        account.setAccountId(dto.getAccountId());
         return account;
     }
 }

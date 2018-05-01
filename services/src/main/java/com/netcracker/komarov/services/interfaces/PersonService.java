@@ -1,9 +1,9 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.services.dto.entity.PersonDTO;
 
 import java.util.Collection;
 
 public interface PersonService {
-    Collection<Person> getAllPeople();
+    Collection<PersonDTO> getAllPeople();
 }

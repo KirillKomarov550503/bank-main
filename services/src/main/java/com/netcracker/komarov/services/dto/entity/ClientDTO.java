@@ -2,7 +2,9 @@ package com.netcracker.komarov.services.dto.entity;
 
 import com.netcracker.komarov.dao.entity.Role;
 
-public class ClientDTO extends AbstractDTO {
+import java.io.Serializable;
+
+public class ClientDTO implements Serializable {
     private String name;
     private String surname;
     private String login;

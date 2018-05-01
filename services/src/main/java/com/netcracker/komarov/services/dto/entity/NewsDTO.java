@@ -1,11 +1,8 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.NewsStatus;
+import java.io.Serializable;
 
-import java.util.Objects;
-
-public class NewsDTO extends AbstractDTO {
+public class NewsDTO implements Serializable {
     private String date;
     private String title;
     private String text;

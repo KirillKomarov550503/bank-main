@@ -4,7 +4,9 @@ import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdminConverter implements Converter<AdminDTO, Admin> {
     @Override
     public AdminDTO convertToDTO(Admin admin) {

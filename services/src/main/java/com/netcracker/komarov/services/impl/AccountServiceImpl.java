@@ -7,6 +7,8 @@ import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.UnlockAccountRequestRepository;
+import com.netcracker.komarov.services.dto.converter.AccountConverter;
+import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +19,33 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
     private UnlockAccountRequestRepository unlockAccountRequestRepository;
     private ClientRepository clientRepository;
+    private AccountConverter converter;
     private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
-    public AccountServiceImpl(RepositoryFactory repositoryFactory) {
+    public AccountServiceImpl(RepositoryFactory repositoryFactory, AccountConverter converter) {
         this.accountRepository = repositoryFactory.getAccountRepository();
         this.unlockAccountRequestRepository = repositoryFactory.getUnlockAccountRequestRepository();
         this.clientRepository = repositoryFactory.getClientRepository();
+        this.converter = converter;
+    }
+
+    private Collection<AccountDTO> convertCollection(Collection<Account> accounts) {
+        return accounts.stream()
+                .map(account -> converter.convertToDTO(account))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Account lockAccount(long accountId) {
+    public AccountDTO lockAccount(long accountId) {
         Account temp = null;
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         if (optionalAccount.isPresent()) {
@@ -45,13 +56,13 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.info("There is no such account in database");
         }
-        return temp;
+        return converter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<Account> getAllAccounts() {
-        return accountRepository.findAll();
+    public Collection<AccountDTO> getAllAccounts() {
+        return convertCollection(accountRepository.findAll());
     }
 
     @Transactional
@@ -77,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public Collection<Account> getAllUnlockAccountRequest() {
+    public Collection<AccountDTO> getAllUnlockAccountRequest() {
         Collection<Account> accounts = new ArrayList<>();
         Collection<UnlockAccountRequest> requests = unlockAccountRequestRepository.findAll();
         for (UnlockAccountRequest request : requests) {
@@ -88,12 +99,12 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.info("Return all request to unlock account");
         }
-        return accounts;
+        return convertCollection(accounts);
     }
 
     @Transactional
     @Override
-    public Account refill(long accountId) {
+    public AccountDTO refill(long accountId) {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         Account account = null;
         Account temp = null;
@@ -106,26 +117,27 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.info("There is no such account in database");
         }
-        return temp;
+        return converter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<Account> getLockAccounts(long clientId) {
+    public Collection<AccountDTO> getLockAccounts(long clientId) {
         logger.info("Return all locked accounts by client ID");
-        return accountRepository.findAccountsByLockedAndClientId(clientId, true);
+        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, true));
     }
 
     @Transactional
     @Override
-    public Collection<Account> getUnlockAccounts(long clientId) {
+    public Collection<AccountDTO> getUnlockAccounts(long clientId) {
         logger.info("Return all unlocked accounts by client ID");
-        return accountRepository.findAccountsByLockedAndClientId(clientId, false);
+        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, false));
     }
 
     @Transactional
     @Override
-    public Account createAccount(Account account, long clientId) {
+    public AccountDTO createAccount(AccountDTO accountDTO, long clientId) {
+        Account account = converter.convertToEntity(accountDTO);
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Client client;
         Account temp = null;
@@ -139,6 +151,6 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.info("There is no such client in database");
         }
-        return temp;
+        return converter.convertToDTO(temp);
     }
 }

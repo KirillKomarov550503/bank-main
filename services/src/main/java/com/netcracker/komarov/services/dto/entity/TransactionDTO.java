@@ -1,8 +1,8 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import java.util.Objects;
+import java.io.Serializable;
 
-public class TransactionDTO extends AbstractDTO {
+public class TransactionDTO implements Serializable {
     private long accountFromId;
     private long accountToId;
     private double money;

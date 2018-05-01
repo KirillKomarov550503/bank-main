@@ -1,23 +1,23 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.Card;
+import com.netcracker.komarov.services.dto.entity.CardDTO;
 
 import java.util.Collection;
 
 public interface CardService {
-    Card createCard(Card card, long accountId);
+    CardDTO createCard(CardDTO card, long accountId);
 
-    Card lockCard(long cardId);
+    CardDTO lockCard(long cardId);
 
-    Collection<Card> getLockCards(long clientId);
+    Collection<CardDTO> getLockCards(long clientId);
 
-    Collection<Card> getAllCardsByAccount(long accountId);
+    Collection<CardDTO> getAllCardsByAccount(long accountId);
 
-    Collection<Card> getUnlockCards(long clientId);
+    Collection<CardDTO> getUnlockCards(long clientId);
 
-    Collection<Card> getAllCards();
+    Collection<CardDTO> getAllCards();
 
-    Collection<Card> getAllUnlockCardRequest();
+    Collection<CardDTO> getAllUnlockCardRequest();
 
     void unlockCard(long cardId);
 }

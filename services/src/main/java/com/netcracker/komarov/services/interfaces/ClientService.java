@@ -1,14 +1,14 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.Client;
-import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.services.dto.entity.ClientDTO;
+import com.netcracker.komarov.services.dto.entity.PersonDTO;
 
 import java.util.Collection;
 
 public interface ClientService {
-    Client signIn(Person person);
+    ClientDTO signIn(PersonDTO personDTO);
 
-    Client registration(Person person);
+    ClientDTO registration(PersonDTO personDTO);
 
-    Collection<Client> getAllClients();
+    Collection<ClientDTO> getAllClients();
 }

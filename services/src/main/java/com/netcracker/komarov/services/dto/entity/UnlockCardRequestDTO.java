@@ -1,6 +1,8 @@
 package com.netcracker.komarov.services.dto.entity;
 
-public class UnlockCardRequestDTO extends AbstractDTO {
+import java.io.Serializable;
+
+public class UnlockCardRequestDTO implements Serializable {
     private boolean locked;
     private int pin;
     private double balance;

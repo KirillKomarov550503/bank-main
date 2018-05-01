@@ -1,8 +1,8 @@
 package com.netcracker.komarov.services.dto;
 
-import com.netcracker.komarov.services.dto.entity.AbstractDTO;
+import java.io.Serializable;
 
-public interface Converter<DTO extends AbstractDTO, Entity> {
+public interface Converter<DTO, Entity> {
     DTO convertToDTO(Entity entity);
 
     Entity convertToEntity(DTO dto);

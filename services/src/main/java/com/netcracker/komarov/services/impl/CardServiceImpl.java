@@ -7,6 +7,8 @@ import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
 import com.netcracker.komarov.dao.repository.UnlockCardRequestRepository;
+import com.netcracker.komarov.services.dto.converter.CardConverter;
+import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +19,33 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
     private UnlockCardRequestRepository unlockCardRequestRepository;
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
+    private CardConverter cardConverter;
     private Logger logger = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
-    public CardServiceImpl(RepositoryFactory repositoryFactory) {
+    public CardServiceImpl(RepositoryFactory repositoryFactory, CardConverter cardConverter) {
         this.unlockCardRequestRepository = repositoryFactory.getUnlockCardRequestRepository();
         this.cardRepository = repositoryFactory.getCardRepository();
         this.accountRepository = repositoryFactory.getAccountRepository();
+        this.cardConverter = cardConverter;
+    }
+
+    private Collection<CardDTO> convertCollection(Collection<Card> cards) {
+        return cards.stream()
+                .map(card -> cardConverter.convertToDTO(card))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Card lockCard(long cardId) {
+    public CardDTO lockCard(long cardId) {
         Optional<Card> cardOptional = cardRepository.findById(cardId);
         Card card = null;
         Card temp = null;
@@ -46,12 +57,13 @@ public class CardServiceImpl implements CardService {
         } else {
             logger.info("There is no such card in database");
         }
-        return temp;
+        return cardConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Card createCard(Card card, long accountId) {
+    public CardDTO createCard(CardDTO cardDTO, long accountId) {
+        Card card = cardConverter.convertToEntity(cardDTO);
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         Card temp = null;
         if (optionalAccount.isPresent()) {
@@ -63,33 +75,33 @@ public class CardServiceImpl implements CardService {
         } else {
             logger.info("There is no such account in database");
         }
-        return temp;
+        return cardConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<Card> getLockCards(long clientId) {
+    public Collection<CardDTO> getLockCards(long clientId) {
         logger.info("Return all locked cards by client ID");
-        return cardRepository.findCardsByClientIdAndLocked(clientId, true);
+        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, true));
     }
 
     @Transactional
     @Override
-    public Collection<Card> getUnlockCards(long clientId) {
+    public Collection<CardDTO> getUnlockCards(long clientId) {
         logger.info("Return all unlocked cards by client ID");
-        return cardRepository.findCardsByClientIdAndLocked(clientId, false);
+        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, false));
     }
 
     @Transactional
     @Override
-    public Collection<Card> getAllCardsByAccount(long accountId) {
+    public Collection<CardDTO> getAllCardsByAccount(long accountId) {
         logger.info("Return all cards that connected with account");
-        return cardRepository.findCardsByAccountId(accountId);
+        return convertCollection(cardRepository.findCardsByAccountId(accountId));
     }
 
     @Transactional
     @Override
-    public Collection<Card> getAllUnlockCardRequest() {
+    public Collection<CardDTO> getAllUnlockCardRequest() {
         Collection<Card> cards = new ArrayList<>();
         Collection<UnlockCardRequest> requests = unlockCardRequestRepository.findAll();
         for (UnlockCardRequest request : requests) {
@@ -100,7 +112,7 @@ public class CardServiceImpl implements CardService {
         } else {
             logger.info("Return all request to unlock card");
         }
-        return cards;
+        return convertCollection(cards);
     }
 
     @Transactional
@@ -126,8 +138,8 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public Collection<Card> getAllCards() {
+    public Collection<CardDTO> getAllCards() {
         logger.info("Return all cards");
-        return cardRepository.findAll();
+        return convertCollection(cardRepository.findAll());
     }
 }

@@ -1,22 +1,22 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.News;
 import com.netcracker.komarov.dao.entity.NewsStatus;
+import com.netcracker.komarov.services.dto.entity.NewsDTO;
 
 import java.util.Collection;
 
 public interface NewsService {
-    Collection<News> getAllClientNewsById(long clientId);
+    Collection<NewsDTO> getAllClientNewsById(long clientId);
 
-    News getPersonalNews(long newsId);
+    NewsDTO getPersonalNews(long newsId);
 
-    Collection<News> getAllNews();
+    Collection<NewsDTO> getAllNews();
 
-    Collection<News> getAllGeneralNews();
+    Collection<NewsDTO> getAllGeneralNews();
 
-    Collection<News> getAllNewsByStatus(NewsStatus newsStatus);
+    Collection<NewsDTO> getAllNewsByStatus(NewsStatus newsStatus);
 
-    News addNews(News news, long adminId, String status);
+    NewsDTO addNews(NewsDTO newsDTO, long adminId, String status);
 
-    News addClientNews(Collection<Long> clientIds, long newsId);
+    NewsDTO addClientNews(Collection<Long> clientIds, long newsId);
 }

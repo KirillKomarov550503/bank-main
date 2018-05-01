@@ -8,6 +8,8 @@ import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.NewsRepository;
+import com.netcracker.komarov.services.dto.converter.NewsConverter;
+import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.interfaces.NewsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,25 +27,33 @@ public class NewsServiceImpl implements NewsService {
     private NewsRepository newsRepository;
     private ClientRepository clientRepository;
     private AdminRepository adminRepository;
+    private NewsConverter newsConverter;
     private Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
 
     @Autowired
-    public NewsServiceImpl(RepositoryFactory repositoryFactory) {
+    public NewsServiceImpl(RepositoryFactory repositoryFactory, NewsConverter newsConverter) {
         this.newsRepository = repositoryFactory.getNewsRepository();
         this.clientRepository = repositoryFactory.getClientRepository();
         this.adminRepository = repositoryFactory.getAdminRepository();
+        this.newsConverter = newsConverter;
+    }
+
+    private Collection<NewsDTO> convertCollection(Collection<News> newsCollection) {
+        return newsCollection.stream()
+                .map(news -> newsConverter.convertToDTO(news))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Collection<News> getAllNews() {
+    public Collection<NewsDTO> getAllNews() {
         logger.info("Return all news");
-        return newsRepository.findAll();
+        return convertCollection(newsRepository.findAll());
     }
 
     @Transactional
     @Override
-    public Collection<News> getAllClientNewsById(long clientId) {
+    public Collection<NewsDTO> getAllClientNewsById(long clientId) {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Collection<News> resultCollection = new ArrayList<>();
         if (optionalClient.isPresent()) {
@@ -63,22 +73,30 @@ public class NewsServiceImpl implements NewsService {
         } else {
             logger.info("There is no such client in database");
         }
-        return resultCollection;
+        return convertCollection(resultCollection);
     }
 
     @Transactional
     @Override
-    public News getPersonalNews(long newsId) {
-        logger.info("Return client news by ID");
-        return newsRepository.findById(newsId).get();
+    public NewsDTO getPersonalNews(long newsId) {
+        Optional<News> optional = newsRepository.findById(newsId);
+        News news = null;
+        if (optional.isPresent()) {
+            news = optional.get();
+            logger.info("Return client news by ID");
+        } else {
+            logger.info("There is no such news in database");
+        }
+        return newsConverter.convertToDTO(news);
     }
 
     @Transactional
     @Override
-    public News addNews(News news, long adminId, String status) {
-        if(status.equals("client")){
+    public NewsDTO addNews(NewsDTO newsDTO, long adminId, String status) {
+        News news = newsConverter.convertToEntity(newsDTO);
+        if (status.equals("client")) {
             news.setNewsStatus(NewsStatus.CLIENT);
-        } else if(status.equals("general")){
+        } else if (status.equals("general")) {
             news.setNewsStatus(NewsStatus.GENERAL);
         }
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
@@ -92,26 +110,26 @@ public class NewsServiceImpl implements NewsService {
         } else {
             logger.info("There is no such admin in database");
         }
-        return temp;
+        return newsConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<News> getAllGeneralNews() {
+    public Collection<NewsDTO> getAllGeneralNews() {
         logger.info("Return all general news");
-        return newsRepository.findNewsByNewsStatus(NewsStatus.GENERAL);
+        return convertCollection(newsRepository.findNewsByNewsStatus(NewsStatus.GENERAL));
     }
 
     @Transactional
     @Override
-    public Collection<News> getAllNewsByStatus(NewsStatus newsStatus) {
+    public Collection<NewsDTO> getAllNewsByStatus(NewsStatus newsStatus) {
         logger.info("Return all news by status");
-        return newsRepository.findNewsByNewsStatus(newsStatus);
+        return convertCollection(newsRepository.findNewsByNewsStatus(newsStatus));
     }
 
     @Transactional
     @Override
-    public News addClientNews(Collection<Long> clientIds, long newsId) {
+    public NewsDTO addClientNews(Collection<Long> clientIds, long newsId) {
         Collection<Client> clients = clientRepository.findAll();
         Optional<News> optionalNews = newsRepository.findById(newsId);
         News news;
@@ -136,6 +154,6 @@ public class NewsServiceImpl implements NewsService {
         } else {
             logger.info("There is no such news in database");
         }
-        return temp;
+        return newsConverter.convertToDTO(temp);
     }
 }

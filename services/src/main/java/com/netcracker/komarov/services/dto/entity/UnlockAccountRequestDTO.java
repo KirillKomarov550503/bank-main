@@ -1,6 +1,8 @@
 package com.netcracker.komarov.services.dto.entity;
 
-public class UnlockAccountRequestDTO extends AbstractDTO {
+import java.io.Serializable;
+
+public class UnlockAccountRequestDTO implements Serializable {
     private boolean locked;
     private double balance;
     private long accountId;

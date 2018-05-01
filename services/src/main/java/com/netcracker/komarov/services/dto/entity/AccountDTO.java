@@ -1,9 +1,12 @@
 package com.netcracker.komarov.services.dto.entity;
 
-public class AccountDTO extends AbstractDTO{
+import java.io.Serializable;
+
+public class AccountDTO implements Serializable {
     private boolean locked;
     private double balance;
     private long accountId;
+
     public AccountDTO() {
     }
 

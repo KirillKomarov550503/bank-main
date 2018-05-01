@@ -1,11 +1,11 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.UnlockCardRequest;
+import com.netcracker.komarov.services.dto.entity.UnlockCardRequestDTO;
 
 import java.util.Collection;
 
 public interface UnlockCardRequestService {
-    UnlockCardRequest addCardRequest(long cardId);
+    UnlockCardRequestDTO addCardRequest(long cardId);
 
-    Collection<UnlockCardRequest> getAllCardRequest();
+    Collection<UnlockCardRequestDTO> getAllCardRequest();
 }

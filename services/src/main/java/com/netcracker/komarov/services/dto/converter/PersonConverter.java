@@ -3,7 +3,9 @@ package com.netcracker.komarov.services.dto.converter;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PersonConverter implements Converter<PersonDTO, Person> {
     @Override
     public PersonDTO convertToDTO(Person person) {

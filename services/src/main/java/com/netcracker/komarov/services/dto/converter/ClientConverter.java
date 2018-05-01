@@ -5,7 +5,9 @@ import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientConverter implements Converter<ClientDTO, Client> {
     @Override
     public ClientDTO convertToDTO(Client client) {

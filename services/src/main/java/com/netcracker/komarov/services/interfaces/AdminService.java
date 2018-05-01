@@ -1,12 +1,12 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.services.dto.entity.AdminDTO;
+import com.netcracker.komarov.services.dto.entity.PersonDTO;
 
 import java.util.Collection;
 
 public interface AdminService {
-    Admin addAdmin(Person person);
+    AdminDTO addAdmin(PersonDTO personDTO);
 
-    Collection<Admin> getAllAdmin();
+    Collection<AdminDTO> getAllAdmin();
 }

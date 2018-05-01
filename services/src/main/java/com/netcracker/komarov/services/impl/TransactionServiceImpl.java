@@ -5,6 +5,7 @@ import com.netcracker.komarov.dao.entity.Transaction;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.TransactionRepository;
+import com.netcracker.komarov.services.dto.converter.TransactionConverter;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.TransactionException;
 import com.netcracker.komarov.services.interfaces.TransactionService;
@@ -18,29 +19,38 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private TransactionRepository transactionRepository;
     private AccountRepository accountRepository;
+    private TransactionConverter transactionConverter;
     private Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
-    public TransactionServiceImpl(RepositoryFactory repositoryFactory) {
+    public TransactionServiceImpl(RepositoryFactory repositoryFactory, TransactionConverter transactionConverter) {
         this.transactionRepository = repositoryFactory.getTransactionRepository();
         this.accountRepository = repositoryFactory.getAccountRepository();
+        this.transactionConverter = transactionConverter;
+    }
+
+    private Collection<TransactionDTO> convertCollection(Collection<Transaction> transactions) {
+        return transactions.stream()
+                .map(transaction -> transactionConverter.convertToDTO(transaction))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Collection<Transaction> showStories(long clientId) {
+    public Collection<TransactionDTO> showStories(long clientId) {
         logger.info("Return transaction story by client ID");
-        return transactionRepository.findTransactionsByClientId(clientId);
+        return convertCollection(transactionRepository.findTransactionsByClientId(clientId));
     }
 
     @Transactional
     @Override
-    public Transaction createTransaction(TransactionDTO transactionDTO, long clientId) throws TransactionException {
+    public TransactionDTO createTransaction(TransactionDTO transactionDTO, long clientId) throws TransactionException {
         Transaction newTransaction = null;
         Optional<Account> optionalAccount = accountRepository.findById(transactionDTO.getAccountFromId());
         if (optionalAccount.isPresent()) {
@@ -80,6 +90,6 @@ public class TransactionServiceImpl implements TransactionService {
         } else {
             logger.info("Wrong input account from ID");
         }
-        return newTransaction;
+        return transactionConverter.convertToDTO(newTransaction);
     }
 }

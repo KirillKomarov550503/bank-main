@@ -1,11 +1,11 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.UnlockAccountRequest;
+import com.netcracker.komarov.services.dto.entity.UnlockAccountRequestDTO;
 
 import java.util.Collection;
 
 public interface UnlockAccountRequestService {
-    UnlockAccountRequest addAccountRequest(long accountId);
+    UnlockAccountRequestDTO addAccountRequest(long accountId);
 
-    Collection<UnlockAccountRequest> getAllAccountRequest();
+    Collection<UnlockAccountRequestDTO> getAllAccountRequest();
 }

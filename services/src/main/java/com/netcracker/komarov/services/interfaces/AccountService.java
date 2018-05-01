@@ -1,23 +1,23 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.Account;
+import com.netcracker.komarov.services.dto.entity.AccountDTO;
 
 import java.util.Collection;
 
 public interface AccountService {
-    Account createAccount(Account account, long clientId);
+    AccountDTO createAccount(AccountDTO accountDTO, long clientId);
 
-    Account lockAccount(long accountId);
+    AccountDTO lockAccount(long accountId);
 
-    Collection<Account> getLockAccounts(long clientId);
+    Collection<AccountDTO> getLockAccounts(long clientId);
 
-    Collection<Account> getUnlockAccounts(long clientId);
+    Collection<AccountDTO> getUnlockAccounts(long clientId);
 
-    Account refill(long accountId);
+    AccountDTO refill(long accountId);
 
-    Collection<Account> getAllUnlockAccountRequest();
+    Collection<AccountDTO> getAllUnlockAccountRequest();
 
-    Collection<Account> getAllAccounts();
+    Collection<AccountDTO> getAllAccounts();
 
     void unlockAccount(long accountId);
 }

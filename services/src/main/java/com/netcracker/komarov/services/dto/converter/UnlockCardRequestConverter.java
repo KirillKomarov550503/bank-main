@@ -4,7 +4,9 @@ import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.UnlockCardRequest;
 import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.UnlockCardRequestDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UnlockCardRequestConverter implements Converter<UnlockCardRequestDTO, UnlockCardRequest> {
     @Override
     public UnlockCardRequestDTO convertToDTO(UnlockCardRequest request) {

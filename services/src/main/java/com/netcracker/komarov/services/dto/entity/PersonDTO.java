@@ -1,6 +1,8 @@
 package com.netcracker.komarov.services.dto.entity;
 
-public class PersonDTO extends AbstractDTO {
+import java.io.Serializable;
+
+public class PersonDTO implements Serializable {
     protected String name;
     protected String surname;
     protected long phoneNumber;

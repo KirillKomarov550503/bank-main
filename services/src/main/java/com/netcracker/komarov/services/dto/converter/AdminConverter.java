@@ -14,6 +14,7 @@ public class AdminConverter implements Converter<AdminDTO, Admin> {
         if(admin != null){
             adminDTO = new AdminDTO();
             Person person = admin.getPerson();
+            adminDTO.setId(person.getId());
             adminDTO.setName(person.getName());
             adminDTO.setSurname(person.getSurname());
             adminDTO.setLogin(person.getLogin());

@@ -15,7 +15,7 @@ public class UnlockCardRequestConverter implements Converter<UnlockCardRequestDT
             dto = new UnlockCardRequestDTO();
             Card card = request.getCard();
             dto.setBalance(card.getAccount().getBalance());
-            dto.setCardId(card.getCardId());
+            dto.setCardId(card.getId());
             dto.setLocked(dto.isLocked());
             dto.setPin(dto.getPin());
         }

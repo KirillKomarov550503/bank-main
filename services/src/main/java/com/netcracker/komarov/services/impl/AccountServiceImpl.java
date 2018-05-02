@@ -67,23 +67,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void unlockAccount(long accountId) {
+    public AccountDTO unlockAccount(long accountId) {
         Optional<UnlockAccountRequest> optionalRequest = unlockAccountRequestRepository.findAll()
                 .stream()
                 .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
                 .findFirst();
+        Account res = null;
         if (optionalRequest.isPresent()) {
             Optional<Account> optionalAccount = accountRepository.findById(accountId);
             if (optionalAccount.isPresent()) {
                 Account account = optionalAccount.get();
                 account.setLocked(false);
-                accountRepository.save(account);
+                res = accountRepository.save(account);
                 unlockAccountRequestRepository.deleteByAccountId(accountId);
                 logger.info("Successful unlocking your account");
             }
         } else {
             logger.info("There is no such account in requests ");
         }
+        return converter.convertToDTO(res);
     }
 
     @Transactional
@@ -122,16 +124,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public Collection<AccountDTO> getLockAccounts(long clientId) {
+    public Collection<AccountDTO> getAccountsByClientIdAndLock(long clientId, boolean lock) {
         logger.info("Return all locked accounts by client ID");
-        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, true));
-    }
-
-    @Transactional
-    @Override
-    public Collection<AccountDTO> getUnlockAccounts(long clientId) {
-        logger.info("Return all unlocked accounts by client ID");
-        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, false));
+        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, lock));
     }
 
     @Transactional

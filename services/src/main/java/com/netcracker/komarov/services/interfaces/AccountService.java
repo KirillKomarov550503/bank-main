@@ -9,9 +9,7 @@ public interface AccountService {
 
     AccountDTO lockAccount(long accountId);
 
-    Collection<AccountDTO> getLockAccounts(long clientId);
-
-    Collection<AccountDTO> getUnlockAccounts(long clientId);
+    Collection<AccountDTO> getAccountsByClientIdAndLock(long clientId, boolean lock);
 
     AccountDTO refill(long accountId);
 
@@ -19,6 +17,6 @@ public interface AccountService {
 
     Collection<AccountDTO> getAllAccounts();
 
-    void unlockAccount(long accountId);
+    AccountDTO unlockAccount(long accountId);
 }
 

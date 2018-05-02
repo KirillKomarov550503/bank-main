@@ -10,6 +10,11 @@ public class AccountDTO implements Serializable {
     public AccountDTO() {
     }
 
+    public AccountDTO(boolean locked, double balance) {
+        this.locked = locked;
+        this.balance = balance;
+    }
+
     public AccountDTO(long id, boolean locked, double balance) {
         this.id = id;
         this.locked = locked;

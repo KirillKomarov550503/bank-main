@@ -80,21 +80,14 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public Collection<CardDTO> getLockCards(long clientId) {
-        logger.info("Return all locked cards by client ID");
-        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, true));
-    }
-
-    @Transactional
-    @Override
-    public Collection<CardDTO> getUnlockCards(long clientId) {
+    public Collection<CardDTO> getCardsByClientIdAndLock(long clientId, boolean lock) {
         logger.info("Return all unlocked cards by client ID");
-        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, false));
+        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, lock));
     }
 
     @Transactional
     @Override
-    public Collection<CardDTO> getAllCardsByAccount(long accountId) {
+    public Collection<CardDTO> getAllCardsByAccountId(long accountId) {
         logger.info("Return all cards that connected with account");
         return convertCollection(cardRepository.findCardsByAccountId(accountId));
     }
@@ -117,23 +110,25 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public void unlockCard(long cardId) {
+    public CardDTO unlockCard(long cardId) {
         Optional<UnlockCardRequest> optionalRequest = unlockCardRequestRepository.findAll()
                 .stream()
                 .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
                 .findFirst();
+        Card res = null;
         if (optionalRequest.isPresent()) {
             Optional<Card> optionalCard = cardRepository.findById(cardId);
             if (optionalCard.isPresent()) {
                 Card card = optionalCard.get();
                 card.setLocked(false);
-                cardRepository.save(card);
+                res = cardRepository.save(card);
                 unlockCardRequestRepository.deleteByCardId(cardId);
                 logger.info("Card was locked");
             }
         } else {
             logger.info("There is no such card in requests");
         }
+        return cardConverter.convertToDTO(res);
     }
 
     @Transactional

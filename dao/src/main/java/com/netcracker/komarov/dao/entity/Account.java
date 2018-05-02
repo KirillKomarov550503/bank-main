@@ -22,9 +22,6 @@ public class Account {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @Column(name = "account_id")
-    private long accountId;
-
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Card> cards = new HashSet<>();
 
@@ -34,19 +31,10 @@ public class Account {
     public Account() {
     }
 
-    public Account(double balance, boolean locked, Client client, long accountId) {
+    public Account(double balance, boolean locked, Client client) {
         this.balance = balance;
         this.locked = locked;
         this.client = client;
-        this.accountId = accountId;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
     }
 
     public double getBalance() {
@@ -105,14 +93,13 @@ public class Account {
         return id == account.id &&
                 Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
-                accountId == account.accountId &&
                 Objects.equals(client, account.client);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, balance, locked, client, accountId);
+        return Objects.hash(id, balance, locked, client);
     }
 
     @Override
@@ -122,7 +109,6 @@ public class Account {
                 ", balance=" + balance +
                 ", locked=" + locked +
                 ", client=" + client +
-                ", accountId=" + accountId +
                 '}';
     }
 

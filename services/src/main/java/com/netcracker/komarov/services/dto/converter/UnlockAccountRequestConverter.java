@@ -15,7 +15,7 @@ public class UnlockAccountRequestConverter implements Converter<UnlockAccountReq
             dto = new UnlockAccountRequestDTO();
             Account account = request.getAccount();
             dto.setLocked(account.isLocked());
-            dto.setAccountId(account.getAccountId());
+            dto.setAccountId(account.getId());
             dto.setBalance(account.getBalance());
         }
         return dto;

@@ -75,23 +75,23 @@ public class ClientMenu implements Menu {
                     }
                     break;
                 case 4:
-                    accountService.getUnlockAccounts(Input.inputClientId()).forEach(System.out::println);
+                    accountService.getAccountsByClientIdAndLock(Input.inputClientId(), false).forEach(System.out::println);
                     accountService.lockAccount(Input.inputAccountId());
                     break;
 
                 case 5:
-                    cardService.getUnlockCards(Input.inputClientId()).forEach(System.out::println);
+                    cardService.getCardsByClientIdAndLock(Input.inputClientId(), false).forEach(System.out::println);
                     cardService.lockCard(Input.inputCardId());
                     break;
                 case 6:
-                    Collection<AccountDTO> accounts = accountService.getLockAccounts(Input.inputClientId());
+                    Collection<AccountDTO> accounts = accountService.getAccountsByClientIdAndLock(Input.inputClientId(), true);
                     accounts.forEach(System.out::println);
                     if (accounts.size() != 0) {
                         unlockAccountRequestService.addAccountRequest(Input.inputAccountId());
                     }
                     break;
                 case 7:
-                    Collection<CardDTO> cards = cardService.getLockCards(Input.inputClientId());
+                    Collection<CardDTO> cards = cardService.getCardsByClientIdAndLock(Input.inputClientId(), true);
                     cards.forEach(System.out::println);
                     if (cards.size() != 0) {
                         unlockCardRequestService.addCardRequest(Input.inputCardId());

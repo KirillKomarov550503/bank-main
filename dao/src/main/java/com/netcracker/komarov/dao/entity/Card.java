@@ -20,9 +20,6 @@ public class Card {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @Column(name = "card_id")
-    private long cardId;
-
     @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UnlockCardRequest unlockCardRequest;
 
@@ -30,11 +27,10 @@ public class Card {
 
     }
 
-    public Card(boolean locked, int pin, Account account, long cardId) {
+    public Card(boolean locked, int pin, Account account) {
         this.locked = locked;
         this.pin = pin;
         this.account = account;
-        this.cardId = cardId;
     }
 
     public UnlockCardRequest getUnlockCardRequest() {
@@ -77,14 +73,6 @@ public class Card {
         this.account = account;
     }
 
-    public long getCardId() {
-        return cardId;
-    }
-
-    public void setCardId(long cardId) {
-        this.cardId = cardId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,14 +81,13 @@ public class Card {
         return id == card.id &&
                 locked == card.locked &&
                 pin == card.pin &&
-                cardId == card.cardId &&
                 Objects.equals(account, card.account);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, locked, pin, account, cardId);
+        return Objects.hash(id, locked, pin, account);
     }
 
     @Override
@@ -110,8 +97,6 @@ public class Card {
                 ", locked=" + locked +
                 ", pin=" + pin +
                 ", account=" + account +
-                ", cardId=" + cardId +
                 '}';
     }
-
 }

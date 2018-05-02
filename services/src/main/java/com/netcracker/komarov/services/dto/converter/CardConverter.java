@@ -12,6 +12,7 @@ public class CardConverter implements Converter<CardDTO, Card> {
         CardDTO cardDTO = null;
         if (card != null) {
             cardDTO = new CardDTO();
+            cardDTO.setId(card.getId());
             cardDTO.setAccountId(card.getAccount().getId());
             cardDTO.setBalance(card.getAccount().getBalance());
             cardDTO.setLocked(card.isLocked());

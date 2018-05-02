@@ -9,15 +9,13 @@ public interface CardService {
 
     CardDTO lockCard(long cardId);
 
-    Collection<CardDTO> getLockCards(long clientId);
+    Collection<CardDTO> getCardsByClientIdAndLock(long clientId, boolean lock);
 
-    Collection<CardDTO> getAllCardsByAccount(long accountId);
-
-    Collection<CardDTO> getUnlockCards(long clientId);
+    Collection<CardDTO> getAllCardsByAccountId(long accountId);
 
     Collection<CardDTO> getAllCards();
 
     Collection<CardDTO> getAllUnlockCardRequest();
 
-    void unlockCard(long cardId);
+    CardDTO unlockCard(long cardId);
 }

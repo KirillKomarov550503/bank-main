@@ -21,5 +21,4 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Query("select c from Card c where c.account.client.id = :client_id")
     Collection<Card> findCardsByClientId(@Param("client_id") long clientId);
 
-    Card findCardByCardId(long cardId);
 }

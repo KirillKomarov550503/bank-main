@@ -51,9 +51,10 @@ public class NewsController implements ExceptionController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/admins/{admiId}/news", method = RequestMethod.GET)
-    public Collection<NewsDTO> getCollection(@PathVariable long adminId, @RequestParam(name = "filter", required = false,
-            defaultValue = "false") boolean filter, @RequestParam(name = "client", required = false) boolean client) {
+    @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.GET)
+    public Collection<NewsDTO> getCollection(@PathVariable long adminId, @RequestParam(name = "filter",
+            required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
+            required = false, defaultValue = "false") boolean client) {
         Collection<NewsDTO> dtos;
         if (filter) {
             if (client) {

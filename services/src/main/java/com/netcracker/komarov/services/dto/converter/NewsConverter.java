@@ -16,7 +16,8 @@ public class NewsConverter implements Converter<NewsDTO, News> {
             newsDTO.setId(news.getId());
             newsDTO.setDate(news.getDate());
             newsDTO.setText(news.getText());
-            newsDTO.setDate(news.getDate());
+            newsDTO.setTitle(news.getTitle());
+            newsDTO.setStatus(news.getNewsStatus().toString());
         }
         return newsDTO;
     }

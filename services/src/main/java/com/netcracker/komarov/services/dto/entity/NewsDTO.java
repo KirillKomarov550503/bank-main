@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class NewsDTO implements Serializable {
     private long id;
@@ -58,6 +59,24 @@ public class NewsDTO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NewsDTO newsDTO = (NewsDTO) o;
+        return id == newsDTO.id &&
+                Objects.equals(date, newsDTO.date) &&
+                Objects.equals(title, newsDTO.title) &&
+                Objects.equals(text, newsDTO.text) &&
+                Objects.equals(status, newsDTO.status);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, date, title, text, status);
     }
 
     @Override

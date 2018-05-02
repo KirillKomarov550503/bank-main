@@ -3,6 +3,7 @@ package com.netcracker.komarov.services.dto.entity;
 import com.netcracker.komarov.dao.entity.Role;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ClientDTO implements Serializable {
     private long id;
@@ -90,6 +91,27 @@ public class ClientDTO implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientDTO clientDTO = (ClientDTO) o;
+        return id == clientDTO.id &&
+                phoneNumber == clientDTO.phoneNumber &&
+                passportId == clientDTO.passportId &&
+                Objects.equals(name, clientDTO.name) &&
+                Objects.equals(surname, clientDTO.surname) &&
+                Objects.equals(login, clientDTO.login) &&
+                Objects.equals(password, clientDTO.password) &&
+                role == clientDTO.role;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, surname, login, password, phoneNumber, passportId, role);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class TransactionDTO implements Serializable {
     private long id;
@@ -58,6 +59,24 @@ public class TransactionDTO implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionDTO dto = (TransactionDTO) o;
+        return id == dto.id &&
+                accountFromId == dto.accountFromId &&
+                accountToId == dto.accountToId &&
+                Double.compare(dto.money, money) == 0 &&
+                Objects.equals(date, dto.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, accountFromId, accountToId, money, date);
     }
 
     @Override

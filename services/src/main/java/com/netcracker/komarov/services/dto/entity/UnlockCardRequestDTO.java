@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class UnlockCardRequestDTO implements Serializable {
     private long id;
@@ -61,6 +62,25 @@ public class UnlockCardRequestDTO implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnlockCardRequestDTO dto = (UnlockCardRequestDTO) o;
+        return id == dto.id &&
+                locked == dto.locked &&
+                pin == dto.pin &&
+                Double.compare(dto.balance, balance) == 0 &&
+                cardId == dto.cardId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, locked, pin, balance, cardId);
+    }
+
+    @Override
+
     public String toString() {
         return "UnlockCardRequestDTO{" +
                 "id=" + id +

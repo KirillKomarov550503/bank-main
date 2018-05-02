@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class PersonDTO implements Serializable {
     private long id;
@@ -58,6 +59,24 @@ public class PersonDTO implements Serializable {
 
     public void setPassportId(long passportId) {
         this.passportId = passportId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonDTO personDTO = (PersonDTO) o;
+        return id == personDTO.id &&
+                phoneNumber == personDTO.phoneNumber &&
+                passportId == personDTO.passportId &&
+                Objects.equals(name, personDTO.name) &&
+                Objects.equals(surname, personDTO.surname);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, surname, phoneNumber, passportId);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class UnlockAccountRequestDTO implements Serializable {
     private long id;
@@ -48,6 +49,23 @@ public class UnlockAccountRequestDTO implements Serializable {
 
     public void setAccountId(long accountId) {
         this.accountId = accountId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnlockAccountRequestDTO dto = (UnlockAccountRequestDTO) o;
+        return id == dto.id &&
+                locked == dto.locked &&
+                Double.compare(dto.balance, balance) == 0 &&
+                accountId == dto.accountId;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, locked, balance, accountId);
     }
 
     @Override

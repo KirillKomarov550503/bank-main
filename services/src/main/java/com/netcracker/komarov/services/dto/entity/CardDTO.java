@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class CardDTO implements Serializable {
     private long id;
@@ -58,6 +59,24 @@ public class CardDTO implements Serializable {
 
     public void setAccountId(long accountId) {
         this.accountId = accountId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CardDTO cardDTO = (CardDTO) o;
+        return id == cardDTO.id &&
+                locked == cardDTO.locked &&
+                Double.compare(cardDTO.balance, balance) == 0 &&
+                accountId == cardDTO.accountId &&
+                pin == cardDTO.pin;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, locked, balance, accountId, pin);
     }
 
     @Override

@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-
 @RestController
 @RequestMapping("api/v1/admins")
-public class AdminController {
+public class AdminController implements ExceptionController {
     private AdminService adminService;
 
     @Autowired
@@ -29,17 +27,5 @@ public class AdminController {
             throw new ServerException("Server can't create new admin");
         }
         return dto;
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET)
-    public Collection<AdminDTO> getAll() {
-        return adminService.getAllAdmin();
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ServerException.class)
-    public String handleServerException(ServerException ex) {
-        return ex.getMessage();
     }
 }

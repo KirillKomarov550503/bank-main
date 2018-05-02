@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1")
-public class UnlockCardRequestController {
+public class UnlockCardRequestController implements ExceptionController {
     private UnlockCardRequestService requestService;
 
     @Autowired
@@ -26,11 +26,5 @@ public class UnlockCardRequestController {
             throw new ServerException("Server can't create new request");
         }
         return dto;
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ServerException.class)
-    public String handleServerException(ServerException ex) {
-        return ex.getMessage();
     }
 }

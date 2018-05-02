@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("api/v1")
-public class NewsController {
+public class NewsController implements ExceptionController {
     private NewsService newsService;
 
     @Autowired
@@ -76,17 +76,5 @@ public class NewsController {
             throw new NullPointerException("news");
         }
         return newsDTO;
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(value = NullPointerException.class)
-    public String handleNullPointerException(NullPointerException ex) {
-        return "Not found this " + ex.getMessage();
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ServerException.class)
-    public String handleServerException(ServerException ex) {
-        return ex.getMessage();
     }
 }

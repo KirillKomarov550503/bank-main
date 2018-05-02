@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1")
-public class UnlockAccountRequestController {
+public class UnlockAccountRequestController implements ExceptionController {
     private UnlockAccountRequestService requestService;
 
     @Autowired
@@ -25,11 +25,5 @@ public class UnlockAccountRequestController {
             throw new ServerException("Server can't create new request");
         }
         return dto;
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ServerException.class)
-    public String handleServerException(ServerException ex) {
-        return ex.getMessage();
     }
 }

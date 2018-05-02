@@ -10,7 +10,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("api/v1")
-public class PersonController {
+public class PersonController implements ExceptionController {
     private PersonService personService;
 
     @Autowired

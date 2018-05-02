@@ -11,7 +11,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping(value = "api/v1")
-public class AccountController {
+public class AccountController implements ExceptionController {
     private AccountService accountService;
 
     @Autowired
@@ -84,17 +84,5 @@ public class AccountController {
     @RequestMapping(value = "/admins/{adminId}/requests/accounts", method = RequestMethod.GET)
     public Collection<AccountDTO> getAllRequests(@PathVariable long adminId) {
         return accountService.getAllUnlockAccountRequest();
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(value = NullPointerException.class)
-    public String handleNullPointerException(NullPointerException ex) {
-        return "Not found this " + ex.getMessage();
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ServerException.class)
-    public String handleServerException(ServerException ex) {
-        return ex.getMessage();
     }
 }

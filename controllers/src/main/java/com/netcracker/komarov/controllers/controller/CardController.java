@@ -1,10 +1,10 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.netcracker.komarov.controllers.exception.ServerException;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -19,78 +19,83 @@ public class CardController {
         this.cardService = cardService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards", method = RequestMethod.POST)
-    public ResponseEntity create(@PathVariable long clientId, @PathVariable long accountId, @RequestBody CardDTO cardDTO) {
+    public CardDTO create(@PathVariable long clientId, @PathVariable long accountId, @RequestBody CardDTO cardDTO) {
         CardDTO dto = cardService.createCard(cardDTO, accountId);
-        ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            responseEntity = new ResponseEntity(dto, HttpStatus.CREATED);
+            throw new ServerException("Server can't create new card");
         }
-        return responseEntity;
+        return dto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}/blocking", method = RequestMethod.GET)
-    public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId, @PathVariable long cardId) {
+    public CardDTO lock(@PathVariable long clientId, @PathVariable long accountId, @PathVariable long cardId) {
         CardDTO dto = cardService.lockCard(cardId);
-        ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
-        } else if (dto.isLocked()) {
-            responseEntity = new ResponseEntity(dto, HttpStatus.OK);
-        } else {
-            responseEntity = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new NullPointerException("card");
+        } else if (!dto.isLocked()) {
+            throw new ServerException("Failed to lock card");
         }
-        return responseEntity;
+        return dto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/{clientId}/requests/cards/{cardId}/unblocking", method = RequestMethod.GET)
-    public ResponseEntity unlock(@PathVariable long clientId, @PathVariable long cardId) {
+    public CardDTO unlock(@PathVariable long clientId, @PathVariable long cardId) {
         CardDTO dto = cardService.lockCard(cardId);
-        ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
+            throw new NullPointerException("card");
         } else if (dto.isLocked()) {
-            responseEntity = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            responseEntity = new ResponseEntity(dto, HttpStatus.OK);
+            throw new ServerException("Failed to lock card");
         }
-        return responseEntity;
+        return dto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/clients/{clientId}/cards/status", method = RequestMethod.GET)
-    public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
+    public Collection<CardDTO> getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
         Collection<CardDTO> dtos = cardService.getCardsByClientIdAndLock(clientId, lock);
-        ResponseEntity responseEntity;
         if (dtos == null) {
-            responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
-        } else {
-            responseEntity = new ResponseEntity(dtos, HttpStatus.OK);
+            throw new NullPointerException("card");
         }
-        return responseEntity;
+        return dtos;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/clients/{clientId}/accounts{accountId}/cards", method = RequestMethod.GET)
-    public ResponseEntity getByAccountId(@PathVariable long clientId, @PathVariable long accountId) {
+    public Collection<CardDTO> getByAccountId(@PathVariable long clientId, @PathVariable long accountId) {
         Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
-        ResponseEntity responseEntity;
         if (dtos == null) {
-            responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
-        } else {
-            responseEntity = new ResponseEntity(dtos, HttpStatus.OK);
+            throw new NullPointerException("account");
         }
-        return responseEntity;
+        return dtos;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/{adminId}/cards", method = RequestMethod.GET)
     public Collection<CardDTO> getAll(@PathVariable long adminId) {
         return cardService.getAllCards();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/{adminId}/requests/cards")
     public Collection<CardDTO> getAllUnlockRequests(@PathVariable long adminId) {
         return cardService.getAllUnlockCardRequest();
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = NullPointerException.class)
+    public String handleNullPointerException(NullPointerException ex) {
+        return "Not found this " + ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = ServerException.class)
+    public String handleServerException(ServerException ex) {
+        return ex.getMessage();
+    }
 }
+

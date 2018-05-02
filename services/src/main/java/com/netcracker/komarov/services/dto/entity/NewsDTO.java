@@ -7,16 +7,17 @@ public class NewsDTO implements Serializable {
     private String date;
     private String title;
     private String text;
-
+    private String status;
 
     public NewsDTO() {
     }
 
-    public NewsDTO(long id, String date, String title, String text) {
+    public NewsDTO(long id, String date, String title, String text, String status) {
         this.id = id;
         this.date = date;
         this.title = title;
         this.text = text;
+        this.status = status;
     }
 
     public long getId() {
@@ -51,6 +52,14 @@ public class NewsDTO implements Serializable {
         this.text = text;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "NewsDTO{" +
@@ -58,6 +67,7 @@ public class NewsDTO implements Serializable {
                 ", date='" + date + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

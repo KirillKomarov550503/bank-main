@@ -1,6 +1,7 @@
 package com.netcracker.komarov.services.dto.converter;
 
 import com.netcracker.komarov.dao.entity.News;
+import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.services.dto.Converter;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,12 @@ public class NewsConverter implements Converter<NewsDTO, News> {
         news.setTitle(dto.getTitle());
         news.setText(dto.getText());
         news.setDate(dto.getDate());
+        String status = dto.getStatus().toLowerCase();
+        if (status.equals("client")) {
+            news.setNewsStatus(NewsStatus.CLIENT);
+        } else if (status.equals("general")) {
+            news.setNewsStatus(NewsStatus.GENERAL);
+        }
         return news;
     }
 }

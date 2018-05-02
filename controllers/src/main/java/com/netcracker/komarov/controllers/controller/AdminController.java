@@ -1,16 +1,13 @@
 package com.netcracker.komarov.controllers.controller;
 
 
+import com.netcracker.komarov.controllers.exception.ServerException;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
@@ -24,20 +21,25 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity add(@RequestBody PersonDTO personDTO) {
-        ResponseEntity responseEntity;
+    public AdminDTO add(@RequestBody PersonDTO personDTO) {
         AdminDTO dto = adminService.addAdmin(personDTO);
         if (dto == null) {
-            responseEntity = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            responseEntity = new ResponseEntity(dto, HttpStatus.CREATED);
+            throw new ServerException("Server can't create new admin");
         }
-        return responseEntity;
+        return dto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET)
     public Collection<AdminDTO> getAll() {
         return adminService.getAllAdmin();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = ServerException.class)
+    public String handleServerException(ServerException ex) {
+        return ex.getMessage();
     }
 }

@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.netcracker.komarov.controllers.exception.ServerException;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.ClientService;
@@ -20,20 +21,25 @@ public class ClientController {
         this.clientService = clientService;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity registration(@RequestBody PersonDTO personDTO) {
+    public ClientDTO registration(@RequestBody PersonDTO personDTO) {
         ClientDTO dto = clientService.registration(personDTO);
-        ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            responseEntity = new ResponseEntity(dto, HttpStatus.CREATED);
+            throw new ServerException("Server can't create new client");
         }
-        return responseEntity;
+        return dto;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/{adminId}/clients", method = RequestMethod.GET)
     public Collection<ClientDTO> getAll(@PathVariable long adminId) {
         return clientService.getAllClients();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = ServerException.class)
+    public String handleServerException(ServerException ex) {
+        return ex.getMessage();
     }
 }

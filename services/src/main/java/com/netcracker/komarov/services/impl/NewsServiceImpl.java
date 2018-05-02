@@ -78,7 +78,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public NewsDTO getPersonalNews(long newsId) {
+    public NewsDTO getNewsById(long newsId) {
         Optional<News> optional = newsRepository.findById(newsId);
         News news = null;
         if (optional.isPresent()) {
@@ -92,13 +92,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public NewsDTO addNews(NewsDTO newsDTO, long adminId, String status) {
+    public NewsDTO addNews(NewsDTO newsDTO, long adminId) {
         News news = newsConverter.convertToEntity(newsDTO);
-        if (status.equals("client")) {
-            news.setNewsStatus(NewsStatus.CLIENT);
-        } else if (status.equals("general")) {
-            news.setNewsStatus(NewsStatus.GENERAL);
-        }
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
         News temp = null;
         if (optionalAdmin.isPresent()) {

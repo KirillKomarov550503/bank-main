@@ -60,14 +60,10 @@ CREATE TABLE IF NOT EXISTS Transaction (
   money   DECIMAL(2)  NOT NULL
 );
 
-CREATE TABlE IF NOT EXISTS UnlockAccountRequest (
-  id         BIGSERIAL NOT NULL PRIMARY KEY,
-  account_id BIGINT    NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS UnlockCardRequest (
-  id      BIGSERIAL NOT NULL PRIMARY KEY,
-  card_id BIGINT    NOT NULL
+CREATE TABlE IF NOT EXISTS Request (
+  id         BIGSERIAL   NOT NULL PRIMARY KEY,
+  request_id BIGINT      NOT NULL,
+  type       VARCHAR(20) NOT NULL
 );
 
 

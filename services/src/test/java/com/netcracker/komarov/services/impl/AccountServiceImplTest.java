@@ -23,17 +23,6 @@ public class AccountServiceImplTest extends AbstractSpringTest {
     @Autowired
     private RequestService requestService;
 
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void lockAccount() {
         Account account = new Account(2, 0.0, true, 1);
@@ -106,8 +95,8 @@ public class AccountServiceImplTest extends AbstractSpringTest {
 
     @Test
     public void createAccount() {
-        Account res = new Account(4, 0.0, false, 2);
         Account account = new Account(0, 0.0, false, 0);
+        Account res = new Account(4, 0.0, false, 2);
         Assert.assertEquals(res, accountService.createAccount(account, 2));
     }
 }

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class RequestDAOImpl implements RequestDAO {
@@ -43,7 +44,7 @@ public class RequestDAOImpl implements RequestDAO {
     @Override
     public Request add(Request entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO request(request_id, type) VALUES(?, ?) RETURNING id");
+                "INSERT INTO Request (request_id, type) VALUES(?, ?) RETURNING id");
         preparedStatement.setLong(1, entity.getRequestId());
         preparedStatement.setString(2, entity.getRequestStatus().toString());
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -98,7 +99,7 @@ public class RequestDAOImpl implements RequestDAO {
 
     @Override
     public Collection<Request> getAll() throws SQLException {
-        Collection<Request> requests = null;
+        Collection<Request> requests = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM request");
         ResultSet resultSet = preparedStatement.executeQuery();

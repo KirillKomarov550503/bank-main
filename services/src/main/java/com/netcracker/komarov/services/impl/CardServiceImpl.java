@@ -94,7 +94,7 @@ public class CardServiceImpl implements CardService {
             Collection<Request> requests = requestDAO.getAll();
             for (Request request : requests) {
                 if (request.getRequestStatus().equals(RequestStatus.CARD)) {
-                    cards.add(cardDAO.getById(request.getId()));
+                    cards.add(cardDAO.getById(request.getRequestId()));
                 }
             }
         } catch (SQLException e) {

@@ -17,19 +17,17 @@ public class AdminMenu implements Menu {
     private CardService cardService;
     private ClientService clientService;
     private NewsService newsService;
-    private ClientNewsService clientNewsService;
     private PersonService personService;
 
     @Autowired
     public AdminMenu(AdminService adminService, AccountService accountService,
                      CardService cardService, ClientService clientService,
-                     NewsService newsService, ClientNewsService clientNewsService, PersonService personService) {
+                     NewsService newsService, PersonService personService) {
         this.adminService = adminService;
         this.accountService = accountService;
         this.cardService = cardService;
         this.clientService = clientService;
         this.newsService = newsService;
-        this.clientNewsService = clientNewsService;
         this.personService = personService;
     }
 
@@ -61,7 +59,7 @@ public class AdminMenu implements Menu {
             printTextMenu();
             switch (scanner.nextInt()) {
                 case 1:
-                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    accountService.getAllAccountRequest().forEach(System.out::println);
                     accountService.unlockAccount(Input.inputAccountId());
                     break;
                 case 2:
@@ -75,7 +73,7 @@ public class AdminMenu implements Menu {
                     newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
                     long newsId = Input.inputNewsId();
                     Collection<Long> clientIds = Input.inputClientIds();
-                    clientNewsService.addClientNews(clientIds, newsId);
+                    newsService.addClientNews(clientIds, newsId);
                     break;
                 case 5:
                     personService.getAllPeople().forEach(System.out::println);
@@ -90,13 +88,13 @@ public class AdminMenu implements Menu {
                     cardService.getAllCards().forEach(System.out::println);
                     break;
                 case 9:
-                    newsService.getAllGeneralNews().forEach(System.out::println);
+                    newsService.getAllNewsByStatus(NewsStatus.GENERAL).forEach(System.out::println);
                     break;
                 case 10:
-                    clientNewsService.getAllClientNews().forEach(System.out::println);
+                    newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
                     break;
                 case 11:
-                    accountService.getAllUnlockAccountRequest().forEach(System.out::println);
+                    accountService.getAllAccountRequest().forEach(System.out::println);
                     break;
                 case 12:
                     cardService.getAllUnlockCardRequest().forEach(System.out::println);

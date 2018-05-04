@@ -94,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
             Collection<Request> requests = requestDAO.getAll();
             for (Request request : requests) {
                 if (request.getRequestStatus().equals(RequestStatus.ACCOUNT)) {
-                    accounts.add(accountDAO.getById(request.getId()));
+                    accounts.add(accountDAO.getById(request.getRequestId()));
                 }
             }
         } catch (SQLException e) {

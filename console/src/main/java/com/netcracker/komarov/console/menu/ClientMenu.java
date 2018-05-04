@@ -4,6 +4,7 @@ import com.netcracker.komarov.console.utils.Input;
 import com.netcracker.komarov.console.utils.Output;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
+import com.netcracker.komarov.dao.entity.RequestStatus;
 import com.netcracker.komarov.services.exception.TransactionException;
 import com.netcracker.komarov.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,16 @@ public class ClientMenu implements Menu {
     private CardService cardService;
     private NewsService newsService;
     private TransactionService transactionService;
-    private UnlockAccountRequestService unlockAccountRequestService;
-    private UnlockCardRequestService unlockCardRequestService;
+    private RequestService requestService;
 
     @Autowired
     public ClientMenu(AccountService accountService, CardService cardService, NewsService newsService,
-                      TransactionService transactionService, UnlockAccountRequestService unlockAccountRequestService,
-                      UnlockCardRequestService unlockCardRequestService) {
+                      TransactionService transactionService, RequestService requestService) {
         this.accountService = accountService;
         this.cardService = cardService;
         this.newsService = newsService;
         this.transactionService = transactionService;
-        this.unlockAccountRequestService = unlockAccountRequestService;
-        this.unlockCardRequestService = unlockCardRequestService;
+        this.requestService = requestService;
     }
 
     @Override
@@ -85,11 +83,11 @@ public class ClientMenu implements Menu {
                     break;
                 case 6:
                     accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    unlockAccountRequestService.unlockAccountRequest(Input.inputAccountId());
+                    requestService.saveRequest(Input.inputAccountId(), RequestStatus.ACCOUNT);
                     break;
                 case 7:
                     cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
-                    unlockCardRequestService.unlockCardRequest(Input.inputCardId());
+                    requestService.saveRequest(Input.inputCardId(), RequestStatus.ACCOUNT);
                     break;
                 case 8:
                     transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);

@@ -19,8 +19,5 @@ public interface DAOFactory {
 
     TransactionDAO getTransactionDAO();
 
-    UnlockAccountRequestDAO getUnlockAccountRequestDAO();
-
-    UnlockCardRequestDAO getUnlockCardRequestDAO();
-
+    RequestDAO getRequestDAO();
 }

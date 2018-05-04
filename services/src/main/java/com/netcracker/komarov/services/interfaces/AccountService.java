@@ -15,9 +15,9 @@ public interface AccountService {
 
     Account refill(long accountId);
 
-    Collection<Account> getAllUnlockAccountRequest();
+    Collection<Account> getAllAccountRequest();
 
     Collection<Account> getAllAccounts();
 
-    void unlockAccount(long accountId);
+    Account unlockAccount(long accountId);
 }

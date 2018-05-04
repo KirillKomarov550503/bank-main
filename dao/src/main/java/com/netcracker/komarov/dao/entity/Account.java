@@ -6,25 +6,15 @@ public class Account extends BaseEntity {
     private double balance;
     private boolean locked;
     private long clientId;
-    private long accountId;
 
     public Account() {
     }
 
-    public Account(long id, double balance, boolean locked, long clientId, long accountId) {
+    public Account(long id, double balance, boolean locked, long clientId) {
         super(id);
         this.balance = balance;
         this.locked = locked;
         this.clientId = clientId;
-        this.accountId = accountId;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
     }
 
     public double getBalance() {
@@ -52,16 +42,6 @@ public class Account extends BaseEntity {
     }
 
     @Override
-    public String toString() {
-        return "Account{" +
-                "balance=" + balance +
-                ", locked=" + locked +
-                ", clientId=" + clientId +
-                ", id=" + id +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -69,13 +49,22 @@ public class Account extends BaseEntity {
         Account account = (Account) o;
         return Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
-                clientId == account.clientId &&
-                accountId == account.accountId;
+                clientId == account.clientId;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), balance, locked, clientId, accountId);
+        return Objects.hash(super.hashCode(), balance, locked, clientId);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", balance=" + balance +
+                ", locked=" + locked +
+                ", clientId=" + clientId +
+                '}';
     }
 }

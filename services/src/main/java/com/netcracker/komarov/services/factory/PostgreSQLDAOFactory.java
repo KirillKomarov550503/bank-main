@@ -49,12 +49,7 @@ public class PostgreSQLDAOFactory implements DAOFactory {
     }
 
     @Override
-    public UnlockAccountRequestDAO getUnlockAccountRequestDAO() {
-        return UnlockAccountRequestDAOImpl.getUnlcokAccountRequestDAO(DataBase.getConnection());
-    }
-
-    @Override
-    public UnlockCardRequestDAO getUnlockCardRequestDAO() {
-        return UnlockCardRequestDAOImpl.getUnlockCardRequestDAO(DataBase.getConnection());
+    public RequestDAO getRequestDAO() {
+        return RequestDAOImpl.getRequestDAO(DataBase.getConnection());
     }
 }

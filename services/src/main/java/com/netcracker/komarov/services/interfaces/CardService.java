@@ -19,5 +19,5 @@ public interface CardService {
 
     Collection<Card> getAllUnlockCardRequest();
 
-    void unlockCard(long cardId);
+    Card unlockCard(long cardId);
 }

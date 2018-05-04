@@ -48,7 +48,6 @@ public class AccountDAOImpl implements AccountDAO {
         account.setBalance(resultSet.getDouble("balance"));
         account.setLocked(resultSet.getBoolean("locked"));
         account.setClientId(resultSet.getLong("client_Id"));
-        account.setAccountId(resultSet.getLong("account_id"));
         return account;
     }
 
@@ -56,12 +55,11 @@ public class AccountDAOImpl implements AccountDAO {
     public Account update(Account entity) throws SQLException {
         Account account = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "UPDATE ACCOUNT SET locked=?, balance=?, client_id=?, account_id=? WHERE id=?");
+                "UPDATE ACCOUNT SET locked=?, balance=?, client_id=? WHERE id=?");
         preparedStatement.setBoolean(1, entity.isLocked());
         preparedStatement.setDouble(2, entity.getBalance());
         preparedStatement.setLong(3, entity.getClientId());
-        preparedStatement.setLong(4, entity.getAccountId());
-        preparedStatement.setLong(5, entity.getId());
+        preparedStatement.setLong(4, entity.getId());
         preparedStatement.execute();
         preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM Account WHERE id=?");
@@ -87,12 +85,11 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public Account add(Account entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO ACCOUNT(balance, locked, client_id, account_id) VALUES(?, ?, ?, ?)" +
+                "INSERT INTO ACCOUNT(balance, locked, client_id) VALUES(?, ?, ?)" +
                 "RETURNING id");
         preparedStatement.setDouble(1, entity.getBalance());
         preparedStatement.setBoolean(2, entity.isLocked());
         preparedStatement.setLong(3, entity.getClientId());
-        preparedStatement.setLong(4, entity.getAccountId());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             entity.setId(resultSet.getLong("id"));
@@ -188,20 +185,5 @@ public class AccountDAOImpl implements AccountDAO {
         resultSet.close();
         preparedStatement.close();
         return accounts;
-    }
-
-    @Override
-    public Account getByAccountId(long accountId) throws SQLException {
-        Account account = null;
-        PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Account WHERE account_id=?");
-        preparedStatement.setLong(1, accountId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            account = getAccount(resultSet);
-        }
-        resultSet.close();
-        preparedStatement.close();
-        return account;
     }
 }

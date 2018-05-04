@@ -3,7 +3,7 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.News;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.dao.utils.DataBase;
-import com.netcracker.komarov.services.interfaces.ClientNewsService;
+import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.NewsService;
 import org.junit.After;
 import org.junit.Assert;
@@ -22,7 +22,7 @@ public class NewsServiceImplTest extends AbstractSpringTest {
     private NewsService newsService;
 
     @Autowired
-    private ClientNewsService clientNewsService;
+    private ClientService clientService;
 
     @Before
     public void init() {
@@ -43,11 +43,11 @@ public class NewsServiceImplTest extends AbstractSpringTest {
         newsService.addGeneralNews(news4, 3);
         Collection<Long> clientIds1 = new ArrayList<>();
         clientIds1.add(0L);
-        clientNewsService.addClientNews(clientIds1, news2.getId());
+        newsService.addClientNews(clientIds1, news2.getId());
         Collection<Long> clientIds2 = new ArrayList<>();
         clientIds2.add(1L);
         clientIds2.add(3L);
-        clientNewsService.addClientNews(clientIds2, news3.getId());
+        newsService.addClientNews(clientIds2, news3.getId());
     }
 
     @After
@@ -92,7 +92,7 @@ public class NewsServiceImplTest extends AbstractSpringTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
         News news = new News(2, simpleDateFormat.format(new Date()), "GG", "GOOD GAME",
                 2, NewsStatus.CLIENT);
-        Assert.assertEquals(news, newsService.getPersonalNews(2));
+        Assert.assertEquals(news, newsService.findClientNewsById(2));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class NewsServiceImplTest extends AbstractSpringTest {
                 " on de_inferno", 3, NewsStatus.GENERAL);
         newsCollection.add(news1);
         newsCollection.add(news4);
-        Assert.assertEquals(newsCollection, newsService.getAllGeneralNews());
+        Assert.assertEquals(newsCollection, newsService.getAllNewsByStatus(NewsStatus.GENERAL));
     }
 
     @Test

@@ -1,9 +1,10 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Card;
-import com.netcracker.komarov.dao.entity.UnlockCardRequest;
+import com.netcracker.komarov.dao.entity.Request;
+import com.netcracker.komarov.dao.entity.RequestStatus;
 import com.netcracker.komarov.dao.interfaces.CardDAO;
-import com.netcracker.komarov.dao.interfaces.UnlockCardRequestDAO;
+import com.netcracker.komarov.dao.interfaces.RequestDAO;
 import com.netcracker.komarov.dao.utils.DataBase;
 import com.netcracker.komarov.services.factory.DAOFactory;
 import com.netcracker.komarov.services.interfaces.CardService;
@@ -17,12 +18,12 @@ import java.util.Collection;
 
 @Service
 public class CardServiceImpl implements CardService {
-    private UnlockCardRequestDAO unlockCardRequestDAO;
+    private RequestDAO requestDAO;
     private CardDAO cardDAO;
 
     @Autowired
     public CardServiceImpl(DAOFactory daoFactory) {
-        this.unlockCardRequestDAO = daoFactory.getUnlockCardRequestDAO();
+        this.requestDAO = daoFactory.getRequestDAO();
         this.cardDAO = daoFactory.getCardDAO();
     }
 
@@ -90,9 +91,11 @@ public class CardServiceImpl implements CardService {
     public Collection<Card> getAllUnlockCardRequest() {
         Collection<Card> cards = new ArrayList<>();
         try {
-            Collection<UnlockCardRequest> requests = unlockCardRequestDAO.getAll();
-            for (UnlockCardRequest request : requests) {
-                cards.add(cardDAO.getById(request.getCardId()));
+            Collection<Request> requests = requestDAO.getAll();
+            for (Request request : requests) {
+                if (request.getRequestStatus().equals(RequestStatus.CARD)) {
+                    cards.add(cardDAO.getById(request.getId()));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,25 +104,27 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void unlockCard(long cardId) {
-        UnlockCardRequest request = null;
+    public Card unlockCard(long cardId) {
+        Request request = null;
         Card card = null;
         try {
-            request = unlockCardRequestDAO.getAll()
+            request = requestDAO.getAll()
                     .stream()
-                    .filter(unlockCardRequest -> unlockCardRequest.getCardId() == cardId)
+                    .filter(elem -> elem.getRequestStatus().equals(RequestStatus.CARD))
+                    .filter(elem -> elem.getRequestId() == cardId)
                     .findFirst()
                     .orElse(null);
-            card = cardDAO.getById(request.getCardId());
+            card = cardDAO.getById(cardId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         Connection connection = DataBase.getConnection();
+        Card temp = null;
         try {
             connection.setAutoCommit(false);
             card.setLocked(false);
-            cardDAO.update(card);
-            unlockCardRequestDAO.delete(request.getId());
+            temp = cardDAO.update(card);
+            requestDAO.delete(request.getId());
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
@@ -131,6 +136,7 @@ public class CardServiceImpl implements CardService {
             }
             System.out.println("SQL exception");
         }
+        return temp;
     }
 
 

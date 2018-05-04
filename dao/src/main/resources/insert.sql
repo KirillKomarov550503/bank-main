@@ -16,24 +16,24 @@ INSERT INTO client (person_id) VALUES (2);
 INSERT INTO client (person_id) VALUES (3);
 
 
-INSERT INTO account (client_id, balance, locked, account_id)
-VALUES (1, 0, FALSE, 423);
+INSERT INTO account (client_id, balance, locked)
+VALUES (1, 0, FALSE);
 
-INSERT INTO account (client_id, balance, locked, account_id)
-VALUES (1, 0, FALSE, 100);
+INSERT INTO account (client_id, balance, locked)
+VALUES (1, 0, FALSE);
 
-INSERT INTO account (client_id, balance, locked, account_id)
-VALUES (3, 0, FALSE, 123);
+INSERT INTO account (client_id, balance, locked)
+VALUES (3, 0, FALSE);
 
 
-INSERT INTO card (account_id, card_id, pin, locked)
-VALUES (3, 100, 4234, FALSE);
+INSERT INTO card (account_id, pin, locked)
+VALUES (3, 4234, FALSE);
 
-INSERT INTO card (account_id, card_id, pin, locked)
-VALUES (1, 128989, 1111, FALSE);
+INSERT INTO card (account_id, pin, locked)
+VALUES (1, 1111, FALSE);
 
-INSERT INTO card (account_id, card_id, pin, locked)
-VALUES (1, 101, 4004, FALSE);
+INSERT INTO card (account_id, pin, locked)
+VALUES (1, 4004, FALSE);
 
 
 INSERT INTO admin (person_id) VALUES (4);

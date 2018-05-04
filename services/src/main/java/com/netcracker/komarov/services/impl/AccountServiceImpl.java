@@ -1,9 +1,10 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
-import com.netcracker.komarov.dao.entity.UnlockAccountRequest;
+import com.netcracker.komarov.dao.entity.Request;
+import com.netcracker.komarov.dao.entity.RequestStatus;
 import com.netcracker.komarov.dao.interfaces.AccountDAO;
-import com.netcracker.komarov.dao.interfaces.UnlockAccountRequestDAO;
+import com.netcracker.komarov.dao.interfaces.RequestDAO;
 import com.netcracker.komarov.dao.utils.DataBase;
 import com.netcracker.komarov.services.factory.DAOFactory;
 import com.netcracker.komarov.services.interfaces.AccountService;
@@ -18,12 +19,12 @@ import java.util.Collection;
 @Service
 public class AccountServiceImpl implements AccountService {
     private AccountDAO accountDAO;
-    private UnlockAccountRequestDAO unlockAccountRequestDAO;
+    private RequestDAO requestDAO;
 
     @Autowired
     public AccountServiceImpl(DAOFactory daoFactory) {
         this.accountDAO = daoFactory.getAccountDAO();
-        this.unlockAccountRequestDAO = daoFactory.getUnlockAccountRequestDAO();
+        this.requestDAO = daoFactory.getRequestDAO();
     }
 
     @Override
@@ -51,25 +52,27 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void unlockAccount(long accountId) {
-        UnlockAccountRequest request = null;
+    public Account unlockAccount(long accountId) {
+        Request request = null;
         Account account = null;
         try {
-            request = unlockAccountRequestDAO.getAll()
+            request = requestDAO.getAll()
                     .stream()
-                    .filter(unlockAccountRequest -> unlockAccountRequest.getAccountId() == accountId)
+                    .filter(elem -> elem.getRequestStatus().equals(RequestStatus.ACCOUNT))
+                    .filter(elem -> elem.getRequestId() == accountId)
                     .findFirst()
                     .orElse(null);
-            account = accountDAO.getById(request.getAccountId());
+            account = accountDAO.getById(accountId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         Connection connection = DataBase.getConnection();
+        Account temp = null;
         try {
             account.setLocked(false);
             connection.setAutoCommit(false);
-            accountDAO.update(account);
-            unlockAccountRequestDAO.delete(request.getId());
+            temp = accountDAO.update(account);
+            requestDAO.delete(request.getId());
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
@@ -81,15 +84,18 @@ public class AccountServiceImpl implements AccountService {
             }
             System.out.println("SQL exception");
         }
+        return temp;
     }
 
     @Override
-    public Collection<Account> getAllUnlockAccountRequest() {
+    public Collection<Account> getAllAccountRequest() {
         Collection<Account> accounts = new ArrayList<>();
         try {
-            Collection<UnlockAccountRequest> requests = unlockAccountRequestDAO.getAll();
-            for (UnlockAccountRequest request : requests) {
-                accounts.add(accountDAO.getById(request.getAccountId()));
+            Collection<Request> requests = requestDAO.getAll();
+            for (Request request : requests) {
+                if (request.getRequestStatus().equals(RequestStatus.ACCOUNT)) {
+                    accounts.add(accountDAO.getById(request.getId()));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

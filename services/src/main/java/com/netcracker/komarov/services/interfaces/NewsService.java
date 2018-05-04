@@ -8,13 +8,13 @@ import java.util.Collection;
 public interface NewsService {
     Collection<News> getAllPersonalNews(long clientId);
 
-    News getPersonalNews(long newsId);
+    News findClientNewsById(long newsId);
 
     Collection<News> getAllNews();
-
-    Collection<News> getAllGeneralNews();
 
     Collection<News> getAllNewsByStatus(NewsStatus newsStatus);
 
     News addGeneralNews(News news, long adminId);
+
+    void addClientNews(Collection<Long> clientIds, long newsId);
 }

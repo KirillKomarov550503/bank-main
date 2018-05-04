@@ -44,12 +44,11 @@ public class CardDAOImpl implements CardDAO {
     public Card update(Card entity) throws SQLException {
         Card card = null;
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "UPDATE Card SET locked=?, pin=?, card_id=?, account_id=? WHERE id=?");
+                "UPDATE Card SET locked=?, pin=?,  account_id=? WHERE id=?");
         preparedStatement.setBoolean(1, entity.isLocked());
         preparedStatement.setInt(2, entity.getPin());
-        preparedStatement.setLong(3, entity.getCardId());
-        preparedStatement.setLong(4, entity.getAccountId());
-        preparedStatement.setLong(5, entity.getId());
+        preparedStatement.setLong(3, entity.getAccountId());
+        preparedStatement.setLong(4, entity.getId());
         preparedStatement.execute();
         preparedStatement = connection.prepareStatement("" +
                 "SELECT * FROM Card WHERE id=?");
@@ -67,7 +66,6 @@ public class CardDAOImpl implements CardDAO {
         Card card = new Card();
         card.setId(resultSet.getLong("id"));
         card.setLocked(resultSet.getBoolean("locked"));
-        card.setCardId(resultSet.getLong("card_id"));
         card.setPin(resultSet.getInt("pin"));
         card.setAccountId(resultSet.getLong("account_id"));
         return card;
@@ -85,12 +83,11 @@ public class CardDAOImpl implements CardDAO {
     @Override
     public Card add(Card entity) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "INSERT INTO Card (locked, pin, card_id, account_id) VALUES(?, ?, ?, ?)" +
+                "INSERT INTO Card (locked, pin, account_id) VALUES(?, ?, ?)" +
                 "RETURNING id");
         preparedStatement.setBoolean(1, entity.isLocked());
         preparedStatement.setInt(2, entity.getPin());
-        preparedStatement.setLong(3, entity.getCardId());
-        preparedStatement.setLong(4, entity.getAccountId());
+        preparedStatement.setLong(3, entity.getAccountId());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             entity.setId(resultSet.getLong("id"));
@@ -113,21 +110,6 @@ public class CardDAOImpl implements CardDAO {
         resultSet.close();
         preparedStatement.close();
         return cards;
-    }
-
-    @Override
-    public Card getByCardId(long cardId) throws SQLException {
-        Card card = null;
-        PreparedStatement preparedStatement = connection.prepareStatement("" +
-                "SELECT * FROM Card WHERE card_id=?");
-        preparedStatement.setLong(1, cardId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            card = getCard(resultSet);
-        }
-        resultSet.close();
-        preparedStatement.close();
-        return card;
     }
 
     @Override

@@ -12,5 +12,4 @@ public interface CardDAO extends CrudDAO<Card> {
     Collection<Card> getLockedCardsByClientId(long clientId) throws SQLException;
     Collection<Card> getUnlockedCardsByClientId(long clientId) throws SQLException;
     Collection<Card> getCardsByClientId(long clientId) throws SQLException;
-    Card getByCardId(long cardId) throws SQLException;
 }

@@ -11,5 +11,4 @@ public interface AccountDAO extends CrudDAO<Account> {
     Collection<Account> getLockedAccountsByClientId(long clientId) throws SQLException;
     Collection<Account> getUnlockedAccountsByClientId(long clientId) throws SQLException;
     Collection<Account> getAccountsByClientId(long clientId) throws SQLException;
-    Account getByAccountId(long accountId) throws SQLException;
 }

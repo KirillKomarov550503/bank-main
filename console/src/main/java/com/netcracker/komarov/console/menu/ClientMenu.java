@@ -100,6 +100,7 @@ public class ClientMenu implements Menu {
                     break;
                 case 0:
                     flag = false;
+                    scanner.close();
                     break;
             }
         }

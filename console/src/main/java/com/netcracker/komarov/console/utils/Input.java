@@ -38,6 +38,7 @@ public class Input {
             System.out.println("Wrong input phone number");
         }
         person.setRole(role);
+        scanner.close();
         return person;
     }
 
@@ -46,6 +47,7 @@ public class Input {
         long personId;
         System.out.println("Input client ID: ");
         personId = scanner.nextLong();
+        scanner.close();
         return personId;
     }
 
@@ -54,6 +56,7 @@ public class Input {
         int pin;
         System.out.println("Come up with PIN of your card: ");
         pin = scanner.nextInt();
+        scanner.close();
         return pin;
     }
 
@@ -62,6 +65,7 @@ public class Input {
         long accountId;
         System.out.println("Input account ID: ");
         accountId = scanner.nextLong();
+        scanner.close();
         return accountId;
     }
 
@@ -80,6 +84,7 @@ public class Input {
         transactionDTO.setAccountToId(accountToId);
         transactionDTO.setClientId(clientId);
         transactionDTO.setMoney(money);
+        scanner.close();
         return transactionDTO;
     }
 
@@ -105,6 +110,7 @@ public class Input {
         } else if (status.equals("client")) {
             news.setNewsStatus(NewsStatus.CLIENT);
         }
+        scanner.close();
         return news;
     }
 
@@ -124,6 +130,7 @@ public class Input {
                 clientIds.add(Long.valueOf(clientId));
             }
         }
+        scanner.close();
         return clientIds;
     }
 
@@ -131,6 +138,7 @@ public class Input {
         Scanner scanner = new Scanner(System.in);
         print("Input ID of card that you want to lock: ");
         long cardId = scanner.nextLong();
+        scanner.close();
         return cardId;
     }
 
@@ -138,6 +146,7 @@ public class Input {
         Scanner scanner = new Scanner(System.in);
         print("Input admin ID: ");
         long adminId = scanner.nextLong();
+        scanner.close();
         return adminId;
     }
 
@@ -160,6 +169,7 @@ public class Input {
         print("Input your phone number: ");
         long phoneNumber = scanner.nextLong();
         person.setPhoneNumber(phoneNumber);
+        scanner.close();
         return person;
     }
 
@@ -167,6 +177,7 @@ public class Input {
         print("Input news ID that you want to send clients: ");
         Scanner scanner = new Scanner(System.in);
         long newsId = scanner.nextLong();
+        scanner.close();
         return newsId;
     }
 }

@@ -62,6 +62,7 @@ public class Main implements CommandLineRunner {
                         break;
                     case 0:
                         DataBase.closeConnection();
+                        scanner.close();
                         System.exit(0);
                         break;
                     default:

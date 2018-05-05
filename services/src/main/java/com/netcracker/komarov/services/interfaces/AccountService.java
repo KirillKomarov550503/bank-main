@@ -13,7 +13,7 @@ public interface AccountService {
 
     AccountDTO refill(long accountId);
 
-    Collection<AccountDTO> getAllUnlockAccountRequest();
+    Collection<AccountDTO> getAllRequests();
 
     Collection<AccountDTO> getAllAccounts();
 

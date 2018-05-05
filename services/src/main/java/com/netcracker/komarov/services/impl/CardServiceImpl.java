@@ -2,11 +2,11 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
-import com.netcracker.komarov.dao.entity.UnlockCardRequest;
+import com.netcracker.komarov.dao.entity.Request;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
-import com.netcracker.komarov.dao.repository.UnlockCardRequestRepository;
+import com.netcracker.komarov.dao.repository.RequestRepository;
 import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.interfaces.CardService;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
-    private UnlockCardRequestRepository unlockCardRequestRepository;
+    private RequestRepository requestRepository;
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
@@ -31,7 +31,7 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     public CardServiceImpl(RepositoryFactory repositoryFactory, CardConverter cardConverter) {
-        this.unlockCardRequestRepository = repositoryFactory.getUnlockCardRequestRepository();
+        this.requestRepository = repositoryFactory.getRequestRepository();
         this.cardRepository = repositoryFactory.getCardRepository();
         this.accountRepository = repositoryFactory.getAccountRepository();
         this.cardConverter = cardConverter;
@@ -47,7 +47,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public CardDTO lockCard(long cardId) {
         Optional<Card> cardOptional = cardRepository.findById(cardId);
-        Card card = null;
+        Card card;
         Card temp = null;
         if (cardOptional.isPresent()) {
             card = cardOptional.get();
@@ -94,11 +94,13 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public Collection<CardDTO> getAllUnlockCardRequest() {
+    public Collection<CardDTO> getAllCardRequest() {
         Collection<Card> cards = new ArrayList<>();
-        Collection<UnlockCardRequest> requests = unlockCardRequestRepository.findAll();
-        for (UnlockCardRequest request : requests) {
-            cards.add(request.getCard());
+        Collection<Request> requests = requestRepository.findAll();
+        for (Request request : requests) {
+            if (request.getCard() != null) {
+                cards.add(request.getCard());
+            }
         }
         if (cards.size() == 0) {
             logger.info("There is no such requests to unlock card");
@@ -111,9 +113,10 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public CardDTO unlockCard(long cardId) {
-        Optional<UnlockCardRequest> optionalRequest = unlockCardRequestRepository.findAll()
+        Optional<Request> optionalRequest = requestRepository.findAll()
                 .stream()
-                .filter(unlockCardRequest -> unlockCardRequest.getCard().getId() == cardId)
+                .filter(request -> request.getCard() != null)
+                .filter(request -> request.getCard().getId() == cardId)
                 .findFirst();
         Card res = null;
         if (optionalRequest.isPresent()) {
@@ -122,7 +125,7 @@ public class CardServiceImpl implements CardService {
                 Card card = optionalCard.get();
                 card.setLocked(false);
                 res = cardRepository.save(card);
-                unlockCardRequestRepository.deleteByCardId(cardId);
+                requestRepository.deleteById(optionalRequest.get().getId());
                 logger.info("Card was locked");
             }
         } else {

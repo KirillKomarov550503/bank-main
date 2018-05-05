@@ -2,11 +2,11 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Client;
-import com.netcracker.komarov.dao.entity.UnlockAccountRequest;
+import com.netcracker.komarov.dao.entity.Request;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
-import com.netcracker.komarov.dao.repository.UnlockAccountRequestRepository;
+import com.netcracker.komarov.dao.repository.RequestRepository;
 import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.interfaces.AccountService;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
-    private UnlockAccountRequestRepository unlockAccountRequestRepository;
+    private RequestRepository requestRepository;
     private ClientRepository clientRepository;
     private AccountConverter converter;
     private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     public AccountServiceImpl(RepositoryFactory repositoryFactory, AccountConverter converter) {
         this.accountRepository = repositoryFactory.getAccountRepository();
-        this.unlockAccountRequestRepository = repositoryFactory.getUnlockAccountRequestRepository();
+        this.requestRepository = repositoryFactory.getRequestRepository();
         this.clientRepository = repositoryFactory.getClientRepository();
         this.converter = converter;
     }
@@ -68,9 +68,10 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public AccountDTO unlockAccount(long accountId) {
-        Optional<UnlockAccountRequest> optionalRequest = unlockAccountRequestRepository.findAll()
+        Optional<Request> optionalRequest = requestRepository.findAll()
                 .stream()
-                .filter(unlockAccountRequest -> unlockAccountRequest.getAccount().getId() == accountId)
+                .filter(request -> request.getAccount() != null)
+                .filter(request -> request.getAccount().getId() == accountId)
                 .findFirst();
         Account res = null;
         if (optionalRequest.isPresent()) {
@@ -79,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
                 Account account = optionalAccount.get();
                 account.setLocked(false);
                 res = accountRepository.save(account);
-                unlockAccountRequestRepository.deleteByAccountId(accountId);
+                requestRepository.deleteById(optionalRequest.get().getId());
                 logger.info("Successful unlocking your account");
             }
         } else {
@@ -90,11 +91,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public Collection<AccountDTO> getAllUnlockAccountRequest() {
+    public Collection<AccountDTO> getAllRequests() {
         Collection<Account> accounts = new ArrayList<>();
-        Collection<UnlockAccountRequest> requests = unlockAccountRequestRepository.findAll();
-        for (UnlockAccountRequest request : requests) {
-            accounts.add(request.getAccount());
+        Collection<Request> requests = requestRepository.findAll();
+        for (Request request : requests) {
+            if (request.getAccount() != null) {
+                accounts.add(request.getAccount());
+            }
         }
         if (accounts.size() == 0) {
             logger.info("There is no such request to unlock account");

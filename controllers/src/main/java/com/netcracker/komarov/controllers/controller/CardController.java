@@ -83,6 +83,6 @@ public class CardController implements ExceptionController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/{adminId}/requests/cards", method = RequestMethod.GET)
     public Collection<CardDTO> getAllUnlockRequests(@PathVariable long adminId) {
-        return cardService.getAllUnlockCardRequest();
+        return cardService.getAllCardRequest();
     }
 }

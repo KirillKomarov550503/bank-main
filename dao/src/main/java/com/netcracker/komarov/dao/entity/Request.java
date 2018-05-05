@@ -1,6 +1,7 @@
 package com.netcracker.komarov.dao.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.util.Objects;
 
@@ -8,13 +9,20 @@ import java.util.Objects;
 public class Request extends BaseEntity {
 
     @OneToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @OneToOne
+    @JoinColumn(name = "card_id")
     private Card card;
 
 
     public Request() {
+    }
+
+    public Request(Account account, Card card) {
+        this.account = account;
+        this.card = card;
     }
 
     public Account getAccount() {

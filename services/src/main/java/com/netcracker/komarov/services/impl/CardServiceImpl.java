@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -95,13 +94,11 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public Collection<CardDTO> getAllCardRequest() {
-        Collection<Card> cards = new ArrayList<>();
-        Collection<Request> requests = requestRepository.findAll();
-        for (Request request : requests) {
-            if (request.getCard() != null) {
-                cards.add(request.getCard());
-            }
-        }
+        Collection<Card> cards = requestRepository.findAll()
+                .stream()
+                .filter(request -> request.getCard() != null)
+                .map(Request::getCard)
+                .collect(Collectors.toList());
         if (cards.size() == 0) {
             logger.info("There is no such requests to unlock card");
         } else {

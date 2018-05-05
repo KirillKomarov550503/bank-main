@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/admins")
-public class AdminController implements ExceptionController {
+public class AdminController {
     private AdminService adminService;
 
     @Autowired

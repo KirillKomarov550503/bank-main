@@ -9,7 +9,7 @@ import java.util.Set;
 @Table(name = "account")
 public class Account extends BaseEntity {
 
-    @Column(name = "balance")
+    @Column(name = "balance", columnDefinition = "DECIMAL")
     private double balance;
 
     @Column(name = "locked")

@@ -92,13 +92,11 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public Collection<AccountDTO> getAllRequests() {
-        Collection<Account> accounts = new ArrayList<>();
-        Collection<Request> requests = requestRepository.findAll();
-        for (Request request : requests) {
-            if (request.getAccount() != null) {
-                accounts.add(request.getAccount());
-            }
-        }
+        Collection<Account> accounts = requestRepository.findAll()
+                .stream()
+                .filter(request -> request.getAccount() != null)
+                .map(Request::getAccount)
+                .collect(Collectors.toList());
         if (accounts.size() == 0) {
             logger.info("There is no such request to unlock account");
         } else {

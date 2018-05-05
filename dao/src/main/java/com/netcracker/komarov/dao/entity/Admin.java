@@ -7,10 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "admin")
-public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Admin extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id")
@@ -54,15 +51,15 @@ public class Admin {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Admin admin = (Admin) o;
-        return id == admin.id &&
-                Objects.equals(person, admin.person);
+        return Objects.equals(person, admin.person);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, person);
+        return Objects.hash(super.hashCode(), person);
     }
 
     @Override

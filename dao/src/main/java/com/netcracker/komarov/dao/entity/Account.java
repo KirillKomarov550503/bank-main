@@ -7,10 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "account")
-public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Account extends BaseEntity {
 
     @Column(name = "balance")
     private double balance;
@@ -26,7 +23,7 @@ public class Account {
     private Set<Card> cards = new HashSet<>();
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UnlockAccountRequest unlockAccountRequest;
+    private Request request;
 
     public Account() {
     }
@@ -61,14 +58,6 @@ public class Account {
         this.client = client;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Set<Card> getCards() {
         return cards;
     }
@@ -77,21 +66,21 @@ public class Account {
         this.cards = cards;
     }
 
-    public UnlockAccountRequest getUnlockAccountRequest() {
-        return unlockAccountRequest;
+    public Request getRequest() {
+        return request;
     }
 
-    public void setUnlockAccountRequest(UnlockAccountRequest unlockAccountRequest) {
-        this.unlockAccountRequest = unlockAccountRequest;
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Account account = (Account) o;
-        return id == account.id &&
-                Double.compare(account.balance, balance) == 0 &&
+        return Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
                 Objects.equals(client, account.client);
     }
@@ -99,17 +88,16 @@ public class Account {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, balance, locked, client);
+        return Objects.hash(super.hashCode(), balance, locked, client);
     }
 
     @Override
     public String toString() {
         return "Account{" +
-                "id=" + id +
-                ", balance=" + balance +
+                "balance=" + balance +
                 ", locked=" + locked +
                 ", client=" + client +
+                ", id=" + id +
                 '}';
     }
-
 }

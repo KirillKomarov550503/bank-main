@@ -5,10 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "transaction")
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Transaction extends BaseEntity {
 
     @Column(name = "date", length = 20)
     private String date;
@@ -76,9 +73,9 @@ public class Transaction {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Transaction that = (Transaction) o;
-        return id == that.id &&
-                accountFromId == that.accountFromId &&
+        return accountFromId == that.accountFromId &&
                 accountToId == that.accountToId &&
                 Double.compare(that.money, money) == 0 &&
                 Objects.equals(date, that.date);
@@ -87,17 +84,17 @@ public class Transaction {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, date, accountFromId, accountToId, money);
+        return Objects.hash(super.hashCode(), date, accountFromId, accountToId, money);
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
-                "id=" + id +
-                ", date='" + date + '\'' +
+                "date='" + date + '\'' +
                 ", accountFromId=" + accountFromId +
                 ", accountToId=" + accountToId +
                 ", money=" + money +
+                ", id=" + id +
                 '}';
     }
 }

@@ -7,10 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "news")
-public class News {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class News extends BaseEntity{
 
     @Column(name = "date", length = 20)
     private String date;
@@ -107,12 +104,11 @@ public class News {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         News news = (News) o;
-        return id == news.id &&
-                Objects.equals(date, news.date) &&
+        return Objects.equals(date, news.date) &&
                 Objects.equals(title, news.title) &&
                 Objects.equals(text, news.text) &&
-                Objects.equals(clients, news.clients) &&
                 Objects.equals(admin, news.admin) &&
                 newsStatus == news.newsStatus;
     }
@@ -120,18 +116,18 @@ public class News {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, date, title, text, clients, admin, newsStatus);
+        return Objects.hash(super.hashCode(), date, title, text, admin, newsStatus);
     }
 
     @Override
     public String toString() {
         return "News{" +
-                "id=" + id +
-                ", date='" + date + '\'' +
+                "date='" + date + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
                 ", admin=" + admin +
                 ", newsStatus=" + newsStatus +
+                ", id=" + id +
                 '}';
     }
 }

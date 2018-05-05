@@ -13,15 +13,13 @@ public class PostgreSQLRepositoryFactory implements RepositoryFactory {
     private NewsRepository newsRepository;
     private PersonRepository personRepository;
     private TransactionRepository transactionRepository;
-    private UnlockAccountRequestRepository unlockAccountRequestRepository;
-    private UnlockCardRequestRepository unlockCardRequestRepository;
+    private RequestRepository requestRepository;
 
     @Autowired
     public PostgreSQLRepositoryFactory(
             AccountRepository accountRepository, AdminRepository adminRepository, CardRepository cardRepository,
             ClientRepository clientRepository, NewsRepository newsRepository, PersonRepository personRepository,
-            TransactionRepository transactionRepository, UnlockAccountRequestRepository unlockAccountRequestRepository,
-            UnlockCardRequestRepository unlockCardRequestRepository) {
+            TransactionRepository transactionRepository, RequestRepository requestRepository) {
         this.accountRepository = accountRepository;
         this.adminRepository = adminRepository;
         this.cardRepository = cardRepository;
@@ -29,8 +27,7 @@ public class PostgreSQLRepositoryFactory implements RepositoryFactory {
         this.newsRepository = newsRepository;
         this.personRepository = personRepository;
         this.transactionRepository = transactionRepository;
-        this.unlockAccountRequestRepository = unlockAccountRequestRepository;
-        this.unlockCardRequestRepository = unlockCardRequestRepository;
+        this.requestRepository = requestRepository;
     }
 
     @Override
@@ -69,13 +66,8 @@ public class PostgreSQLRepositoryFactory implements RepositoryFactory {
     }
 
     @Override
-    public UnlockAccountRequestRepository getUnlockAccountRequestRepository() {
-        return unlockAccountRequestRepository;
-    }
-
-    @Override
-    public UnlockCardRequestRepository getUnlockCardRequestRepository() {
-        return unlockCardRequestRepository;
+    public RequestRepository getRequestRepository() {
+        return requestRepository;
     }
 }
 

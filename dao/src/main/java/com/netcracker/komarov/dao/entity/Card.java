@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "card")
-public class Card {
+public class Card extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -21,7 +21,7 @@ public class Card {
     private Account account;
 
     @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UnlockCardRequest unlockCardRequest;
+    private Request request;
 
     public Card() {
 
@@ -33,12 +33,12 @@ public class Card {
         this.account = account;
     }
 
-    public UnlockCardRequest getUnlockCardRequest() {
-        return unlockCardRequest;
+    public Request getRequest() {
+        return request;
     }
 
-    public void setUnlockCardRequest(UnlockCardRequest unlockCardRequest) {
-        this.unlockCardRequest = unlockCardRequest;
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     public long getId() {
@@ -77,6 +77,7 @@ public class Card {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Card card = (Card) o;
         return id == card.id &&
                 locked == card.locked &&
@@ -87,7 +88,7 @@ public class Card {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, locked, pin, account);
+        return Objects.hash(super.hashCode(), id, locked, pin, account);
     }
 
     @Override

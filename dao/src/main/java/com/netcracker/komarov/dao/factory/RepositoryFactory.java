@@ -17,9 +17,6 @@ public interface RepositoryFactory {
 
     TransactionRepository getTransactionRepository();
 
-    UnlockAccountRequestRepository getUnlockAccountRequestRepository();
-
-    UnlockCardRequestRepository getUnlockCardRequestRepository();
-
+    RequestRepository getRequestRepository();
 }
 

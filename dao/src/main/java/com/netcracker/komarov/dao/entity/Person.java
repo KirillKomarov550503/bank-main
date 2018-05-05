@@ -4,32 +4,29 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name="person")
-public class Person {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+@Table(name = "person")
+public class Person extends BaseEntity {
 
-    @Column(name="name", length = 50)
+    @Column(name = "name", length = 50)
     protected String name;
 
-    @Column(name="surname", length = 50)
+    @Column(name = "surname", length = 50)
     protected String surname;
 
-    @Column(name="phone_number")
+    @Column(name = "phone_number")
     protected long phoneNumber;
 
-    @Column(name="role")
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     protected Role role;
 
-    @Column(name="login", length = 50)
+    @Column(name = "login", length = 50)
     protected String login;
 
-    @Column(name="password", length = 50)
+    @Column(name = "password", length = 50)
     protected String password;
 
-    @Column(name="passport_id")
+    @Column(name = "passport_id")
     protected long passportId;
 
     @OneToOne(mappedBy = "person")
@@ -139,9 +136,9 @@ public class Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Person person = (Person) o;
-        return id == person.id &&
-                phoneNumber == person.phoneNumber &&
+        return phoneNumber == person.phoneNumber &&
                 passportId == person.passportId &&
                 Objects.equals(name, person.name) &&
                 Objects.equals(surname, person.surname) &&
@@ -153,20 +150,20 @@ public class Person {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, surname, phoneNumber, role, login, password, passportId);
+        return Objects.hash(super.hashCode(), name, surname, phoneNumber, role, login, password, passportId);
     }
 
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 ", role=" + role +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", passportId=" + passportId +
+                ", id=" + id +
                 '}';
     }
 }

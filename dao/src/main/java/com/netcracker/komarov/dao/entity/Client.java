@@ -7,10 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "client")
-public class Client {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Client extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
@@ -27,14 +24,6 @@ public class Client {
 
     public Client(Person person) {
         this.person = person;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public Person getPerson() {
@@ -65,22 +54,22 @@ public class Client {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Client client = (Client) o;
-        return id == client.id &&
-                Objects.equals(person, client.person);
+        return Objects.equals(person, client.person);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, person);
+        return Objects.hash(super.hashCode(), person);
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + id +
-                ", person=" + person +
+                "person=" + person +
+                ", id=" + id +
                 '}';
     }
 }

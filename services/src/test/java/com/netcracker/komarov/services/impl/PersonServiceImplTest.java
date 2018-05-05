@@ -18,17 +18,6 @@ public class PersonServiceImplTest extends AbstractSpringTest {
     @Autowired
     private PersonService personService;
 
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void getAllPeople() {
         Person person1 = new Person(1, "Kirill", "Komarov", 123, Role.CLIENT,

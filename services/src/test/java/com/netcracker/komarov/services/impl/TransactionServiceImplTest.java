@@ -25,18 +25,6 @@ public class TransactionServiceImplTest extends AbstractSpringTest {
     @Autowired
     private AccountService accountService;
 
-
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void showStories() {
         TransactionDTO transactionDTO1 = new TransactionDTO(1, 2, 13, 1);

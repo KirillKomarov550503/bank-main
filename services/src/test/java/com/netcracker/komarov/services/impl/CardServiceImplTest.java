@@ -21,17 +21,6 @@ public class CardServiceImplTest extends AbstractSpringTest {
     @Autowired
     private RequestService requestService;
 
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void lockCard() {
         Card card = new Card(2, true, 1111, 1);

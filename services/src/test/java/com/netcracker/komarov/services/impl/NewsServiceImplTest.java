@@ -21,9 +21,6 @@ public class NewsServiceImplTest extends AbstractSpringTest {
     @Autowired
     private NewsService newsService;
 
-    @Autowired
-    private ClientService clientService;
-
     @Before
     public void init() {
         DataBase.initTable();

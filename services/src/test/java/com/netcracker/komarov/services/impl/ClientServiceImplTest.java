@@ -19,17 +19,6 @@ public class ClientServiceImplTest extends AbstractSpringTest {
     @Autowired
     private ClientService clientService;
 
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void signIn() {
         Assert.assertEquals(null, clientService.signIn(null));

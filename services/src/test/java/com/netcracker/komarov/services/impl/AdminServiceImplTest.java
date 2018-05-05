@@ -20,17 +20,6 @@ public class AdminServiceImplTest extends AbstractSpringTest {
     @Autowired
     private AdminService adminService;
 
-    @Before
-    public void init() {
-        DataBase.initTable();
-        DataBase.insertValues();
-    }
-
-    @After
-    public void destroy() {
-        DataBase.dropTable();
-    }
-
     @Test
     public void addAdmin() {
         Admin admin = new Admin(2, 5);

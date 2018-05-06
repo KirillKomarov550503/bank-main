@@ -75,15 +75,14 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/admins/accounts", method = RequestMethod.GET)
-    public ResponseEntity<String> getAll() {
+    public ResponseEntity getAll() {
         Collection<AccountDTO> dtos = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
-    public ResponseEntity<String> getAllRequests() {
+    public ResponseEntity getAllRequests() {
         Collection<AccountDTO> dtos = accountService.getAllRequests();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));

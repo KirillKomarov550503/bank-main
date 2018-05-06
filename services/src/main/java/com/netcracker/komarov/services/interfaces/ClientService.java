@@ -8,7 +8,13 @@ import java.util.Collection;
 public interface ClientService {
     ClientDTO signIn(PersonDTO personDTO);
 
-    ClientDTO registration(PersonDTO personDTO);
+    ClientDTO save(PersonDTO personDTO);
 
-    Collection<ClientDTO> getAllClients();
+    Collection<ClientDTO> findAllClients();
+
+    ClientDTO update(ClientDTO clientDTO, long clientId);
+
+    void delete(long id);
+
+    ClientDTO findById(long id);
 }

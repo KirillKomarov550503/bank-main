@@ -15,7 +15,5 @@ public interface CardService {
 
     Collection<CardDTO> getAllCards();
 
-    Collection<CardDTO> getAllCardRequest();
-
     CardDTO unlockCard(long cardId);
 }

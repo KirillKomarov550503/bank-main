@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +49,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO registration(PersonDTO personDTO) {
+    public ClientDTO save(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
         Client client = new Client();
@@ -60,9 +61,41 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public Collection<ClientDTO> getAllClients() {
+    public Collection<ClientDTO> findAllClients() {
         logger.info("Return all clients");
         return convertCollection(clientRepository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public ClientDTO update(ClientDTO clientDTO, long clientId) {
+        Client newClient = clientConverter.convertToEntity(clientDTO);
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Client resClient = null;
+        if (optionalClient.isPresent()) {
+            Client oldClient = optionalClient.get();
+            Person newPerson = newClient.getPerson();
+            Person oldPerson = oldClient.getPerson();
+            newPerson.setId(oldPerson.getId());
+            oldClient.setPerson(newPerson);
+            resClient = clientRepository.saveAndFlush(oldClient);
+            logger.info("Information about client was updated");
+        } else {
+            logger.info("There is no such client in database");
+        }
+        return clientConverter.convertToDTO(resClient);
+    }
+
+    @Transactional
+    @Override
+    public void delete(long id) {
+
+    }
+
+    @Transactional
+    @Override
+    public ClientDTO findById(long id) {
+        return null;
     }
 }
 

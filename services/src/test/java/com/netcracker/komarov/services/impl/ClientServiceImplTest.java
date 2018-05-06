@@ -25,15 +25,15 @@
 //    }
 //
 //    @Test
-//    public void registration() {
+//    public void save() {
 //        Person person = new Person(0, "Dmitrya", "Medvedev", 4234, Role.CLIENT,
 //                null, null, 2);
 //        Client client = new Client(4, 5);
-//        Assert.assertEquals(client, clientService.registration(person));
+//        Assert.assertEquals(client, clientService.save(person));
 //    }
 //
 //    @Test
-//    public void getAllClients() {
+//    public void findAllClients() {
 //        Collection<Client> clients = new ArrayList<>();
 //        Client client1 = new Client(1, 1);
 //        Client client2 = new Client(2, 2);
@@ -41,6 +41,6 @@
 //        clients.add(client1);
 //        clients.add(client2);
 //        clients.add(client3);
-//        Assert.assertEquals(clients, clientService.getAllClients());
+//        Assert.assertEquals(clients, clientService.findAllClients());
 //    }
 //}

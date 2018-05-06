@@ -109,19 +109,4 @@ public class CardController {
         }
         return responseEntity;
     }
-
-    @RequestMapping(value = "/admins/requests/cards", method = RequestMethod.GET)
-    public ResponseEntity getAllUnlockRequests() {
-        Collection<CardDTO> dtos = cardService.getAllCardRequest();
-        ResponseEntity responseEntity;
-        Gson gson = new Gson();
-        if (dtos == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of cards" : dtos));
-        }
-        return responseEntity;
-    }
 }

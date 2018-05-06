@@ -94,22 +94,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public Collection<AccountDTO> getAllRequests() {
-        Collection<Account> accounts = requestRepository.findAll()
-                .stream()
-                .filter(request -> request.getAccount() != null)
-                .map(Request::getAccount)
-                .collect(Collectors.toList());
-        if (accounts.size() == 0) {
-            logger.info("There is no such request to unlock account");
-        } else {
-            logger.info("Return all request to unlock account");
-        }
-        return convertCollection(accounts);
-    }
-
-    @Transactional
-    @Override
     public AccountDTO refill(long accountId) {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         Account account = null;

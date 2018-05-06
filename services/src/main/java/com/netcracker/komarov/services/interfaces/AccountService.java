@@ -13,8 +13,6 @@ public interface AccountService {
 
     AccountDTO refill(long accountId);
 
-    Collection<AccountDTO> getAllRequests();
-
     Collection<AccountDTO> getAllAccounts();
 
     AccountDTO unlockAccount(long accountId);

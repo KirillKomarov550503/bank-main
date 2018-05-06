@@ -94,22 +94,6 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public Collection<CardDTO> getAllCardRequest() {
-        Collection<Card> cards = requestRepository.findAll()
-                .stream()
-                .filter(request -> request.getCard() != null)
-                .map(Request::getCard)
-                .collect(Collectors.toList());
-        if (cards.size() == 0) {
-            logger.info("There is no such requests to unlock card");
-        } else {
-            logger.info("Return all request to unlock card");
-        }
-        return convertCollection(cards);
-    }
-
-    @Transactional
-    @Override
     public CardDTO unlockCard(long cardId) {
         Optional<Request> optionalRequest = requestRepository.findAll()
                 .stream()

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("bank/v1/admins")
 public class AdminController {
@@ -34,6 +36,21 @@ public class AdminController {
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.CREATED)
                     .body(gson.toJson(dto));
+        }
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/admins", method = RequestMethod.GET)
+    public ResponseEntity getAllAdmins() {
+        ResponseEntity responseEntity;
+        Gson gson = new Gson();
+        Collection<AdminDTO> dtos = adminService.getAllAdmin();
+        if (dtos == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of admins" : dtos));
         }
         return responseEntity;
     }

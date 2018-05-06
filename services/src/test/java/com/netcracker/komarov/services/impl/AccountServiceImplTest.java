@@ -38,9 +38,9 @@
 //    @Before
 //    public void init() {
 //        if (flag) {
-//            clientService.registration(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-//            clientService.registration(new PersonDTO(0, "Vlad", "M", 2, 2));
-//            clientService.registration(new PersonDTO(0, "Max", "Ul", 3, 3));
+//            clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
+//            clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
+//            clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
 //            accountService.createAccount(new AccountDTO(true, 0.0), 1);
 //            accountService.createAccount(new AccountDTO(false, 0.0), 2);
 //            accountService.createAccount(new AccountDTO(false, 0.0), 1);

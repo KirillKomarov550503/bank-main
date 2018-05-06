@@ -12,6 +12,7 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
         PersonDTO dto = null;
         if (person != null) {
             dto = new PersonDTO();
+            dto.setId(person.getId());
             dto.setName(person.getName());
             dto.setSurname(person.getSurname());
             dto.setPassportId(person.getPassportId());

@@ -14,6 +14,7 @@ public class ClientConverter implements Converter<ClientDTO, Client> {
         if (client != null) {
             clientDTO = new ClientDTO();
             Person person = client.getPerson();
+            clientDTO.setId(client.getId());
             clientDTO.setName(person.getName());
             clientDTO.setSurname(person.getSurname());
             clientDTO.setLogin(person.getLogin());

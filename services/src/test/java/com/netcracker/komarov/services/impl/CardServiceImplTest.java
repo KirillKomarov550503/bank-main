@@ -1,7 +1,7 @@
 //package com.netcracker.komarov.services.impl;
 //
 //import com.netcracker.komarov.dao.entity.Card;
-//import com.netcracker.komarov.dao.entity.RequestStatus;
+//import com.netcracker.komarov.services.dto.RequestStatus;
 //import com.netcracker.komarov.dao.utils.DataBase;
 //import com.netcracker.komarov.services.interfaces.CardService;
 //import com.netcracker.komarov.services.interfaces.RequestService;

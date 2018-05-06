@@ -1,6 +1,6 @@
 package com.netcracker.komarov.services.interfaces;
 
-import com.netcracker.komarov.dao.entity.RequestStatus;
+import com.netcracker.komarov.services.dto.RequestStatus;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
 
 import java.util.Collection;

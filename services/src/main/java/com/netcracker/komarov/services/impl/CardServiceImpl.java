@@ -68,6 +68,7 @@ public class CardServiceImpl implements CardService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             card.setAccount(account);
+            card.setLocked(false);
             account.getCards().add(card);
             temp = cardRepository.save(card);
             logger.info("Creation of new card");

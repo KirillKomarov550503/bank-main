@@ -77,10 +77,13 @@ public class AccountServiceImpl implements AccountService {
         if (optionalRequest.isPresent()) {
             Optional<Account> optionalAccount = accountRepository.findById(accountId);
             if (optionalAccount.isPresent()) {
+                Request request = optionalRequest.get();
                 Account account = optionalAccount.get();
                 account.setLocked(false);
+                account.setRequest(request);
+                request.setAccount(account);
                 res = accountRepository.save(account);
-                requestRepository.deleteById(optionalRequest.get().getId());
+                requestRepository.deleteById(request.getId());
                 logger.info("Successful unlocking your account");
             }
         } else {
@@ -140,6 +143,8 @@ public class AccountServiceImpl implements AccountService {
         if (optionalClient.isPresent()) {
             client = optionalClient.get();
             account.setClient(client);
+            account.setBalance(0.0);
+            account.setLocked(false);
             client.getAccounts().add(account);
             account.getClient().setId(clientId);
             temp = accountRepository.save(account);

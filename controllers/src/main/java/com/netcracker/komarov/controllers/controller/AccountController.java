@@ -15,53 +15,75 @@ import java.util.Collection;
 public class AccountController {
     private AccountService accountService;
 
-    private Gson gson;
 
     @Autowired
-    public AccountController(AccountService accountService, Gson gson) {
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
-        this.gson = gson;
     }
 
     @RequestMapping(value = "/clients/{clientId}/accounts", method = RequestMethod.POST)
     public ResponseEntity create(@PathVariable long clientId) {
+        Gson gson = new Gson();
         AccountDTO dto = accountService.createAccount(new AccountDTO(false, 0), clientId);
-        ResponseEntity responseEntity = ResponseEntity.
-                status(dto == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED)
-                .body(gson.toJson(dto));
+        ResponseEntity responseEntity;
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+        }
         return responseEntity;
     }
 
     @RequestMapping(value = "/admins/requests/accounts/{accountId}", method = RequestMethod.PATCH)
     public ResponseEntity unlock(@PathVariable long accountId) {
+        Gson gson = new Gson();
         AccountDTO dto = accountService.unlockAccount(accountId);
-        ResponseEntity responseEntity = ResponseEntity.
-                status(dto == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK)
-                .body(gson.toJson(dto));
+        ResponseEntity responseEntity;
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dto));
+        }
         return responseEntity;
     }
 
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.PATCH)
     public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId) {
+        Gson gson = new Gson();
         AccountDTO dto = accountService.lockAccount(accountId);
-        ResponseEntity responseEntity = ResponseEntity.
-                status(dto == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK)
-                .body(gson.toJson(dto));
+        ResponseEntity responseEntity;
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dto));
+        }
         return responseEntity;
     }
 
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
     public ResponseEntity refill(@PathVariable long clientId, @PathVariable long accountId) {
+        Gson gson = new Gson();
         AccountDTO dto = accountService.refill(accountId);
-        ResponseEntity responseEntity = ResponseEntity.
-                status(dto == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK)
-                .body(gson.toJson(dto));
+        ResponseEntity responseEntity;
+        if(dto == null){
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dto));
+        }
         return responseEntity;
     }
 
     @RequestMapping(value = "/clients/{clientId}/accounts/status", method = RequestMethod.GET)
     public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
+        Gson gson = new Gson();
         Collection<AccountDTO> dtos = accountService.getAccountsByClientIdAndLock(clientId, lock);
         ResponseEntity responseEntity;
         if (dtos == null) {
@@ -76,15 +98,17 @@ public class AccountController {
 
     @RequestMapping(value = "/admins/accounts", method = RequestMethod.GET)
     public ResponseEntity getAll() {
+        Gson gson = new Gson();
         Collection<AccountDTO> dtos = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
     }
 
-    @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
-    public ResponseEntity getAllRequests() {
-        Collection<AccountDTO> dtos = accountService.getAllRequests();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
-    }
+//    @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
+//    public ResponseEntity getAllRequests() {
+//        Gson gson = new Gson();
+//        Collection<AccountDTO> dtos = accountService.getAllRequests();
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
+//    }
 }

@@ -1,16 +1,20 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.netcracker.komarov.controllers.exception.ServerException;
+import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1")
-public class ClientController implements ExceptionController {
+@RequestMapping("bank/v1")
+public class ClientController {
     private ClientService clientService;
 
     @Autowired
@@ -18,13 +22,18 @@ public class ClientController implements ExceptionController {
         this.clientService = clientService;
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
-    public ClientDTO registration(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity registration(@RequestBody PersonDTO personDTO) {
+        Gson gson = new Gson();
         ClientDTO dto = clientService.registration(personDTO);
+        ResponseEntity responseEntity;
         if (dto == null) {
-            throw new ServerException("Server can't create new client");
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
+                    .body(gson.toJson(dto));
         }
-        return dto;
+        return responseEntity;
     }
 }

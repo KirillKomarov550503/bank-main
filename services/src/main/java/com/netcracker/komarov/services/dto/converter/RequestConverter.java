@@ -19,10 +19,13 @@ public class RequestConverter implements Converter<RequestDTO, Request> {
 
     @Override
     public RequestDTO convertToDTO(Request request) {
-        RequestDTO dto = new RequestDTO();
-        dto.setId(request.getId());
-        dto.setAccountDTO(accountConverter.convertToDTO(request.getAccount()));
-        dto.setCardDTO(cardConverter.convertToDTO(request.getCard()));
+        RequestDTO dto = null;
+        if (request != null) {
+            dto = new RequestDTO();
+            dto.setId(request.getId());
+            dto.setAccountDTO(accountConverter.convertToDTO(request.getAccount()));
+            dto.setCardDTO(cardConverter.convertToDTO(request.getCard()));
+        }
         return dto;
     }
 

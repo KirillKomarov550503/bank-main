@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.TransactionException;
 import com.netcracker.komarov.services.interfaces.TransactionService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-
+    @ApiOperation(value = "Creation of new transaction")
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.POST)
     public ResponseEntity createTransaction(@RequestBody TransactionDTO transactionDTO, @PathVariable long clientId) {
         Gson gson = new Gson();
@@ -40,6 +41,7 @@ public class TransactionController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all transaction by client ID")
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.GET)
     public ResponseEntity showTransactionStory(@PathVariable long clientId) {
         Collection<TransactionDTO> dtos = transactionService.showStories(clientId);

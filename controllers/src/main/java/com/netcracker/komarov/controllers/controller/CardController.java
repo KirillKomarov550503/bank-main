@@ -3,6 +3,7 @@ package com.netcracker.komarov.controllers.controller;
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.interfaces.CardService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class CardController {
         this.cardService = cardService;
     }
 
+    @ApiOperation(value = "Creation of new card")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards", method = RequestMethod.POST)
     public ResponseEntity create(@PathVariable long clientId, @PathVariable long accountId, @RequestBody CardDTO cardDTO) {
         CardDTO dto = cardService.createCard(cardDTO, accountId);
@@ -35,6 +37,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Locking of card by ID")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}", method = RequestMethod.PATCH)
     public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId, @PathVariable long cardId) {
         Gson gson = new Gson();
@@ -49,6 +52,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Unlocking card by ID")
     @RequestMapping(value = "/admins/requests/cards/{cardId}", method = RequestMethod.PATCH)
     public ResponseEntity unlock(@PathVariable long cardId) {
         Gson gson = new Gson();
@@ -64,6 +68,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all card by status")
     @RequestMapping(value = "/clients/{clientId}/cards/status", method = RequestMethod.GET)
     public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
@@ -80,6 +85,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all card that belong to account ID")
     @RequestMapping(value = "/clients/{clientId}/accounts{accountId}/cards", method = RequestMethod.GET)
     public ResponseEntity getByAccountId(@PathVariable long clientId, @PathVariable long accountId) {
         Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
@@ -95,6 +101,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all card")
     @RequestMapping(value = "/admins/cards", method = RequestMethod.GET)
     public ResponseEntity getAll() {
         Collection<CardDTO> dtos = cardService.getAllCards();
@@ -110,6 +117,7 @@ public class CardController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Deleting card by ID")
     @RequestMapping(value = "/cards/{cardId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long cardId) {
         cardService.deleteById(cardId);

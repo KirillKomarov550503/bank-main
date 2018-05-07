@@ -19,6 +19,4 @@ public interface NewsService {
     NewsDTO addClientNews(Collection<Long> clientIds, long newsId);
 
     NewsDTO update(NewsDTO newsDTO);
-
-    void deleteById(long newsId);
 }

@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -94,6 +96,8 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public NewsDTO addNews(NewsDTO newsDTO, long adminId) {
         News news = newsConverter.convertToEntity(newsDTO);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        news.setDate(simpleDateFormat.format(new Date()));
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
         News temp = null;
         if (optionalAdmin.isPresent()) {
@@ -160,11 +164,5 @@ public class NewsServiceImpl implements NewsService {
             logger.info("There is no such news in database");
         }
         return newsConverter.convertToDTO(resNews);
-    }
-
-    @Transactional
-    @Override
-    public void deleteById(long newsId) {
-        newsRepository.deleteById(newsId);
     }
 }

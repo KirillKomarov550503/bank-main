@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.ClientService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class ClientController {
         this.clientService = clientService;
     }
 
+    @ApiOperation(value = "Registration of news client")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity save(@RequestBody PersonDTO personDTO) {
         Gson gson = new Gson();
@@ -34,6 +36,7 @@ public class ClientController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Updating information about client")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody ClientDTO clientDTO, @PathVariable long clientId) {
         Gson gson = new Gson();
@@ -49,6 +52,7 @@ public class ClientController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Deleting client by ID")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long clientId) {
         clientService.deleteById(clientId);

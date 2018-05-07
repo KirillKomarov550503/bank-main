@@ -18,9 +18,7 @@ public class News extends BaseEntity{
     @Column(name = "text", columnDefinition = "Text")
     private String text;
 
-    @ManyToMany
-    @JoinTable(name = "news_client", joinColumns = @JoinColumn(name = "news_id"),
-            inverseJoinColumns = @JoinColumn(name = "client_id"))
+    @ManyToMany(mappedBy = "newsSet")
     private Set<Client> clients = new HashSet<>();
 
     @ManyToOne()

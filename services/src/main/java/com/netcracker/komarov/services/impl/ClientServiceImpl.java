@@ -1,10 +1,9 @@
 package com.netcracker.komarov.services.impl;
 
-import com.netcracker.komarov.dao.entity.Client;
-import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.entity.Role;
+import com.netcracker.komarov.dao.entity.*;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.repository.NewsRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.ClientConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
@@ -27,6 +26,7 @@ public class ClientServiceImpl implements ClientService {
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
     private PersonRepository personRepository;
+    private NewsRepository newsRepository;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
@@ -36,6 +36,7 @@ public class ClientServiceImpl implements ClientService {
         this.personRepository = repositoryFactory.getPersonRepository();
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
+        this.newsRepository = repositoryFactory.getNewsRepository();
     }
 
     private Collection<ClientDTO> convertCollection(Collection<Client> clients) {
@@ -93,8 +94,10 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void deleteById(long clientId) {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
-        if(optionalClient.isPresent()){
+        if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
+            client.setNewsSet(null);
+            clientRepository.save(client);
             personRepository.deleteById(client.getPerson().getId());
             logger.info("Client was deleted");
         } else {

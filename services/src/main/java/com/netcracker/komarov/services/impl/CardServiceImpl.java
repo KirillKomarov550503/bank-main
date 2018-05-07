@@ -106,7 +106,7 @@ public class CardServiceImpl implements CardService {
             card.setLocked(false);
             res = cardRepository.save(card);
             requestRepository.deleteRequestById(optionalRequest.get().getId());
-            logger.info("Card was locked");
+            logger.info("Card was unlocked");
         } else {
             logger.info("There is no such card in requests");
         }

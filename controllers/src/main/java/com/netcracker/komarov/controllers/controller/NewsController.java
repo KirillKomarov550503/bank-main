@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.interfaces.NewsService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class NewsController {
         this.newsService = newsService;
     }
 
+    @ApiOperation(value = "Creation of new news")
     @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.POST)
     public ResponseEntity add(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
         Gson gson = new Gson();
@@ -36,6 +38,7 @@ public class NewsController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all client news by client ID")
     @RequestMapping(value = "/client/{clientId}/news", method = RequestMethod.GET)
     public ResponseEntity getAllClientNewsById(@PathVariable long clientId) {
         Gson gson = new Gson();
@@ -51,6 +54,7 @@ public class NewsController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting news by ID")
     @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity getById(@PathVariable long newsId) {
         Gson gson = new Gson();
@@ -66,6 +70,7 @@ public class NewsController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all news by status")
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
     public ResponseEntity getCollection(@RequestParam(name = "filter",
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
@@ -92,6 +97,7 @@ public class NewsController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Sending news to clients")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.POST)
     public ResponseEntity sendNewsToClients(@PathVariable long newsId,
                                             @RequestBody Collection<Long> clientIds) {
@@ -108,6 +114,7 @@ public class NewsController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Remarking news")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody NewsDTO newsDTO, @PathVariable long newsId) {
         newsDTO.setId(newsId);
@@ -122,12 +129,5 @@ public class NewsController {
                     .body(gson.toJson(dto));
         }
         return responseEntity;
-    }
-
-    @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteById(@PathVariable long newsId) {
-        newsService.deleteById(newsId);
-        Gson gson = new Gson();
-        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("News was deleted"));
     }
 }

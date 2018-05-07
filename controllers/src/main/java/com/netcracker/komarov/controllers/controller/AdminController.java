@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @ApiOperation(value = "Creation of new admin")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity add(@RequestBody PersonDTO personDTO) {
         Gson gson = new Gson();
@@ -37,6 +39,7 @@ public class AdminController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Selecting all admins")
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public ResponseEntity getAllAdmins() {
         ResponseEntity responseEntity;
@@ -52,6 +55,7 @@ public class AdminController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Updating information about admin")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody AdminDTO adminDTO, @PathVariable long adminId) {
         Gson gson = new Gson();
@@ -67,6 +71,7 @@ public class AdminController {
         return responseEntity;
     }
 
+    @ApiOperation(value = "Deleting admin from system by ID")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long adminId) {
         adminService.deleteById(adminId);

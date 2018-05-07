@@ -13,7 +13,9 @@ public class Client extends BaseEntity {
     @JoinColumn(name = "person_id")
     private Person person;
 
-    @ManyToMany(mappedBy = "clients", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "client_news", joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "news_id"))
     private Set<News> newsSet = new HashSet<>();
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -7,13 +7,13 @@ import java.util.Set;
 
 @Entity
 @Table(name = "admin")
-public class Admin extends BaseEntity{
+public class Admin extends BaseEntity {
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
     private Person person;
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "admin")
     private Set<News> news = new HashSet<>();
 
     public Admin() {

@@ -110,13 +110,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public Collection<NewsDTO> getAllGeneralNews() {
-        logger.info("Return all general news");
-        return convertCollection(newsRepository.findNewsByNewsStatus(NewsStatus.GENERAL));
-    }
-
-    @Transactional
-    @Override
     public Collection<NewsDTO> getAllNewsByStatus(NewsStatus newsStatus) {
         logger.info("Return all news by status");
         return convertCollection(newsRepository.findNewsByNewsStatus(newsStatus));
@@ -141,7 +134,6 @@ public class NewsServiceImpl implements NewsService {
                     Client client = clientRepository.findById(clientId).get();
                     news.getClients().add(client);
                     client.getNewsSet().add(news);
-
                 }
             }
             temp = newsRepository.save(news);
@@ -150,5 +142,29 @@ public class NewsServiceImpl implements NewsService {
             logger.info("There is no such news in database");
         }
         return newsConverter.convertToDTO(temp);
+    }
+
+    @Transactional
+    @Override
+    public NewsDTO update(NewsDTO newsDTO) {
+        News newNews = newsConverter.convertToEntity(newsDTO);
+        Optional<News> optionalNews = newsRepository.findById(newsDTO.getId());
+        News resNews = null;
+        if (optionalNews.isPresent()) {
+            News oldNews = optionalNews.get();
+            oldNews.setTitle(newNews.getTitle());
+            oldNews.setText(newNews.getText());
+            resNews = newsRepository.saveAndFlush(oldNews);
+            logger.info("News was edited by admin");
+        } else {
+            logger.info("There is no such news in database");
+        }
+        return newsConverter.convertToDTO(resNews);
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(long newsId) {
+        newsRepository.deleteById(newsId);
     }
 }

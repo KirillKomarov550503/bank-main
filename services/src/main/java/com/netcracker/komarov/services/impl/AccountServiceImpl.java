@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,17 +74,14 @@ public class AccountServiceImpl implements AccountService {
                 .findFirst();
         Account res = null;
         if (optionalRequest.isPresent()) {
-            Optional<Account> optionalAccount = accountRepository.findById(accountId);
-            if (optionalAccount.isPresent()) {
-                Request request = optionalRequest.get();
-                Account account = optionalAccount.get();
-                account.setLocked(false);
-                account.setRequest(request);
-                request.setAccount(account);
-                res = accountRepository.save(account);
-                requestRepository.deleteById(request.getId());
-                logger.info("Successful unlocking your account");
-            }
+            Request request = optionalRequest.get();
+            Account account = request.getAccount();
+            account.setLocked(false);
+            account.setRequest(request);
+            request.setAccount(account);
+            res = accountRepository.save(account);
+            requestRepository.deleteRequestById(request.getId());
+            logger.info("Successful unlocking your account");
         } else {
             logger.info("There is no such account in requests ");
         }
@@ -137,5 +133,12 @@ public class AccountServiceImpl implements AccountService {
             logger.info("There is no such client in database");
         }
         return converter.convertToDTO(temp);
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(long accountId) {
+        accountRepository.deleteById(accountId);
+        logger.info("Account was deleted");
     }
 }

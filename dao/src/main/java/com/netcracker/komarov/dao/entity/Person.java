@@ -29,10 +29,10 @@ public class Person extends BaseEntity {
     @Column(name = "passport_id")
     protected long passportId;
 
-    @OneToOne(mappedBy = "person")
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Admin admin;
 
-    @OneToOne(mappedBy = "person")
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Client client;
 
     public Person() {

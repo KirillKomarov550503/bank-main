@@ -109,4 +109,11 @@ public class CardController {
         }
         return responseEntity;
     }
+
+    @RequestMapping(value = "/cards/{cardId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long cardId) {
+        cardService.deleteById(cardId);
+        Gson gson = new Gson();
+        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Card was deleted"));
+    }
 }

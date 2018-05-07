@@ -48,4 +48,11 @@ public class ClientController {
         }
         return responseEntity;
     }
+
+    @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long clientId) {
+        clientService.deleteById(clientId);
+        Gson gson = new Gson();
+        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+    }
 }

@@ -5,6 +5,7 @@ import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.ClientConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
@@ -25,12 +26,14 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
+    private PersonRepository personRepository;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(RepositoryFactory repositoryFactory,
                              ClientConverter clientConverter, PersonConverter personConverter) {
         this.clientRepository = repositoryFactory.getClientRepository();
+        this.personRepository = repositoryFactory.getPersonRepository();
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
     }
@@ -88,13 +91,20 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public void delete(long id) {
-
+    public void deleteById(long clientId) {
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        if(optionalClient.isPresent()){
+            Client client = optionalClient.get();
+            personRepository.deleteById(client.getPerson().getId());
+            logger.info("Client was deleted");
+        } else {
+            logger.info("There is no such client in database");
+        }
     }
 
     @Transactional
     @Override
-    public ClientDTO findById(long id) {
+    public ClientDTO findById(long clientId) {
         return null;
     }
 }

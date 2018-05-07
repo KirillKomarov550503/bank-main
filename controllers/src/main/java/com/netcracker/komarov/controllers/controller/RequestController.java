@@ -40,6 +40,22 @@ public class RequestController {
         return responseEntity;
     }
 
+    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}/requests", method = RequestMethod.PATCH)
+    public ResponseEntity sendRequestToUnlockCard(@PathVariable long clientId,
+                                                  @PathVariable long accountId,
+                                                  @PathVariable long cardId) {
+        Gson gson = new Gson();
+        ResponseEntity responseEntity;
+        RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
+                    .body(gson.toJson(dto));
+        }
+        return responseEntity;
+    }
 
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
     public ResponseEntity getAllRequests() {
@@ -57,7 +73,7 @@ public class RequestController {
     }
 
     @RequestMapping(value = "/admins/requests/{requestId}/del", method = RequestMethod.DELETE)
-    public void deleteRequest(@PathVariable long requestId){
+    public void deleteRequest(@PathVariable long requestId) {
         requestService.delete(requestId);
     }
 }

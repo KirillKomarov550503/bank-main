@@ -20,7 +20,7 @@ public class Card extends BaseEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToOne(mappedBy = "card")
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Request request;
 
     public Card() {

@@ -16,4 +16,6 @@ public interface CardService {
     Collection<CardDTO> getAllCards();
 
     CardDTO unlockCard(long cardId);
+
+    void deleteById(long cardId);
 }

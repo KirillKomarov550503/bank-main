@@ -70,7 +70,7 @@ public class AccountController {
         Gson gson = new Gson();
         AccountDTO dto = accountService.refill(accountId);
         ResponseEntity responseEntity;
-        if(dto == null){
+        if (dto == null) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(gson.toJson("Server error"));
         } else {
@@ -104,11 +104,10 @@ public class AccountController {
                 .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
     }
 
-//    @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
-//    public ResponseEntity getAllRequests() {
-//        Gson gson = new Gson();
-//        Collection<AccountDTO> dtos = accountService.getAllRequests();
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
-//    }
+    @RequestMapping(value = "/accounts/{accountId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long accountId) {
+        accountService.deleteById(accountId);
+        Gson gson = new Gson();
+        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Account was deleted"));
+    }
 }

@@ -6,11 +6,11 @@ import java.util.Objects;
 @Entity
 public class Request extends BaseEntity {
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "card_id")
     private Card card;
 

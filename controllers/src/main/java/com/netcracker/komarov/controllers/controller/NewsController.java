@@ -67,7 +67,7 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
-    public ResponseEntity getCollection(@PathVariable long adminId, @RequestParam(name = "filter",
+    public ResponseEntity getCollection(@RequestParam(name = "filter",
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
             required = false, defaultValue = "false") boolean client) {
         Collection<NewsDTO> dtos;
@@ -106,5 +106,28 @@ public class NewsController {
                     .body(gson.toJson(newsDTO));
         }
         return responseEntity;
+    }
+
+    @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody NewsDTO newsDTO, @PathVariable long newsId) {
+        newsDTO.setId(newsId);
+        Gson gson = new Gson();
+        NewsDTO dto = newsService.update(newsDTO);
+        ResponseEntity responseEntity;
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(gson.toJson("Server error"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dto));
+        }
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long newsId) {
+        newsService.deleteById(newsId);
+        Gson gson = new Gson();
+        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("News was deleted"));
     }
 }

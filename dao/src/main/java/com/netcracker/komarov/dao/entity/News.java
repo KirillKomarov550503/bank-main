@@ -23,7 +23,7 @@ public class News extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "client_id"))
     private Set<Client> clients = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "admin_id")
     private Admin admin;
 

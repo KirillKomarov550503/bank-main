@@ -12,11 +12,13 @@ public interface NewsService {
 
     Collection<NewsDTO> getAllNews();
 
-    Collection<NewsDTO> getAllGeneralNews();
-
     Collection<NewsDTO> getAllNewsByStatus(NewsStatus newsStatus);
 
     NewsDTO addNews(NewsDTO newsDTO, long adminId);
 
     NewsDTO addClientNews(Collection<Long> clientIds, long newsId);
+
+    NewsDTO update(NewsDTO newsDTO);
+
+    void deleteById(long newsId);
 }

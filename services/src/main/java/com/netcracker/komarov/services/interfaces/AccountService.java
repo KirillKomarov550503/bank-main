@@ -16,5 +16,7 @@ public interface AccountService {
     Collection<AccountDTO> getAllAccounts();
 
     AccountDTO unlockAccount(long accountId);
+
+    void deleteById(long accountId);
 }
 

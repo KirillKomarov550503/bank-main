@@ -102,14 +102,11 @@ public class CardServiceImpl implements CardService {
                 .findFirst();
         Card res = null;
         if (optionalRequest.isPresent()) {
-            Optional<Card> optionalCard = cardRepository.findById(cardId);
-            if (optionalCard.isPresent()) {
-                Card card = optionalCard.get();
-                card.setLocked(false);
-                res = cardRepository.save(card);
-                requestRepository.deleteById(optionalRequest.get().getId());
-                logger.info("Card was locked");
-            }
+            Card card = optionalRequest.get().getCard();
+            card.setLocked(false);
+            res = cardRepository.save(card);
+            requestRepository.deleteRequestById(optionalRequest.get().getId());
+            logger.info("Card was locked");
         } else {
             logger.info("There is no such card in requests");
         }
@@ -121,5 +118,12 @@ public class CardServiceImpl implements CardService {
     public Collection<CardDTO> getAllCards() {
         logger.info("Return all cards");
         return convertCollection(cardRepository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(long cardId) {
+        cardRepository.deleteById(cardId);
+        logger.info("Card was deleted");
     }
 }

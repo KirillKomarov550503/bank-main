@@ -9,4 +9,8 @@ public interface AdminService {
     AdminDTO addAdmin(PersonDTO personDTO);
 
     Collection<AdminDTO> getAllAdmin();
+
+    AdminDTO update(AdminDTO adminDTO, long adminId);
+
+    void deleteById(long adminId);
 }

@@ -120,7 +120,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public void delete(long id) {
-        requestRepository.deleteById(id);
+        requestRepository.deleteRequestById(id);
         logger.info("Request was deleted successful");
     }
 }

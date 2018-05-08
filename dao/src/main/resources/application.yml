@@ -7,7 +7,7 @@ spring:
     platform: POSTGRESQL
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     properties:

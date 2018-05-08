@@ -56,5 +56,14 @@ public class RequestDTO implements Serializable {
 
         return Objects.hash(id, accountDTO, cardDTO);
     }
+
+    @Override
+    public String toString() {
+        return "RequestDTO{" +
+                "id=" + id +
+                ", accountDTO=" + accountDTO +
+                ", cardDTO=" + cardDTO +
+                '}';
+    }
 }
 

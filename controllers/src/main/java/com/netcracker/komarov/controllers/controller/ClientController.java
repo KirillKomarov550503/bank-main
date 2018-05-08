@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("bank/v1")
 public class ClientController {
     private ClientService clientService;
+    private Gson gson;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, Gson gson) {
         this.clientService = clientService;
+        this.gson = gson;
     }
 
     @ApiOperation(value = "Registration of news client")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity save(@RequestBody PersonDTO personDTO) {
-        Gson gson = new Gson();
         ClientDTO dto = clientService.save(personDTO);
         ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+            responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.CREATED)
                     .body(gson.toJson(dto));
@@ -38,17 +38,19 @@ public class ClientController {
 
     @ApiOperation(value = "Updating information about client")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.PUT)
-    public ResponseEntity update(@RequestBody ClientDTO clientDTO, @PathVariable long clientId) {
-        Gson gson = new Gson();
-        clientDTO.setId(clientId);
-        ClientDTO dto = clientService.update(clientDTO);
+    public ResponseEntity update(@RequestBody ClientDTO requestClientDTO, @PathVariable long clientId) {
         ResponseEntity responseEntity;
-        if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+        ClientDTO clientDTO = clientService.findById(clientId);
+        if (clientDTO == null) {
+            responseEntity = notFound("No such client in database");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dto));
+            requestClientDTO.setId(clientId);
+            ClientDTO dto = clientService.update(requestClientDTO);
+            if (dto == null) {
+                responseEntity = internalServerError("Server error");
+            } else {
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            }
         }
         return responseEntity;
     }
@@ -56,8 +58,22 @@ public class ClientController {
     @ApiOperation(value = "Deleting client by ID")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long clientId) {
-        clientService.deleteById(clientId);
-        Gson gson = new Gson();
-        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+        ClientDTO clientDTO = clientService.findById(clientId);
+        ResponseEntity responseEntity;
+        if (clientDTO == null) {
+            responseEntity = notFound("No such client");
+        } else {
+            clientService.deleteById(clientId);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+        }
+        return responseEntity;
+    }
+
+    private ResponseEntity notFound(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+    }
+
+    private ResponseEntity internalServerError(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
     }
 }

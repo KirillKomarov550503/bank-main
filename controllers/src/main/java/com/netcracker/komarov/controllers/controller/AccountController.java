@@ -80,14 +80,21 @@ public class AccountController {
             responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(gson.toJson("No such client in database"));
         } else {
-            AccountDTO dto = accountService.lockAccount(accountId);
-            if (dto == null) {
-                responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(gson.toJson("Server error"));
+            AccountDTO accountDTO = accountService.findById(accountId);
+            if (accountDTO == null) {
+                responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(gson.toJson("No such account in database"));
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                AccountDTO dto = accountService.lockAccount(accountId);
+                if (dto == null) {
+                    responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(gson.toJson("Server error"));
+                } else {
+                    responseEntity = ResponseEntity.status(HttpStatus.OK)
+                            .body(gson.toJson(dto));
+                }
             }
+
         }
         return responseEntity;
     }
@@ -102,13 +109,19 @@ public class AccountController {
             responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(gson.toJson("No such client in database"));
         } else {
-            AccountDTO dto = accountService.refill(accountId);
-            if (dto == null) {
-                responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(gson.toJson("Server error"));
+            AccountDTO accountDTO = accountService.findById(accountId);
+            if (accountDTO == null) {
+                responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(gson.toJson("No such account in database"));
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                AccountDTO dto = accountService.refill(accountId);
+                if (dto == null) {
+                    responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(gson.toJson("Server error"));
+                } else {
+                    responseEntity = ResponseEntity.status(HttpStatus.OK)
+                            .body(gson.toJson(dto));
+                }
             }
         }
         return responseEntity;

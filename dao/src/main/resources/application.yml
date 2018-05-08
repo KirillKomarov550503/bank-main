@@ -7,7 +7,7 @@ spring:
     platform: POSTGRESQL
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     properties:
@@ -17,6 +17,6 @@ spring:
           use_jdbc_metadata_defaults: false
 server:
   port: 8080
-logging:
-  pattern:
-    console:
+#logging:
+#  pattern:
+#    console:

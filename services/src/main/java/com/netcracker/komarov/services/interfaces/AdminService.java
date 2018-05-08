@@ -10,7 +10,7 @@ public interface AdminService {
 
     Collection<AdminDTO> getAllAdmin();
 
-    AdminDTO update(AdminDTO adminDTO, long adminId);
+    AdminDTO update(AdminDTO adminDTO);
 
     void deleteById(long adminId);
 }

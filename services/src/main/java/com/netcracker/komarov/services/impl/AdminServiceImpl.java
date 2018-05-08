@@ -66,9 +66,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO update(AdminDTO adminDTO, long adminId) {
+    public AdminDTO update(AdminDTO adminDTO) {
         Admin newClient = adminConverter.convertToEntity(adminDTO);
-        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
+        Optional<Admin> optionalAdmin = adminRepository.findById(adminDTO.getId());
         Admin resAdmin = null;
         if (optionalAdmin.isPresent()) {
             Admin oldAdmin = optionalAdmin.get();

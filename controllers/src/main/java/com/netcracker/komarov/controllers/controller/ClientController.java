@@ -40,7 +40,8 @@ public class ClientController {
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody ClientDTO clientDTO, @PathVariable long clientId) {
         Gson gson = new Gson();
-        ClientDTO dto = clientService.update(clientDTO, clientId);
+        clientDTO.setId(clientId);
+        ClientDTO dto = clientService.update(clientDTO);
         ResponseEntity responseEntity;
         if (dto == null) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

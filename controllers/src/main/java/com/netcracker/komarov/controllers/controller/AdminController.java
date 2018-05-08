@@ -59,7 +59,8 @@ public class AdminController {
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody AdminDTO adminDTO, @PathVariable long adminId) {
         Gson gson = new Gson();
-        AdminDTO dto = adminService.update(adminDTO, adminId);
+        adminDTO.setId(adminId);
+        AdminDTO dto = adminService.update(adminDTO);
         ResponseEntity responseEntity;
         if (dto == null) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -12,7 +12,7 @@ public interface ClientService {
 
     Collection<ClientDTO> findAllClients();
 
-    ClientDTO update(ClientDTO clientDTO, long clientId);
+    ClientDTO update(ClientDTO clientDTO);
 
     void deleteById(long clientId);
 

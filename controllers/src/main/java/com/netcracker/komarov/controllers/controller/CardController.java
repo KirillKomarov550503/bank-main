@@ -24,7 +24,8 @@ public class CardController {
     @ApiOperation(value = "Creation of new card")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards", method = RequestMethod.POST)
     public ResponseEntity create(@PathVariable long clientId, @PathVariable long accountId, @RequestBody CardDTO cardDTO) {
-        CardDTO dto = cardService.createCard(cardDTO, accountId);
+        CardDTO dto = cardService.createCard(cardDTO);
+        cardDTO.setAccountId(accountId);
         Gson gson = new Gson();
         ResponseEntity responseEntity;
         if (dto == null) {

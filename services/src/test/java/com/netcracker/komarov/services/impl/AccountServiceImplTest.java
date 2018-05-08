@@ -7,6 +7,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.RequestService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,26 +39,24 @@ public class AccountServiceImplTest {
     @Autowired
     private RequestService requestService;
 
-    @Test
-    public void lockAccount() {
+    @Before
+    public void init() {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
         clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
         clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
         accountService.createAccount(new AccountDTO(false, 0.0), 2);
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
+    }
+
+    @Test
+    public void lockAccount() {
         AccountDTO accountDTO = new AccountDTO(3, true, 0.0);
         assertEquals(accountDTO, accountService.lockAccount(3));
     }
 
     @Test
     public void getAllAccounts() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
-        clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
         Collection<AccountDTO> dtos = new ArrayList<>();
         dtos.add(new AccountDTO(1, false, 0));
         dtos.add(new AccountDTO(2, false, 0));
@@ -67,12 +66,6 @@ public class AccountServiceImplTest {
 
     @Test
     public void unlockAccount() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
-        clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
         requestService.saveRequest(1, RequestStatus.ACCOUNT);
         AccountDTO dto = new AccountDTO(1, false, 0);
         assertEquals(dto, accountService.unlockAccount(1));
@@ -80,24 +73,12 @@ public class AccountServiceImplTest {
 
     @Test
     public void refill() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
-        clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
         AccountDTO accountDTO = new AccountDTO(2, false, 100);
         assertEquals(accountDTO, accountService.refill(2));
     }
 
     @Test
     public void getAccountsByClientIdAndLock() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
-        clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
         accountService.lockAccount(1);
         accountService.lockAccount(3);
         Collection<AccountDTO> dtos = new ArrayList<>();
@@ -109,7 +90,7 @@ public class AccountServiceImplTest {
     @Test
     public void createAccount() {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        AccountDTO accountDTO = new AccountDTO(1, false, 0);
+        AccountDTO accountDTO = new AccountDTO(4, false, 0);
         assertEquals(accountDTO, accountService.createAccount(new AccountDTO(false, 0), 1));
     }
 

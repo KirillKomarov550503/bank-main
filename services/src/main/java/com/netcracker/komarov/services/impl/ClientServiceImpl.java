@@ -72,9 +72,9 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO update(ClientDTO clientDTO, long clientId) {
+    public ClientDTO update(ClientDTO clientDTO) {
         Client newClient = clientConverter.convertToEntity(clientDTO);
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Optional<Client> optionalClient = clientRepository.findById(clientDTO.getId());
         Client resClient = null;
         if (optionalClient.isPresent()) {
             Client oldClient = optionalClient.get();
@@ -108,7 +108,15 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     @Override
     public ClientDTO findById(long clientId) {
-        return null;
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Client client = null;
+        if(optionalClient.isPresent()){
+            client = optionalClient.get();
+            logger.info("Return client");
+        } else {
+            logger.info("There is no such client");
+        }
+        return clientConverter.convertToDTO(client);
     }
 }
 

@@ -61,9 +61,9 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public CardDTO createCard(CardDTO cardDTO, long accountId) {
+    public CardDTO createCard(CardDTO cardDTO) {
         Card card = cardConverter.convertToEntity(cardDTO);
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        Optional<Account> optionalAccount = accountRepository.findById(cardDTO.getAccountId());
         Card temp = null;
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();

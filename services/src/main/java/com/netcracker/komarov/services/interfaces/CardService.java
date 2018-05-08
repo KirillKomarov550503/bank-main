@@ -5,7 +5,7 @@ import com.netcracker.komarov.services.dto.entity.CardDTO;
 import java.util.Collection;
 
 public interface CardService {
-    CardDTO createCard(CardDTO card, long accountId);
+    CardDTO createCard(CardDTO card);
 
     CardDTO lockCard(long cardId);
 

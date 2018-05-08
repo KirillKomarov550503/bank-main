@@ -34,8 +34,7 @@ public class AdminController {
         if (dto == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                    .body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
         }
         return responseEntity;
     }
@@ -67,8 +66,7 @@ public class AdminController {
             if (dto == null) {
                 responseEntity = internalServerError("Server error");
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
             }
         }
         return responseEntity;
@@ -83,8 +81,7 @@ public class AdminController {
             responseEntity = notFound("No such admin in database");
         } else {
             adminService.deleteById(adminId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson("Admin was deleted"));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Admin was deleted"));
         }
         return responseEntity;
     }
@@ -97,8 +94,7 @@ public class AdminController {
         if (dto == null) {
             responseEntity = notFound("No such admin in database");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
         }
         return responseEntity;
     }

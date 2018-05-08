@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.Collection;
 
 @RestController
@@ -51,8 +50,7 @@ public class CardController {
                 if (dto == null) {
                     responseEntity = internalServerError("Server error");
                 } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                            .body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
                 }
             }
         }
@@ -102,8 +100,7 @@ public class CardController {
             if (dto == null) {
                 responseEntity = internalServerError("Server error");
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
             }
         }
         return responseEntity;
@@ -122,8 +119,7 @@ public class CardController {
             if (dtos == null) {
                 responseEntity = internalServerError("Server error");
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dtos));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
             }
         }
         return responseEntity;
@@ -145,8 +141,7 @@ public class CardController {
                 if (dtos == null) {
                     responseEntity = internalServerError("Server error");
                 } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK)
-                            .body(gson.toJson(dtos));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
                 }
             }
         }
@@ -199,8 +194,7 @@ public class CardController {
                 if (dto == null) {
                     responseEntity = notFound("No such card in database");
                 } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK)
-                            .body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
                 }
             }
         }

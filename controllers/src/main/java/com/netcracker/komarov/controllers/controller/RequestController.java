@@ -2,7 +2,13 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.RequestStatus;
+import com.netcracker.komarov.services.dto.entity.AccountDTO;
+import com.netcracker.komarov.services.dto.entity.CardDTO;
+import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
+import com.netcracker.komarov.services.interfaces.AccountService;
+import com.netcracker.komarov.services.interfaces.CardService;
+import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.RequestService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,26 +24,42 @@ import java.util.Collection;
 @RestController
 @RequestMapping("bank/v1")
 public class RequestController {
+    private CardService cardService;
     private RequestService requestService;
+    private ClientService clientService;
+    private AccountService accountService;
+    private Gson gson;
 
     @Autowired
-    public RequestController(RequestService requestService) {
+    public RequestController(RequestService requestService, ClientService clientService,
+                             AccountService accountService, CardService cardService, Gson gson) {
         this.requestService = requestService;
+        this.clientService = clientService;
+        this.accountService = accountService;
+        this.cardService = cardService;
+        this.gson = gson;
     }
 
     @ApiOperation(value = "Sending request to unlock account")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/requests", method = RequestMethod.PATCH)
     public ResponseEntity sendRequestToUnlockAccount(@PathVariable long clientId,
                                                      @PathVariable long accountId) {
-        Gson gson = new Gson();
+        ClientDTO clientDTO = clientService.findById(clientId);
         ResponseEntity responseEntity;
-        RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
-        if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+        if (clientDTO == null) {
+            responseEntity = notFound("No such client in database");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                    .body(gson.toJson(dto));
+            AccountDTO accountDTO = accountService.findById(accountId);
+            if (accountDTO == null) {
+                responseEntity = notFound("No such account in database");
+            } else {
+                RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
+                if (dto == null) {
+                    responseEntity = internalServerError("Server error");
+                } else {
+                    responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+                }
+            }
         }
         return responseEntity;
     }
@@ -47,15 +69,27 @@ public class RequestController {
     public ResponseEntity sendRequestToUnlockCard(@PathVariable long clientId,
                                                   @PathVariable long accountId,
                                                   @PathVariable long cardId) {
-        Gson gson = new Gson();
+        ClientDTO clientDTO = clientService.findById(clientId);
         ResponseEntity responseEntity;
-        RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
-        if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+        if (clientDTO == null) {
+            responseEntity = notFound("No such client in database");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                    .body(gson.toJson(dto));
+            AccountDTO accountDTO = accountService.findById(accountId);
+            if (accountDTO == null) {
+                responseEntity = notFound("No such account in database");
+            } else {
+                CardDTO cardDTO = cardService.findById(cardId);
+                if (cardDTO == null) {
+                    responseEntity = notFound("No such card in database");
+                } else {
+                    RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
+                    if (dto == null) {
+                        responseEntity = internalServerError("Server error");
+                    } else {
+                        responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+                    }
+                }
+            }
         }
         return responseEntity;
     }
@@ -63,12 +97,10 @@ public class RequestController {
     @ApiOperation(value = "Selecting all unlock requests")
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
     public ResponseEntity getAllRequests() {
-        Gson gson = new Gson();
         Collection<RequestDTO> dtos = requestService.findAllRequests();
         ResponseEntity responseEntity;
         if (dtos == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+            responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(gson.toJson(dtos.isEmpty() ? "Empty list of requests" : dtos));
@@ -78,7 +110,36 @@ public class RequestController {
 
     @ApiOperation(value = "Deleting request by ID")
     @RequestMapping(value = "/admins/requests/{requestId}/del", method = RequestMethod.DELETE)
-    public void deleteRequest(@PathVariable long requestId) {
-        requestService.delete(requestId);
+    public ResponseEntity deleteById(@PathVariable long requestId) {
+        RequestDTO requestDTO = requestService.findById(requestId);
+        ResponseEntity responseEntity;
+        if (requestDTO == null) {
+            responseEntity = notFound("No such request in database");
+        } else {
+            requestService.delete(requestId);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Request was deleted"));
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting request by ID")
+    @RequestMapping(value = "/admins/requests/{requestId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long requestId) {
+        ResponseEntity responseEntity;
+        RequestDTO dto = requestService.findById(requestId);
+        if (dto == null) {
+            responseEntity = notFound("No such request in database");
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        }
+        return responseEntity;
+    }
+
+    private ResponseEntity notFound(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+    }
+
+    private ResponseEntity internalServerError(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
     }
 }

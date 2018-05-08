@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.management.relation.RelationNotFoundException;
 import java.util.Collection;
 
 @RestController
@@ -60,8 +58,7 @@ public class AccountController {
             if (dto == null) {
                 responseEntity = internalServerError("Server error");
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
             }
         }
         return responseEntity;
@@ -83,8 +80,7 @@ public class AccountController {
                 if (dto == null) {
                     responseEntity = internalServerError("Server error");
                 } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK)
-                            .body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
                 }
             }
 
@@ -108,8 +104,7 @@ public class AccountController {
                 if (dto == null) {
                     responseEntity = internalServerError("Server error");
                 } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK)
-                            .body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
                 }
             }
         }
@@ -157,8 +152,7 @@ public class AccountController {
                 responseEntity = notFound("No such account in database");
             } else {
                 accountService.deleteById(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson("Account was deleted"));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Account was deleted"));
             }
         }
         return responseEntity;
@@ -176,8 +170,7 @@ public class AccountController {
             if (dto == null) {
                 responseEntity = notFound("No such client in database");
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
             }
         }
         return responseEntity;

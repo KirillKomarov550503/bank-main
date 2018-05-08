@@ -30,8 +30,7 @@ public class ClientController {
         if (dto == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                    .body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
         }
         return responseEntity;
     }
@@ -58,13 +57,26 @@ public class ClientController {
     @ApiOperation(value = "Deleting client by ID")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long clientId) {
-        ClientDTO clientDTO = clientService.findById(clientId);
         ResponseEntity responseEntity;
+        ClientDTO clientDTO = clientService.findById(clientId);
         if (clientDTO == null) {
             responseEntity = notFound("No such client");
         } else {
             clientService.deleteById(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting client by ID")
+    @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long clientId) {
+        ResponseEntity responseEntity;
+        ClientDTO dto = clientService.findById(clientId);
+        if (dto == null) {
+            responseEntity = notFound("No such client in database");
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
         }
         return responseEntity;
     }

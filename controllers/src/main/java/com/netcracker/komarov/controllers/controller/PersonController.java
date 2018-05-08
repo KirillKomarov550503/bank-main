@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +18,12 @@ import java.util.Collection;
 @RequestMapping("bank/v1")
 public class PersonController {
     private PersonService personService;
+    private Gson gson;
 
     @Autowired
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, Gson gson) {
         this.personService = personService;
+        this.gson = gson;
     }
 
     @ApiOperation(value = "Selecting all people")
@@ -35,6 +38,20 @@ public class PersonController {
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(gson.toJson(dtos.isEmpty() ? "Empty list of people" : dtos));
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting person by ID")
+    @RequestMapping(value = "/admins/people/{personId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long personId) {
+        ResponseEntity responseEntity;
+        PersonDTO dto = personService.findById(personId);
+        if (dto == null) {
+            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(gson.toJson("No such person in database"));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
         }
         return responseEntity;
     }

@@ -17,21 +17,22 @@ import java.util.Collection;
 @RequestMapping("bank/v1/admins")
 public class AdminController {
     private AdminService adminService;
+    private Gson gson;
 
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService,
+                           Gson gson) {
         this.adminService = adminService;
+        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new admin")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity add(@RequestBody PersonDTO requestPersonDTO) {
-        Gson gson = new Gson();
         AdminDTO dto = adminService.addAdmin(requestPersonDTO);
         ResponseEntity responseEntity;
         if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+            responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.CREATED)
                     .body(gson.toJson(dto));
@@ -43,11 +44,9 @@ public class AdminController {
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public ResponseEntity getAllAdmins() {
         ResponseEntity responseEntity;
-        Gson gson = new Gson();
         Collection<AdminDTO> dtos = adminService.getAllAdmin();
         if (dtos == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+            responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(gson.toJson(dtos.isEmpty() ? "Empty list of admins" : dtos));
@@ -58,18 +57,15 @@ public class AdminController {
     @ApiOperation(value = "Updating information about admin")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody AdminDTO requestAdminDTO, @PathVariable long adminId) {
-        Gson gson = new Gson();
         AdminDTO adminDTO = adminService.findById(adminId);
         ResponseEntity responseEntity;
         if (adminDTO == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(gson.toJson("No such admin"));
+            responseEntity = notFound("No such admin in database");
         } else {
             requestAdminDTO.setId(adminId);
             AdminDTO dto = adminService.update(requestAdminDTO);
             if (dto == null) {
-                responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(gson.toJson("Server error"));
+                responseEntity = internalServerError("Server error");
             } else {
                 responseEntity = ResponseEntity.status(HttpStatus.OK)
                         .body(gson.toJson(dto));
@@ -81,12 +77,10 @@ public class AdminController {
     @ApiOperation(value = "Deleting admin from system by ID")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long adminId) {
-        Gson gson = new Gson();
         ResponseEntity responseEntity;
         AdminDTO adminDTO = adminService.findById(adminId);
         if (adminDTO == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(gson.toJson("No such admin"));
+            responseEntity = notFound("No such admin in database");
         } else {
             adminService.deleteById(adminId);
             responseEntity = ResponseEntity.status(HttpStatus.OK)
@@ -98,16 +92,22 @@ public class AdminController {
     @ApiOperation(value = "Selecting admin by ID")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long adminId) {
-        Gson gson = new Gson();
         ResponseEntity responseEntity;
         AdminDTO dto = adminService.findById(adminId);
         if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(gson.toJson("No such admin in database"));
+            responseEntity = notFound("No such admin in database");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(gson.toJson(dto));
         }
         return responseEntity;
+    }
+
+    private ResponseEntity notFound(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+    }
+
+    private ResponseEntity internalServerError(String message) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(message));
     }
 }

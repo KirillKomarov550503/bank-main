@@ -29,7 +29,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             temp = requestDAO.add(request);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -40,7 +40,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             requests = requestDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return requests;
     }
@@ -51,7 +51,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             request = requestDAO.getById(id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return request;
     }
@@ -61,7 +61,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             requestDAO.delete(id);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
     }
 }

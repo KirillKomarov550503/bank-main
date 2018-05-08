@@ -108,4 +108,10 @@ public class CardServiceImplTest {
         cardService.deleteById(3);
         verify(cardService, times(1)).deleteById(3);
     }
+
+    @Test
+    public void findById() {
+        CardDTO cardDTO = new CardDTO(1, false, 0, 1, 1111);
+        assertEquals(cardDTO, cardService.findById(1));
+    }
 }

@@ -101,4 +101,10 @@ public class AccountServiceImplTest {
         accountService.deleteById(1);
         verify(accountService, times(1)).deleteById(1);
     }
+
+    @Test
+    public void findById() {
+        AccountDTO accountDTO = new AccountDTO(3, false, 0);
+        assertEquals(accountDTO, accountService.findById(3));
+    }
 }

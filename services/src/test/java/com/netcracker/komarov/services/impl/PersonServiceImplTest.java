@@ -5,7 +5,6 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.PersonService;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 @Transactional
 @Rollback
@@ -57,6 +58,12 @@ public class PersonServiceImplTest {
         dtos.add(personDTO1);
         dtos.add(personDTO4);
         dtos.add(personDTO3);
-        Assert.assertEquals(dtos, personService.getAllPeople());
+        assertEquals(dtos, personService.getAllPeople());
+    }
+
+    @Test
+    public void findById() {
+        PersonDTO personDTO = new PersonDTO(4, "Stephen", "Strange", 3, 3);
+        assertEquals(personDTO, personService.findById(4));
     }
 }

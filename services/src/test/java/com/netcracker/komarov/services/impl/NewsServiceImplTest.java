@@ -100,7 +100,7 @@ public class NewsServiceImplTest {
 
 
     @Test
-    public void getNewsById() {
+    public void findById() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         NewsDTO newsDTO1 = new NewsDTO(1, date, "Gen t1", "b1", NewsStatus.GENERAL.toString());

@@ -79,4 +79,11 @@ public class AdminServiceImplTest {
         adminService.deleteById(2);
         verify(adminService, times(1)).deleteById(2);
     }
+
+    @Test
+    public void findById() {
+        AdminDTO dto = new AdminDTO(2, "Pav", "Zar"
+                , null, null, 2, 2, Role.ADMIN);
+        assertEquals(dto, adminService.findById(2));
+    }
 }

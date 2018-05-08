@@ -18,5 +18,7 @@ public interface AccountService {
     AccountDTO unlockAccount(long accountId);
 
     void deleteById(long accountId);
+
+    AccountDTO findById(long accountId);
 }
 

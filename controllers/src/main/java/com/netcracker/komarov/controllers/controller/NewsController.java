@@ -58,7 +58,7 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity getById(@PathVariable long newsId) {
         Gson gson = new Gson();
-        NewsDTO dto = newsService.getNewsById(newsId);
+        NewsDTO dto = newsService.findById(newsId);
         ResponseEntity responseEntity;
         if (dto == null) {
             responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)

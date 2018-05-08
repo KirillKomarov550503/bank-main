@@ -18,4 +18,6 @@ public interface CardService {
     CardDTO unlockCard(long cardId);
 
     void deleteById(long cardId);
+
+    CardDTO findById(long cardId);
 }

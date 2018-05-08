@@ -9,4 +9,6 @@ public interface TransactionService {
     TransactionDTO createTransaction(TransactionDTO transactionDTO, long clientId) throws TransactionException;
 
     Collection<TransactionDTO> showStories(long clientId);
+
+    TransactionDTO findById(long transactionId);
 }

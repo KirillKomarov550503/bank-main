@@ -1,7 +1,6 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
@@ -79,7 +78,7 @@ public class AdminServiceImpl implements AdminService {
             resAdmin = adminRepository.saveAndFlush(oldAdmin);
             logger.info("Information about admin was updated");
         } else {
-            logger.info("There is no such admin in database");
+            logger.error("There is no such admin in database");
         }
         return adminConverter.convertToDTO(resAdmin);
     }
@@ -93,7 +92,20 @@ public class AdminServiceImpl implements AdminService {
             personRepository.deleteById(admin.getPerson().getId());
             logger.info("Client was deleted");
         } else {
-            logger.info("There is no such client in database");
+            logger.error("There is no such client in database");
         }
+    }
+
+    @Override
+    public AdminDTO findById(long adminId) {
+        Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
+        Admin admin = null;
+        if (optionalAdmin.isPresent()) {
+            admin = optionalAdmin.get();
+            logger.info("Return admin");
+        } else {
+            logger.error("There is no such admin");
+        }
+        return adminConverter.convertToDTO(admin);
     }
 }

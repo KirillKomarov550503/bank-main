@@ -73,21 +73,21 @@ public class NewsServiceImpl implements NewsService {
             }
             logger.info("Return all client news By client ID");
         } else {
-            logger.info("There is no such client in database");
+            logger.error("There is no such client in database");
         }
         return convertCollection(resultCollection);
     }
 
     @Transactional
     @Override
-    public NewsDTO getNewsById(long newsId) {
+    public NewsDTO findById(long newsId) {
         Optional<News> optional = newsRepository.findById(newsId);
         News news = null;
         if (optional.isPresent()) {
             news = optional.get();
             logger.info("Return client news by ID");
         } else {
-            logger.info("There is no such news in database");
+            logger.error("There is no such news in database");
         }
         return newsConverter.convertToDTO(news);
     }
@@ -107,7 +107,7 @@ public class NewsServiceImpl implements NewsService {
             logger.info("Addition new general new to database");
             temp = newsRepository.save(news);
         } else {
-            logger.info("There is no such admin in database");
+            logger.error("There is no such admin in database");
         }
         return newsConverter.convertToDTO(temp);
     }
@@ -143,7 +143,7 @@ public class NewsServiceImpl implements NewsService {
             temp = newsRepository.save(news);
             logger.info("Send news to client");
         } else {
-            logger.info("There is no such news in database");
+            logger.error("There is no such news in database");
         }
         return newsConverter.convertToDTO(temp);
     }
@@ -161,7 +161,7 @@ public class NewsServiceImpl implements NewsService {
             resNews = newsRepository.saveAndFlush(oldNews);
             logger.info("News was edited by admin");
         } else {
-            logger.info("There is no such news in database");
+            logger.error("There is no such news in database");
         }
         return newsConverter.convertToDTO(resNews);
     }

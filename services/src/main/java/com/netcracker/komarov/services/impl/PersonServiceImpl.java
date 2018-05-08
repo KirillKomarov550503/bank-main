@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +39,20 @@ public class PersonServiceImpl implements PersonService {
     public Collection<PersonDTO> getAllPeople() {
         logger.info("Return all people");
         return convertCollection(personRepository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public PersonDTO findById(long personId) {
+        Optional<Person> optionalPerson = personRepository.findById(personId);
+        Person person = null;
+        if (optionalPerson.isPresent()) {
+            person = optionalPerson.get();
+            logger.info("Return person");
+        } else {
+            logger.error("There is no such person");
+        }
+        return personConverter.convertToDTO(person);
     }
 }
 

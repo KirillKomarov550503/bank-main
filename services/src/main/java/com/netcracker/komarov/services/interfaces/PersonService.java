@@ -6,4 +6,6 @@ import java.util.Collection;
 
 public interface PersonService {
     Collection<PersonDTO> getAllPeople();
+
+    PersonDTO findById(long personId);
 }

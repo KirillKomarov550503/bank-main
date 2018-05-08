@@ -58,17 +58,17 @@ public class TransactionServiceImpl implements TransactionService {
             if (accountFrom.getClient().getId() == clientId) {
                 Account accountTo = accountRepository.findById(transactionDTO.getAccountToId()).get();
                 if (accountFrom.isLocked()) {
-                    logger.info("Your account is lock");
+                    logger.error("Your account is lock");
                     throw new TransactionException("Your account is lock");
                 }
                 if (accountTo.isLocked()) {
-                    logger.info("Other account is lock");
+                    logger.error("Other account is lock");
                     throw new TransactionException("Other account is lock");
                 }
                 double moneyFrom = accountFrom.getBalance();
                 double transactionMoney = transactionDTO.getMoney();
                 if (moneyFrom < transactionMoney) {
-                    logger.info("Not enough money on your account");
+                    logger.error("Not enough money on your account");
                     throw new TransactionException("Not enough money on your account");
                 }
                 double moneyTo = accountTo.getBalance();
@@ -88,8 +88,22 @@ public class TransactionServiceImpl implements TransactionService {
                 logger.info("Transaction was completed");
             }
         } else {
-            logger.info("Wrong input account from ID");
+            logger.error("Wrong input account from ID");
         }
         return transactionConverter.convertToDTO(newTransaction);
+    }
+
+    @Transactional
+    @Override
+    public TransactionDTO findById(long transactionId) {
+        Optional<Transaction> optionalTransactionDTO = transactionRepository.findById(transactionId);
+        Transaction transaction = null;
+        if (optionalTransactionDTO.isPresent()) {
+            transaction = optionalTransactionDTO.get();
+            logger.info("Return data about transaction");
+        } else {
+            logger.error("There is no such transaction in database");
+        }
+        return transactionConverter.convertToDTO(transaction);
     }
 }

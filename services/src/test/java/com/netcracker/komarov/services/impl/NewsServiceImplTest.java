@@ -104,7 +104,7 @@ public class NewsServiceImplTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         NewsDTO newsDTO1 = new NewsDTO(1, date, "Gen t1", "b1", NewsStatus.GENERAL.toString());
-        assertEquals(newsDTO1, newsService.getNewsById(1));
+        assertEquals(newsDTO1, newsService.findById(1));
     }
 
     @Test

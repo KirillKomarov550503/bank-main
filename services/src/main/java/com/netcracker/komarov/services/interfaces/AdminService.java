@@ -13,4 +13,6 @@ public interface AdminService {
     AdminDTO update(AdminDTO adminDTO);
 
     void deleteById(long adminId);
+
+    AdminDTO findById(long adminId);
 }

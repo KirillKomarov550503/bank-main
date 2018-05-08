@@ -8,7 +8,7 @@ import java.util.Collection;
 public interface NewsService {
     Collection<NewsDTO> getAllClientNewsById(long clientId);
 
-    NewsDTO getNewsById(long newsId);
+    NewsDTO findById(long newsId);
 
     Collection<NewsDTO> getAllNews();
 

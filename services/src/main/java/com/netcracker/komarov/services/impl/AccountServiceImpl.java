@@ -25,20 +25,20 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
     private RequestRepository requestRepository;
     private ClientRepository clientRepository;
-    private AccountConverter converter;
+    private AccountConverter accountConverter;
     private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
-    public AccountServiceImpl(RepositoryFactory repositoryFactory, AccountConverter converter) {
+    public AccountServiceImpl(RepositoryFactory repositoryFactory, AccountConverter accountConverter) {
         this.accountRepository = repositoryFactory.getAccountRepository();
         this.requestRepository = repositoryFactory.getRequestRepository();
         this.clientRepository = repositoryFactory.getClientRepository();
-        this.converter = converter;
+        this.accountConverter = accountConverter;
     }
 
     private Collection<AccountDTO> convertCollection(Collection<Account> accounts) {
         return accounts.stream()
-                .map(account -> converter.convertToDTO(account))
+                .map(account -> accountConverter.convertToDTO(account))
                 .collect(Collectors.toList());
     }
 
@@ -53,9 +53,9 @@ public class AccountServiceImpl implements AccountService {
             temp = accountRepository.save(account);
             logger.info("Successful locking your account");
         } else {
-            logger.info("There is no such account in database");
+            logger.error("There is no such account in database");
         }
-        return converter.convertToDTO(temp);
+        return accountConverter.convertToDTO(temp);
     }
 
     @Transactional
@@ -83,9 +83,9 @@ public class AccountServiceImpl implements AccountService {
             requestRepository.deleteRequestById(request.getId());
             logger.info("Successful unlocking your account");
         } else {
-            logger.info("There is no such account in requests ");
+            logger.error("There is no such account in requests ");
         }
-        return converter.convertToDTO(res);
+        return accountConverter.convertToDTO(res);
     }
 
     @Transactional
@@ -101,9 +101,9 @@ public class AccountServiceImpl implements AccountService {
             temp = accountRepository.save(account);
             logger.info("Refill account");
         } else {
-            logger.info("There is no such account in database");
+            logger.error("There is no such account in database");
         }
-        return converter.convertToDTO(temp);
+        return accountConverter.convertToDTO(temp);
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public AccountDTO createAccount(AccountDTO accountDTO, long clientId) {
-        Account account = converter.convertToEntity(accountDTO);
+        Account account = accountConverter.convertToEntity(accountDTO);
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Client client;
         Account temp = null;
@@ -130,9 +130,9 @@ public class AccountServiceImpl implements AccountService {
             temp = accountRepository.save(account);
             logger.info("Creation of account");
         } else {
-            logger.info("There is no such client in database");
+            logger.error("There is no such client in database");
         }
-        return converter.convertToDTO(temp);
+        return accountConverter.convertToDTO(temp);
     }
 
     @Transactional
@@ -140,5 +140,19 @@ public class AccountServiceImpl implements AccountService {
     public void deleteById(long accountId) {
         accountRepository.deleteById(accountId);
         logger.info("Account was deleted");
+    }
+
+    @Transactional
+    @Override
+    public AccountDTO findById(long accountId) {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        Account account = null;
+        if (optionalAccount.isPresent()) {
+            account = optionalAccount.get();
+            logger.info("Return account");
+        } else {
+            logger.error("There is no such account");
+        }
+        return accountConverter.convertToDTO(account);
     }
 }

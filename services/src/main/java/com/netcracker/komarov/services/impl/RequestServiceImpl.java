@@ -56,7 +56,7 @@ public class RequestServiceImpl implements RequestService {
                     .filter(elem -> elem.getAccount().getId() == requestId)
                     .findFirst();
             if (optionalRequest.isPresent()) {
-                logger.info("This account have already added to requests");
+                logger.error("This account have already added to requests");
             } else {
                 Optional<Account> optionalAccount = accountRepository.findById(requestId);
                 if (optionalAccount.isPresent()) {
@@ -66,7 +66,7 @@ public class RequestServiceImpl implements RequestService {
                     res = requestRepository.save(request);
                     logger.info("Add request to unlock account");
                 } else {
-                    logger.info("There is no such account in database");
+                    logger.error("There is no such account in database");
                 }
             }
         } else {
@@ -78,7 +78,7 @@ public class RequestServiceImpl implements RequestService {
                         .filter(elem -> elem.getCard().getId() == requestId)
                         .findFirst();
                 if (optionalRequest.isPresent()) {
-                    logger.info("This card have already added to requests");
+                    logger.error("This card have already added to requests");
                 } else {
                     Optional<Card> optionalCard = cardRepository.findById(requestId);
                     if (optionalCard.isPresent()) {
@@ -88,7 +88,7 @@ public class RequestServiceImpl implements RequestService {
                         res = requestRepository.save(request);
                         logger.info("Add request to unlock card");
                     } else {
-                        logger.info("There is no such card in database");
+                        logger.error("There is no such card in database");
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class RequestServiceImpl implements RequestService {
             request = optionalRequest.get();
             logger.info("Return request");
         } else {
-            logger.info("There is no such request in database");
+            logger.error("There is no such request in database");
         }
         return converter.convertToDTO(request);
     }

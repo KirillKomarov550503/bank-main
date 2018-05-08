@@ -54,7 +54,7 @@ public class CardServiceImpl implements CardService {
             logger.info("Card was locked");
             temp = cardRepository.save(card);
         } else {
-            logger.info("There is no such card in database");
+            logger.error("There is no such card in database");
         }
         return cardConverter.convertToDTO(temp);
     }
@@ -73,7 +73,7 @@ public class CardServiceImpl implements CardService {
             temp = cardRepository.save(card);
             logger.info("Creation of new card");
         } else {
-            logger.info("There is no such account in database");
+            logger.error("There is no such account in database");
         }
         return cardConverter.convertToDTO(temp);
     }
@@ -108,7 +108,7 @@ public class CardServiceImpl implements CardService {
             requestRepository.deleteRequestById(optionalRequest.get().getId());
             logger.info("Card was unlocked");
         } else {
-            logger.info("There is no such card in requests");
+            logger.error("There is no such card in requests");
         }
         return cardConverter.convertToDTO(res);
     }
@@ -125,5 +125,19 @@ public class CardServiceImpl implements CardService {
     public void deleteById(long cardId) {
         cardRepository.deleteById(cardId);
         logger.info("Card was deleted");
+    }
+
+    @Transactional
+    @Override
+    public CardDTO findById(long cardId) {
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        Card card = null;
+        if (optionalCard.isPresent()) {
+            card = optionalCard.get();
+            logger.info("Return card");
+        } else {
+            logger.error("There is no such card");
+        }
+        return cardConverter.convertToDTO(card);
     }
 }

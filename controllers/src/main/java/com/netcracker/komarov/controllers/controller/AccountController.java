@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(value = "bank/v1")
+@RequestMapping(value = "/bank/v1")
 public class AccountController {
     private AccountService accountService;
     private Gson gson;

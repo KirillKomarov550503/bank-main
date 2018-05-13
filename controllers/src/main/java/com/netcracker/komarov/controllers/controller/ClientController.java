@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("bank/v1")
+@RequestMapping("/bank/v1")
 public class ClientController {
     private ClientService clientService;
     private Gson gson;
@@ -23,7 +23,7 @@ public class ClientController {
     }
 
     @ApiOperation(value = "Registration of news client")
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ResponseEntity save(@RequestBody PersonDTO personDTO) {
         ClientDTO dto = clientService.save(personDTO);
         ResponseEntity responseEntity;

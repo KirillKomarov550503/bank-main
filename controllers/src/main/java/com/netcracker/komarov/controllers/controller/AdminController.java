@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("bank/v1/admins")
+@RequestMapping("/bank/v1/admins")
 public class AdminController {
     private AdminService adminService;
     private Gson gson;

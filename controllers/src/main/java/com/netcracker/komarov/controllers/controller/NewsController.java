@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("bank/v1")
+@RequestMapping("/bank/v1")
 public class NewsController {
     private NewsService newsService;
     private AdminService adminService;
@@ -65,6 +65,20 @@ public class NewsController {
             } else {
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
             }
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting all general news")
+    @RequestMapping(value = "/news", method = RequestMethod.GET)
+    public ResponseEntity findAllGeneralNews() {
+        ResponseEntity responseEntity;
+        Collection<NewsDTO> dtos = newsService.getAllNewsByStatus(NewsStatus.GENERAL);
+        if (dtos == null) {
+            responseEntity = internalServerError("Server error");
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dtos.isEmpty() ? "Empty list" : dtos));
         }
         return responseEntity;
     }

@@ -11,9 +11,11 @@ import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,15 +29,17 @@ public class ClientServiceImpl implements ClientService {
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
     private PersonRepository personRepository;
+    private CustomPasswordEncoder customPasswordEncoder;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
-    public ClientServiceImpl(RepositoryFactory repositoryFactory,
-                             ClientConverter clientConverter, PersonConverter personConverter) {
+    public ClientServiceImpl(RepositoryFactory repositoryFactory, ClientConverter clientConverter,
+                             PersonConverter personConverter, CustomPasswordEncoder customPasswordEncoder) {
         this.clientRepository = repositoryFactory.getClientRepository();
         this.personRepository = repositoryFactory.getPersonRepository();
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
+        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     private Collection<ClientDTO> convertCollection(Collection<Client> clients) {
@@ -55,6 +59,8 @@ public class ClientServiceImpl implements ClientService {
     public ClientDTO save(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
+        String password = person.getPassword();
+        person.setPassword(customPasswordEncoder.encode(password));
         Client client = new Client();
         client.setPerson(person);
         person.setClient(client);
@@ -78,6 +84,8 @@ public class ClientServiceImpl implements ClientService {
         if (optionalClient.isPresent()) {
             Client oldClient = optionalClient.get();
             Person newPerson = newClient.getPerson();
+            String password = newPerson.getPassword();
+            newPerson.setPassword(customPasswordEncoder.encode(password));
             Person oldPerson = oldClient.getPerson();
             newPerson.setId(oldPerson.getId());
             oldClient.setPerson(newPerson);

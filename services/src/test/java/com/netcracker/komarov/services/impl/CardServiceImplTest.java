@@ -46,7 +46,8 @@ public class CardServiceImplTest {
 
     @Before
     public void init() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
+        clientService.save(new PersonDTO(0, "Kirill", "Komarov",
+                1, 1, "Optimist", "qwerty"));
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
         cardService.createCard(new CardDTO(0, false, 0, 1, 1111));

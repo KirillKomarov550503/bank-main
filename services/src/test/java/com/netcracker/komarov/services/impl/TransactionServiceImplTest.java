@@ -42,8 +42,10 @@ public class TransactionServiceImplTest {
 
     @Before
     public void init() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
+        clientService.save(new PersonDTO(0, "Kirill", "Komarov",
+                1, 1, "Optimist", "qwerty"));
+        clientService.save(new PersonDTO(0, "Vlad", "M",
+                2, 2, "Sloupok", "0000000"));
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
         accountService.createAccount(new AccountDTO(false, 0.0), 2);
         accountService.createAccount(new AccountDTO(false, 0.0), 1);

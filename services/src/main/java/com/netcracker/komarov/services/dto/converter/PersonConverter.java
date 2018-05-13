@@ -17,6 +17,8 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
             dto.setSurname(person.getSurname());
             dto.setPassportId(person.getPassportId());
             dto.setPhoneNumber(person.getPhoneNumber());
+            dto.setUsername(person.getUsername());
+            dto.setPassword(person.getPassword());
         }
         return dto;
     }
@@ -28,6 +30,8 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
         person.setSurname(dto.getSurname());
         person.setPassportId(dto.getPassportId());
         person.setPhoneNumber(dto.getPhoneNumber());
+        person.setUsername(dto.getUsername());
+        person.setPassword(dto.getPassword());
         return person;
     }
 }

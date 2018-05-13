@@ -105,14 +105,13 @@ public class AdminDTO implements Serializable {
                 Objects.equals(name, adminDTO.name) &&
                 Objects.equals(surname, adminDTO.surname) &&
                 Objects.equals(login, adminDTO.login) &&
-                Objects.equals(password, adminDTO.password) &&
                 role == adminDTO.role;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, surname, login, password, phoneNumber, passportId, role);
+        return Objects.hash(id, name, surname, login, phoneNumber, passportId, role);
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("bank/v1")
+@RequestMapping("/bank/v1")
 public class RequestController {
     private CardService cardService;
     private RequestService requestService;

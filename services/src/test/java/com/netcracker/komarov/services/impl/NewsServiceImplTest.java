@@ -7,6 +7,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.NewsService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class NewsServiceImplTest {
-
     @Mock
     @Autowired
     private NewsService newsService;
@@ -44,12 +44,15 @@ public class NewsServiceImplTest {
 
     @Before
     public void init() {
-        PersonDTO dto1 = new PersonDTO(0, "Max", "Ul", 1, 1);
-        PersonDTO dto2 = new PersonDTO(0, "Pav", "Zar", 2, 2);
+        PersonDTO dto1 = new PersonDTO(0, "Max", "Ul",
+                1, 1, "Pessimist", "password");
+        PersonDTO dto2 = new PersonDTO(0, "Pav", "Zar",
+                2, 2, "Dancer", "disco");
         clientService.save(dto1);
         clientService.save(dto2);
 
-        PersonDTO dto = new PersonDTO(0, "Max", "UL", 1, 1);
+        PersonDTO dto = new PersonDTO(0, "Max", "UL",
+                1, 1, "Pessimist", "password");
         adminService.addAdmin(dto);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm");

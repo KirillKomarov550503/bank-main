@@ -7,6 +7,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.RequestService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class AccountServiceImplTest {
-
+    @Autowired
+    private CustomPasswordEncoder encoder;
     @Mock
     @Autowired
     private AccountService accountService;
@@ -41,9 +43,12 @@ public class AccountServiceImplTest {
 
     @Before
     public void init() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
-        clientService.save(new PersonDTO(0, "Vlad", "M", 2, 2));
-        clientService.save(new PersonDTO(0, "Max", "Ul", 3, 3));
+        clientService.save(new PersonDTO(0, "Kirill", "Komarov",
+                1, 1, "Optimist", "qwerty"));
+        clientService.save(new PersonDTO(0, "Vlad", "M",
+                2, 2, "Realist", "12345"));
+        clientService.save(new PersonDTO(0, "Max", "Ul",
+                3, 3, "Pessimist", "password"));
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
         accountService.createAccount(new AccountDTO(false, 0.0), 2);
         accountService.createAccount(new AccountDTO(false, 0.0), 1);
@@ -89,7 +94,8 @@ public class AccountServiceImplTest {
 
     @Test
     public void createAccount() {
-        clientService.save(new PersonDTO(0, "Kirill", "Komarov", 1, 1));
+        clientService.save(new PersonDTO(0, "Kirill", "Komarov",
+                1, 1, "Optimist", encoder.encode("qwerty")));
         AccountDTO accountDTO = new AccountDTO(4, false, 0);
         assertEquals(accountDTO, accountService.createAccount(new AccountDTO(false, 0), 1));
     }

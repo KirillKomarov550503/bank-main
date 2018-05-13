@@ -104,14 +104,13 @@ public class ClientDTO implements Serializable {
                 Objects.equals(name, clientDTO.name) &&
                 Objects.equals(surname, clientDTO.surname) &&
                 Objects.equals(login, clientDTO.login) &&
-                Objects.equals(password, clientDTO.password) &&
                 role == clientDTO.role;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, surname, login, password, phoneNumber, passportId, role);
+        return Objects.hash(id, name, surname, login, phoneNumber, passportId, role);
     }
 
     @Override

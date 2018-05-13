@@ -20,10 +20,10 @@ public class Person extends BaseEntity {
     @Enumerated(EnumType.STRING)
     protected Role role;
 
-    @Column(name = "login", length = 50)
-    protected String login;
+    @Column(name = "username", length = 50)
+    protected String username;
 
-    @Column(name = "password", length = 50)
+    @Column(name = "password", length = 100)
     protected String password;
 
     @Column(name = "passport_id")
@@ -39,13 +39,13 @@ public class Person extends BaseEntity {
     }
 
     public Person(String name, String surname, long phoneNumber, Role role,
-                  String login, String password, long passportId,
+                  String username, String password, long passportId,
                   Admin admin, Client client) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.login = login;
+        this.username = username;
         this.password = password;
         this.passportId = passportId;
         this.admin = admin;
@@ -92,12 +92,12 @@ public class Person extends BaseEntity {
         this.role = role;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String login) {
+        this.username = login;
     }
 
     public String getPassword() {
@@ -143,14 +143,14 @@ public class Person extends BaseEntity {
                 Objects.equals(name, person.name) &&
                 Objects.equals(surname, person.surname) &&
                 role == person.role &&
-                Objects.equals(login, person.login) &&
+                Objects.equals(username, person.username) &&
                 Objects.equals(password, person.password);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), name, surname, phoneNumber, role, login, password, passportId);
+        return Objects.hash(super.hashCode(), name, surname, phoneNumber, role, username, password, passportId);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class Person extends BaseEntity {
                 ", surname='" + surname + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 ", role=" + role +
-                ", login='" + login + '\'' +
+                ", login='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", passportId=" + passportId +
                 ", id=" + id +

@@ -11,9 +11,11 @@ import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +29,17 @@ public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
     private AdminConverter adminConverter;
     private PersonConverter personConverter;
+    private CustomPasswordEncoder customPasswordEncoder;
     private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
-    public AdminServiceImpl(RepositoryFactory repositoryFactory, AdminConverter adminConverter, PersonConverter personConverter) {
+    public AdminServiceImpl(RepositoryFactory repositoryFactory, AdminConverter adminConverter,
+                            PersonConverter personConverter, CustomPasswordEncoder customPasswordEncoder) {
         this.adminRepository = repositoryFactory.getAdminRepository();
         this.adminConverter = adminConverter;
         this.personConverter = personConverter;
         this.personRepository = repositoryFactory.getPersonRepository();
+        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     private Collection<AdminDTO> convertCollection(Collection<Admin> admins) {
@@ -48,6 +53,8 @@ public class AdminServiceImpl implements AdminService {
     public AdminDTO addAdmin(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.ADMIN);
+        String password = person.getPassword();
+        person.setPassword(customPasswordEncoder.encode(password));
         Admin admin = new Admin();
         admin.setPerson(person);
         person.setAdmin(admin);
@@ -73,6 +80,8 @@ public class AdminServiceImpl implements AdminService {
             Admin oldAdmin = optionalAdmin.get();
             Person oldPerson = oldAdmin.getPerson();
             Person newPerson = newClient.getPerson();
+            String password = newPerson.getPassword();
+            newPerson.setPassword(customPasswordEncoder.encode(password));
             newPerson.setId(oldPerson.getId());
             oldAdmin.setPerson(newPerson);
             resAdmin = adminRepository.saveAndFlush(oldAdmin);

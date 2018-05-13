@@ -5,20 +5,24 @@ import java.util.Objects;
 
 public class PersonDTO implements Serializable {
     private long id;
-    protected String name;
-    protected String surname;
-    protected long phoneNumber;
-    protected long passportId;
-
+    private String name;
+    private String surname;
+    private long phoneNumber;
+    private long passportId;
+    private String username;
+    private String password;
     public PersonDTO() {
     }
 
-    public PersonDTO(long id, String name, String surname, long phoneNumber, long passportId) {
+    public PersonDTO(long id, String name, String surname, long phoneNumber,
+                     long passportId, String username, String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.passportId = passportId;
+        this.username = username;
+        this.password = password;
     }
 
     public long getId() {
@@ -61,6 +65,22 @@ public class PersonDTO implements Serializable {
         this.passportId = passportId;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,13 +90,14 @@ public class PersonDTO implements Serializable {
                 phoneNumber == personDTO.phoneNumber &&
                 passportId == personDTO.passportId &&
                 Objects.equals(name, personDTO.name) &&
-                Objects.equals(surname, personDTO.surname);
+                Objects.equals(surname, personDTO.surname) &&
+                Objects.equals(username, personDTO.username);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, surname, phoneNumber, passportId);
+        return Objects.hash(id, name, surname, phoneNumber, passportId, username);
     }
 
     @Override
@@ -87,6 +108,8 @@ public class PersonDTO implements Serializable {
                 ", surname='" + surname + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 ", passportId=" + passportId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

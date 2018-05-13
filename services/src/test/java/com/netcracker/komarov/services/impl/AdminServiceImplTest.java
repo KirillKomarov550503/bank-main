@@ -5,6 +5,7 @@ import com.netcracker.komarov.services.ServiceContext;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,16 +27,20 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class AdminServiceImplTest {
-
+    @Autowired
+    private CustomPasswordEncoder encoder;
     @Mock
     @Autowired
     private AdminService adminService;
 
     @Before
     public void init() {
-        PersonDTO dto1 = new PersonDTO(0, "Max", "UL", 1, 1);
-        PersonDTO dto2 = new PersonDTO(0, "Pav", "Zar", 2, 2);
-        PersonDTO dto3 = new PersonDTO(0, "Kir", "Kom", 3, 3);
+        PersonDTO dto1 = new PersonDTO(0, "Max", "UL",
+                1, 1, "Pessimist", "password");
+        PersonDTO dto2 = new PersonDTO(0, "Pav", "Zar",
+                2, 2, "Dancer", "disco");
+        PersonDTO dto3 = new PersonDTO(0, "Kir", "Kom",
+                3, 3, "Optimist", "qwerty");
         adminService.addAdmin(dto1);
         adminService.addAdmin(dto2);
         adminService.addAdmin(dto3);
@@ -44,20 +49,21 @@ public class AdminServiceImplTest {
 
     @Test
     public void addAdmin() {
-        AdminDTO adminDTO = new AdminDTO(4, "Alex", "Khu", null,
-                null, 4, 4, Role.ADMIN);
-        PersonDTO personDTO = new PersonDTO(0, "Alex", "Khu", 4, 4);
+        AdminDTO adminDTO = new AdminDTO(4, "Alex", "Khu", "WTF",
+                encoder.encode("WTF"), 4, 4, Role.ADMIN);
+        PersonDTO personDTO = new PersonDTO(0, "Alex", "Khu",
+                4, 4, "WTF", "WTF");
         assertEquals(adminDTO, adminService.addAdmin(personDTO));
     }
 
     @Test
     public void getAllAdmin() {
         AdminDTO dto1 = new AdminDTO(1, "Max", "UL",
-                null, null, 1, 1, Role.ADMIN);
+                "Pessimist", encoder.encode("password"), 1, 1, Role.ADMIN);
         AdminDTO dto2 = new AdminDTO(2, "Pav", "Zar"
-                , null, null, 2, 2, Role.ADMIN);
+                , "Dancer", encoder.encode("disco"), 2, 2, Role.ADMIN);
         AdminDTO dto3 = new AdminDTO(3, "Kir", "Kom",
-                null, null, 3, 3, Role.ADMIN);
+                "Optimist", encoder.encode("qwerty"), 3, 3, Role.ADMIN);
         Collection<AdminDTO> dtos = new ArrayList<>();
         dtos.add(dto1);
         dtos.add(dto2);
@@ -68,8 +74,10 @@ public class AdminServiceImplTest {
     @Test
     public void update() {
         AdminDTO adminDTO = new AdminDTO(2, "Pavel", "Zaretskya",
-                null, null, 101010, 224466, Role.ADMIN);
-        assertEquals(adminDTO, adminService.update(adminDTO));
+                "Dancer", "disco", 101010, 224466, Role.ADMIN);
+        AdminDTO res = new AdminDTO(2, "Pavel", "Zaretskya",
+                "Dancer", encoder.encode("disco"), 101010, 224466, Role.ADMIN);
+        assertEquals(res, adminService.update(adminDTO));
     }
 
     @Test
@@ -83,7 +91,7 @@ public class AdminServiceImplTest {
     @Test
     public void findById() {
         AdminDTO dto = new AdminDTO(2, "Pav", "Zar"
-                , null, null, 2, 2, Role.ADMIN);
+                , "Dancer", encoder.encode("disco"), 2, 2, Role.ADMIN);
         assertEquals(dto, adminService.findById(2));
     }
 }

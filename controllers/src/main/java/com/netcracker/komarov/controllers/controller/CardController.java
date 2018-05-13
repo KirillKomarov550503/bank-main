@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("bank/v1")
+@RequestMapping("/bank/v1")
 public class CardController {
     private CardService cardService;
     private ClientService clientService;

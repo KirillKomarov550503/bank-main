@@ -1,7 +1,6 @@
 package com.netcracker.komarov.services.dto.converter;
 
 import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.dto.Converter;
@@ -19,7 +18,7 @@ public class AdminConverter implements Converter<AdminDTO, Admin> {
             adminDTO.setId(admin.getId());
             adminDTO.setName(person.getName());
             adminDTO.setSurname(person.getSurname());
-            adminDTO.setLogin(person.getLogin());
+            adminDTO.setLogin(person.getUsername());
             adminDTO.setPassportId(person.getPassportId());
             adminDTO.setPassword(person.getPassword());
             adminDTO.setPhoneNumber(person.getPhoneNumber());
@@ -37,7 +36,7 @@ public class AdminConverter implements Converter<AdminDTO, Admin> {
         person.setSurname(dto.getSurname());
         person.setPassportId(dto.getPassportId());
         person.setPhoneNumber(dto.getPhoneNumber());
-        person.setLogin(dto.getLogin());
+        person.setUsername(dto.getLogin());
         person.setPassword(dto.getPassword());
         person.setRole(Role.ADMIN);
         admin.setPerson(person);

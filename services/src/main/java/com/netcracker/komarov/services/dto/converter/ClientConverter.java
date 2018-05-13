@@ -18,7 +18,7 @@ public class ClientConverter implements Converter<ClientDTO, Client> {
             clientDTO.setId(client.getId());
             clientDTO.setName(person.getName());
             clientDTO.setSurname(person.getSurname());
-            clientDTO.setLogin(person.getLogin());
+            clientDTO.setLogin(person.getUsername());
             clientDTO.setPassportId(person.getPassportId());
             clientDTO.setPassword(person.getPassword());
             clientDTO.setPhoneNumber(person.getPhoneNumber());
@@ -36,7 +36,7 @@ public class ClientConverter implements Converter<ClientDTO, Client> {
         person.setSurname(dto.getSurname());
         person.setPassportId(dto.getPassportId());
         person.setPhoneNumber(dto.getPhoneNumber());
-        person.setLogin(dto.getLogin());
+        person.setUsername(dto.getLogin());
         person.setPassword(dto.getPassword());
         person.setRole(Role.CLIENT);
         client.setPerson(person);

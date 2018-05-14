@@ -7,7 +7,6 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.NewsService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

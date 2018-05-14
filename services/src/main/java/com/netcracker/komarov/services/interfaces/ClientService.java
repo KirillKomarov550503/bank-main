@@ -2,19 +2,18 @@ package com.netcracker.komarov.services.interfaces;
 
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 
 import java.util.Collection;
 
 public interface ClientService {
-    ClientDTO signIn(PersonDTO personDTO);
-
     ClientDTO save(PersonDTO personDTO);
 
     Collection<ClientDTO> findAllClients();
 
-    ClientDTO update(ClientDTO clientDTO);
+    ClientDTO update(ClientDTO clientDTO) throws NotFoundException;
 
-    void deleteById(long clientId);
+    void deleteById(long clientId) throws NotFoundException;
 
-    ClientDTO findById(long clientId);
+    ClientDTO findById(long clientId) throws NotFoundException;
 }

@@ -10,6 +10,7 @@ import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.NewsRepository;
 import com.netcracker.komarov.services.dto.converter.NewsConverter;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.NewsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public Collection<NewsDTO> getAllClientNewsById(long clientId) {
+    public Collection<NewsDTO> getAllClientNewsById(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Collection<News> resultCollection = new ArrayList<>();
         if (optionalClient.isPresent()) {
@@ -73,28 +74,32 @@ public class NewsServiceImpl implements NewsService {
             }
             logger.info("Return all client news By client ID");
         } else {
-            logger.error("There is no such client in database");
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return convertCollection(resultCollection);
     }
 
     @Transactional
     @Override
-    public NewsDTO findById(long newsId) {
+    public NewsDTO findById(long newsId) throws NotFoundException {
         Optional<News> optional = newsRepository.findById(newsId);
-        News news = null;
+        News news;
         if (optional.isPresent()) {
             news = optional.get();
             logger.info("Return client news by ID");
         } else {
-            logger.error("There is no such news in database");
+            String error = "There is no such news in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return newsConverter.convertToDTO(news);
     }
 
     @Transactional
     @Override
-    public NewsDTO addNews(NewsDTO newsDTO, long adminId) {
+    public NewsDTO addNews(NewsDTO newsDTO, long adminId) throws NotFoundException {
         News news = newsConverter.convertToEntity(newsDTO);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         news.setDate(simpleDateFormat.format(new Date()));
@@ -107,7 +112,9 @@ public class NewsServiceImpl implements NewsService {
             logger.info("Addition new general new to database");
             temp = newsRepository.save(news);
         } else {
-            logger.error("There is no such admin in database");
+            String error = "There is no such admin in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return newsConverter.convertToDTO(temp);
     }
@@ -121,11 +128,11 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public NewsDTO addClientNews(Collection<Long> clientIds, long newsId) {
+    public NewsDTO addClientNews(Collection<Long> clientIds, long newsId) throws NotFoundException {
         Collection<Client> clients = clientRepository.findAll();
         Optional<News> optionalNews = newsRepository.findById(newsId);
         News news;
-        News temp = null;
+        News temp;
         if (optionalNews.isPresent()) {
             news = optionalNews.get();
             if (clientIds.size() == 0) {
@@ -135,25 +142,34 @@ public class NewsServiceImpl implements NewsService {
                 }
             } else {
                 for (long clientId : clientIds) {
-                    Client client = clientRepository.findById(clientId).get();
-                    news.getClients().add(client);
-                    client.getNewsSet().add(news);
+                    Optional<Client> optionalClient = clientRepository.findById(clientId);
+                    if (optionalClient.isPresent()) {
+                        Client client = optionalClient.get();
+                        news.getClients().add(client);
+                        client.getNewsSet().add(news);
+                    } else {
+                        String error = "Client with ID " + clientId + " absent in database";
+                        logger.error(error);
+                        throw new NotFoundException(error);
+                    }
                 }
             }
             temp = newsRepository.save(news);
             logger.info("Send news to client");
         } else {
-            logger.error("There is no such news in database");
+            String error = "There is no such news in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return newsConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public NewsDTO update(NewsDTO newsDTO) {
+    public NewsDTO update(NewsDTO newsDTO) throws NotFoundException {
         News newNews = newsConverter.convertToEntity(newsDTO);
         Optional<News> optionalNews = newsRepository.findById(newsDTO.getId());
-        News resNews = null;
+        News resNews;
         if (optionalNews.isPresent()) {
             News oldNews = optionalNews.get();
             oldNews.setTitle(newNews.getTitle());
@@ -161,7 +177,9 @@ public class NewsServiceImpl implements NewsService {
             resNews = newsRepository.saveAndFlush(oldNews);
             logger.info("News was edited by admin");
         } else {
-            logger.error("There is no such news in database");
+            String error = "There is no such news in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return newsConverter.convertToDTO(resNews);
     }

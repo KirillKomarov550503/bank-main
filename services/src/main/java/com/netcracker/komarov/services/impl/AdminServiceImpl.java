@@ -10,12 +10,12 @@ import com.netcracker.komarov.services.dto.converter.AdminConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,10 +72,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO update(AdminDTO adminDTO) {
+    public AdminDTO update(AdminDTO adminDTO) throws NotFoundException {
         Admin newClient = adminConverter.convertToEntity(adminDTO);
         Optional<Admin> optionalAdmin = adminRepository.findById(adminDTO.getId());
-        Admin resAdmin = null;
+        Admin resAdmin;
         if (optionalAdmin.isPresent()) {
             Admin oldAdmin = optionalAdmin.get();
             Person oldPerson = oldAdmin.getPerson();
@@ -87,33 +87,39 @@ public class AdminServiceImpl implements AdminService {
             resAdmin = adminRepository.saveAndFlush(oldAdmin);
             logger.info("Information about admin was updated");
         } else {
-            logger.error("There is no such admin in database");
+            String error = "There is no such admin in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return adminConverter.convertToDTO(resAdmin);
     }
 
     @Transactional
     @Override
-    public void deleteById(long adminId) {
+    public void deleteById(long adminId) throws NotFoundException {
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
             personRepository.deleteById(admin.getPerson().getId());
             logger.info("Client was deleted");
         } else {
-            logger.error("There is no such client in database");
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
     }
 
     @Override
-    public AdminDTO findById(long adminId) {
+    public AdminDTO findById(long adminId) throws NotFoundException {
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
-        Admin admin = null;
+        Admin admin;
         if (optionalAdmin.isPresent()) {
             admin = optionalAdmin.get();
             logger.info("Return admin");
         } else {
-            logger.error("There is no such admin");
+            String error = "There is no such admin";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return adminConverter.convertToDTO(admin);
     }

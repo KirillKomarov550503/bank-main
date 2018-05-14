@@ -5,6 +5,7 @@ import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +44,16 @@ public class PersonServiceImpl implements PersonService {
 
     @Transactional
     @Override
-    public PersonDTO findById(long personId) {
+    public PersonDTO findById(long personId) throws NotFoundException {
         Optional<Person> optionalPerson = personRepository.findById(personId);
         Person person = null;
         if (optionalPerson.isPresent()) {
             person = optionalPerson.get();
             logger.info("Return person");
         } else {
-            logger.error("There is no such person");
+            String error = "There is no such person";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return personConverter.convertToDTO(person);
     }

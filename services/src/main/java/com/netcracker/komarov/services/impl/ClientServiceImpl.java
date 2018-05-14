@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.dto.converter.ClientConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
@@ -50,12 +51,6 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO signIn(PersonDTO personDTO) {
-        return null;
-    }
-
-    @Transactional
-    @Override
     public ClientDTO save(PersonDTO personDTO) {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
@@ -77,10 +72,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO update(ClientDTO clientDTO) {
+    public ClientDTO update(ClientDTO clientDTO) throws NotFoundException {
         Client newClient = clientConverter.convertToEntity(clientDTO);
         Optional<Client> optionalClient = clientRepository.findById(clientDTO.getId());
-        Client resClient = null;
+        Client resClient;
         if (optionalClient.isPresent()) {
             Client oldClient = optionalClient.get();
             Person newPerson = newClient.getPerson();
@@ -92,14 +87,16 @@ public class ClientServiceImpl implements ClientService {
             resClient = clientRepository.saveAndFlush(oldClient);
             logger.info("Information about client was updated");
         } else {
-            logger.error("There is no such client in database");
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return clientConverter.convertToDTO(resClient);
     }
 
     @Transactional
     @Override
-    public void deleteById(long clientId) {
+    public void deleteById(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
@@ -108,20 +105,24 @@ public class ClientServiceImpl implements ClientService {
             personRepository.deleteById(client.getPerson().getId());
             logger.info("Client was deleted");
         } else {
-            logger.error("There is no such client in database");
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
     }
 
     @Transactional
     @Override
-    public ClientDTO findById(long clientId) {
+    public ClientDTO findById(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Client client = null;
         if (optionalClient.isPresent()) {
             client = optionalClient.get();
             logger.info("Return client");
         } else {
-            logger.error("There is no such client");
+            String error = "There is no such client";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return clientConverter.convertToDTO(client);
     }

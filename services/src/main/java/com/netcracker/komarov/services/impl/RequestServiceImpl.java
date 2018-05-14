@@ -10,6 +10,8 @@ import com.netcracker.komarov.dao.repository.RequestRepository;
 import com.netcracker.komarov.services.dto.RequestStatus;
 import com.netcracker.komarov.services.dto.converter.RequestConverter;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
+import com.netcracker.komarov.services.exception.LogicException;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public RequestDTO saveRequest(long requestId, RequestStatus requestStatus) {
+    public RequestDTO saveRequest(long requestId, RequestStatus requestStatus) throws LogicException, NotFoundException {
         Request request = new Request();
         Request res = null;
         if (requestStatus.equals(RequestStatus.ACCOUNT)) {
@@ -56,7 +58,9 @@ public class RequestServiceImpl implements RequestService {
                     .filter(elem -> elem.getAccount().getId() == requestId)
                     .findFirst();
             if (optionalRequest.isPresent()) {
-                logger.error("This account have already added to requests");
+                String error = "This account have already added to requests";
+                logger.error(error);
+                throw new LogicException(error);
             } else {
                 Optional<Account> optionalAccount = accountRepository.findById(requestId);
                 if (optionalAccount.isPresent()) {
@@ -66,7 +70,9 @@ public class RequestServiceImpl implements RequestService {
                     res = requestRepository.save(request);
                     logger.info("Add request to unlock account");
                 } else {
-                    logger.error("There is no such account in database");
+                    String error = "There is no such account in database";
+                    logger.error(error);
+                    throw new NotFoundException(error);
                 }
             }
         } else {
@@ -78,7 +84,9 @@ public class RequestServiceImpl implements RequestService {
                         .filter(elem -> elem.getCard().getId() == requestId)
                         .findFirst();
                 if (optionalRequest.isPresent()) {
-                    logger.error("This card have already added to requests");
+                    String error = "This card have already added to requests";
+                    logger.error(error);
+                    throw new LogicException(error);
                 } else {
                     Optional<Card> optionalCard = cardRepository.findById(requestId);
                     if (optionalCard.isPresent()) {
@@ -88,7 +96,9 @@ public class RequestServiceImpl implements RequestService {
                         res = requestRepository.save(request);
                         logger.info("Add request to unlock card");
                     } else {
-                        logger.error("There is no such card in database");
+                        String error = "There is no such card in database";
+                        logger.error(error);
+                        throw new NotFoundException(error);
                     }
                 }
             }
@@ -105,22 +115,31 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public RequestDTO findById(long id) {
-        Request request = null;
+    public RequestDTO findById(long id) throws NotFoundException {
+        Request request;
         Optional<Request> optionalRequest = requestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             request = optionalRequest.get();
             logger.info("Return request");
         } else {
-            logger.error("There is no such request in database");
+            String error = "There is no such request in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return converter.convertToDTO(request);
     }
 
     @Transactional
     @Override
-    public void delete(long id) {
-        requestRepository.deleteRequestById(id);
-        logger.info("Request was deleted successful");
+    public void delete(long id) throws NotFoundException {
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            requestRepository.deleteRequestById(id);
+            logger.info("Request was deleted successful");
+        } else {
+            String error = "There is no such request in database";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
     }
 }

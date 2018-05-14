@@ -2,13 +2,17 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
+import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Request;
 import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
+import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.RequestRepository;
 import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
+import com.netcracker.komarov.services.exception.LogicException;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,7 @@ public class CardServiceImpl implements CardService {
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
+    private ClientRepository clientRepository;
     private Logger logger = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
@@ -34,6 +39,7 @@ public class CardServiceImpl implements CardService {
         this.cardRepository = repositoryFactory.getCardRepository();
         this.accountRepository = repositoryFactory.getAccountRepository();
         this.cardConverter = cardConverter;
+        this.clientRepository = repositoryFactory.getClientRepository();
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -42,29 +48,41 @@ public class CardServiceImpl implements CardService {
                 .collect(Collectors.toList());
     }
 
+    public boolean contains(long accountId, long cardId) {
+        Card card = cardRepository.findById(cardId).get();
+        return card.getAccount().getId() == accountId;
+    }
+
     @Transactional
     @Override
-    public CardDTO lockCard(long cardId) {
+    public CardDTO lockCard(long cardId) throws LogicException, NotFoundException {
         Optional<Card> cardOptional = cardRepository.findById(cardId);
-        Card card;
-        Card temp = null;
+        Card temp;
         if (cardOptional.isPresent()) {
-            card = cardOptional.get();
-            card.setLocked(true);
-            logger.info("Card was locked");
-            temp = cardRepository.save(card);
+            Card card = cardOptional.get();
+            if (card.isLocked()) {
+                String error = "This card is already locked";
+                logger.error(error);
+                throw new LogicException(error);
+            } else {
+                card.setLocked(true);
+                logger.info("Card was locked");
+                temp = cardRepository.save(card);
+            }
         } else {
-            logger.error("There is no such card in database");
+            String error = "There is no such card in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return cardConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public CardDTO createCard(CardDTO cardDTO) {
+    public CardDTO createCard(CardDTO cardDTO) throws NotFoundException {
         Card card = cardConverter.convertToEntity(cardDTO);
         Optional<Account> optionalAccount = accountRepository.findById(cardDTO.getAccountId());
-        Card temp = null;
+        Card temp;
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             card.setAccount(account);
@@ -73,42 +91,70 @@ public class CardServiceImpl implements CardService {
             temp = cardRepository.save(card);
             logger.info("Creation of new card");
         } else {
-            logger.error("There is no such account in database");
+            String error = "There is no such account in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return cardConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<CardDTO> getCardsByClientIdAndLock(long clientId, boolean lock) {
-        logger.info("Return all unlocked cards by client ID");
-        return convertCollection(cardRepository.findCardsByClientIdAndLocked(clientId, lock));
+    public Collection<CardDTO> getCardsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException {
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Collection<Card> cards;
+        if (optionalClient.isPresent()) {
+            cards = cardRepository.findCardsByClientIdAndLocked(clientId, lock);
+            logger.info("Return all unlocked cards by client ID");
+        } else {
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return convertCollection(cards);
     }
 
     @Transactional
     @Override
-    public Collection<CardDTO> getAllCardsByAccountId(long accountId) {
-        logger.info("Return all cards that connected with account");
-        return convertCollection(cardRepository.findCardsByAccountId(accountId));
+    public Collection<CardDTO> getAllCardsByAccountId(long accountId) throws NotFoundException {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        Collection<Card> cards;
+        if (optionalAccount.isPresent()) {
+            logger.info("Return all cards that connected with account");
+            cards = cardRepository.findCardsByAccountId(accountId);
+        } else {
+            String error = "There is no such account in database";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return convertCollection(cards);
     }
 
     @Transactional
     @Override
-    public CardDTO unlockCard(long cardId) {
+    public CardDTO unlockCard(long cardId) throws LogicException, NotFoundException {
         Optional<Request> optionalRequest = requestRepository.findAll()
                 .stream()
                 .filter(request -> request.getCard() != null)
                 .filter(request -> request.getCard().getId() == cardId)
                 .findFirst();
-        Card res = null;
+        Card res;
         if (optionalRequest.isPresent()) {
             Card card = optionalRequest.get().getCard();
-            card.setLocked(false);
-            res = cardRepository.save(card);
-            requestRepository.deleteRequestById(optionalRequest.get().getId());
-            logger.info("Card was unlocked");
+            if (card.isLocked()) {
+                card.setLocked(false);
+                res = cardRepository.save(card);
+                requestRepository.deleteRequestById(optionalRequest.get().getId());
+                logger.info("Card was unlocked");
+            } else {
+                String error = "This account is already unlocked";
+                logger.error(error);
+                throw new LogicException(error);
+            }
         } else {
-            logger.error("There is no such card in requests");
+            String error = "There is no such card in requests";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return cardConverter.convertToDTO(res);
     }
@@ -122,21 +168,30 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public void deleteById(long cardId) {
-        cardRepository.deleteById(cardId);
-        logger.info("Card was deleted");
+    public void deleteById(long cardId) throws NotFoundException {
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        if (optionalCard.isPresent()) {
+            cardRepository.deleteById(cardId);
+            logger.info("Card was deleted");
+        } else {
+            String error = "There is no such card";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
     }
 
     @Transactional
     @Override
-    public CardDTO findById(long cardId) {
+    public CardDTO findById(long cardId) throws NotFoundException {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
-        Card card = null;
+        Card card;
         if (optionalCard.isPresent()) {
             card = optionalCard.get();
             logger.info("Return card");
         } else {
-            logger.error("There is no such card");
+            String error = "There is no such card";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return cardConverter.convertToDTO(card);
     }

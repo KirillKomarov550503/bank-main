@@ -9,6 +9,8 @@ import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.RequestRepository;
 import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
+import com.netcracker.komarov.services.exception.LogicException;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +44,31 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
+    public boolean contain(long clientId, long accountId) {
+        Account account = accountRepository.findById(accountId).get();
+        return account.getClient().getId() == clientId;
+    }
+
     @Transactional
     @Override
-    public AccountDTO lockAccount(long accountId) {
-        Account temp = null;
+    public AccountDTO lockAccount(long accountId) throws LogicException, NotFoundException {
+        Account temp;
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            account.setLocked(true);
-            temp = accountRepository.save(account);
-            logger.info("Successful locking your account");
+            if (account.isLocked()) {
+                String error = "This account is already locked";
+                logger.error(error);
+                throw new LogicException(error);
+            } else {
+                account.setLocked(true);
+                temp = accountRepository.save(account);
+                logger.info("Successful locking your account");
+            }
         } else {
-            logger.error("There is no such account in database");
+            String error = "There is no such account in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return accountConverter.convertToDTO(temp);
     }
@@ -66,60 +81,85 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public AccountDTO unlockAccount(long accountId) {
+    public AccountDTO unlockAccount(long accountId) throws LogicException, NotFoundException {
         Optional<Request> optionalRequest = requestRepository.findAll()
                 .stream()
                 .filter(request -> request.getAccount() != null)
                 .filter(request -> request.getAccount().getId() == accountId)
                 .findFirst();
-        Account res = null;
+        Account res;
         if (optionalRequest.isPresent()) {
             Request request = optionalRequest.get();
             Account account = request.getAccount();
-            account.setLocked(false);
-            account.setRequest(request);
-            request.setAccount(account);
-            res = accountRepository.save(account);
-            requestRepository.deleteRequestById(request.getId());
-            logger.info("Successful unlocking your account");
+            if (account.isLocked()) {
+                account.setLocked(false);
+                account.setRequest(request);
+                request.setAccount(account);
+                res = accountRepository.save(account);
+                requestRepository.deleteRequestById(request.getId());
+                logger.info("Successful unlocking your account");
+            } else {
+                String error = "This account is already unlocked";
+                logger.error(error);
+                throw new LogicException(error);
+            }
+
         } else {
-            logger.error("There is no such account in requests ");
+            String error = "There is no such account in requests";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return accountConverter.convertToDTO(res);
     }
 
     @Transactional
     @Override
-    public AccountDTO refill(long accountId) {
+    public AccountDTO refill(long accountId) throws LogicException, NotFoundException {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        Account account = null;
-        Account temp = null;
+        Account temp;
         if (optionalAccount.isPresent()) {
-            account = optionalAccount.get();
-            double balance = account.getBalance();
-            account.setBalance(balance + 100.0);
-            temp = accountRepository.save(account);
-            logger.info("Refill account");
+            Account account = optionalAccount.get();
+            if (account.isLocked()) {
+                String error = "This account is locking";
+                logger.error(error);
+                throw new LogicException(error);
+            } else {
+                double balance = account.getBalance();
+                account.setBalance(balance + 100.0);
+                temp = accountRepository.save(account);
+                logger.info("Refill account");
+            }
         } else {
-            logger.error("There is no such account in database");
+            String error = "There is no such account in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return accountConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public Collection<AccountDTO> getAccountsByClientIdAndLock(long clientId, boolean lock) {
-        logger.info("Return all locked accounts by client ID");
-        return convertCollection(accountRepository.findAccountsByLockedAndClientId(clientId, lock));
+    public Collection<AccountDTO> getAccountsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException {
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Collection<Account> accounts;
+        if (optionalClient.isPresent()) {
+            logger.info("Return all locked accounts by client ID");
+            accounts = accountRepository.findAccountsByLockedAndClientId(clientId, lock);
+        } else {
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return convertCollection(accounts);
     }
 
     @Transactional
     @Override
-    public AccountDTO createAccount(AccountDTO accountDTO, long clientId) {
+    public AccountDTO createAccount(AccountDTO accountDTO, long clientId) throws NotFoundException {
         Account account = accountConverter.convertToEntity(accountDTO);
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Client client;
-        Account temp = null;
+        Account temp;
         if (optionalClient.isPresent()) {
             client = optionalClient.get();
             account.setClient(client);
@@ -130,28 +170,39 @@ public class AccountServiceImpl implements AccountService {
             temp = accountRepository.save(account);
             logger.info("Creation of account");
         } else {
-            logger.error("There is no such client in database");
+            String error = "There is no such client in database";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return accountConverter.convertToDTO(temp);
     }
 
     @Transactional
     @Override
-    public void deleteById(long accountId) {
-        accountRepository.deleteById(accountId);
-        logger.info("Account was deleted");
+    public void deleteById(long accountId) throws NotFoundException {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isPresent()) {
+            accountRepository.deleteById(accountId);
+            logger.info("Account was deleted");
+        } else {
+            String error = "There is no such account in database";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
     }
 
     @Transactional
     @Override
-    public AccountDTO findById(long accountId) {
+    public AccountDTO findById(long accountId) throws NotFoundException {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        Account account = null;
+        Account account;
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
             logger.info("Return account");
         } else {
-            logger.error("There is no such account");
+            String error = "There is no such account";
+            logger.error(error);
+            throw new NotFoundException(error);
         }
         return accountConverter.convertToDTO(account);
     }

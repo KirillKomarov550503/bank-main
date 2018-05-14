@@ -4,7 +4,7 @@ import com.netcracker.komarov.services.ServiceContext;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
-import com.netcracker.komarov.services.exception.TransactionException;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
@@ -53,7 +53,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void showStories() throws TransactionException{
+    public void showStories() throws LogicException {
         accountService.refill(2);
         accountService.refill(3);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -72,8 +72,8 @@ public class TransactionServiceImplTest {
         assertEquals(transactions, transactionService.showStories(1));
     }
 
-    @Test(expected = TransactionException.class)
-    public void createTransactionException() throws TransactionException {
+    @Test(expected = LogicException.class)
+    public void createTransactionException() throws LogicException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 110, date);
@@ -81,7 +81,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void createTransaction() throws TransactionException {
+    public void createTransaction() throws LogicException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 90, date);
@@ -90,7 +90,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void findById() throws TransactionException {
+    public void findById() throws LogicException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 3, 24.9, date);

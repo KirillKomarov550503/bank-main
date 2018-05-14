@@ -70,13 +70,13 @@ public class RequestServiceImplTest {
     @Test
     public void saveRequest() {
         accountService.lockAccount(1);
-        RequestDTO requestDTO = new RequestDTO(4, new AccountDTO(1, true, 0), null);
+        RequestDTO requestDTO = new RequestDTO(4, new AccountDTO(1, true, 0, 1), null);
         assertEquals(requestDTO, requestService.saveRequest(1, RequestStatus.ACCOUNT));
     }
 
     @Test
     public void findAllRequests() {
-        RequestDTO dto1 = new RequestDTO(1, new AccountDTO(2, true, 0), null);
+        RequestDTO dto1 = new RequestDTO(1, new AccountDTO(2, true, 0, 1), null);
         RequestDTO dto2 = new RequestDTO(2, null,
                 new CardDTO(2, true, 0, 1, 2222));
         RequestDTO dto3 = new RequestDTO(3, null,

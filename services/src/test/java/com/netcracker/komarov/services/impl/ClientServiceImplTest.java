@@ -47,13 +47,6 @@ public class ClientServiceImplTest {
     }
 
     @Test
-    public void signIn() {
-        assertNull(clientService
-                .signIn(new PersonDTO(0, "Trevor", "Philips",
-                        10, 10, "Industry", "Ice")));
-    }
-
-    @Test
     public void save() {
         PersonDTO personDTO = new PersonDTO(0, "Tony", "Stark",
                 4444, 9, "Iron_man", "Jarvis");

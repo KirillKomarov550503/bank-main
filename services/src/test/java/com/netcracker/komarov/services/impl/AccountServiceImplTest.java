@@ -56,29 +56,30 @@ public class AccountServiceImplTest {
 
     @Test
     public void lockAccount() {
-        AccountDTO accountDTO = new AccountDTO(3, true, 0.0);
+        AccountDTO accountDTO = new AccountDTO(3, true, 0.0, 1);
         assertEquals(accountDTO, accountService.lockAccount(3));
     }
 
     @Test
     public void getAllAccounts() {
         Collection<AccountDTO> dtos = new ArrayList<>();
-        dtos.add(new AccountDTO(1, false, 0));
-        dtos.add(new AccountDTO(2, false, 0));
-        dtos.add(new AccountDTO(3, false, 0));
+        dtos.add(new AccountDTO(1, false, 0, 1));
+        dtos.add(new AccountDTO(2, false, 0, 2));
+        dtos.add(new AccountDTO(3, false, 0, 1));
         assertEquals(dtos, accountService.getAllAccounts());
     }
 
     @Test
     public void unlockAccount() {
+        accountService.lockAccount(1);
         requestService.saveRequest(1, RequestStatus.ACCOUNT);
-        AccountDTO dto = new AccountDTO(1, false, 0);
+        AccountDTO dto = new AccountDTO(1, false, 0, 1);
         assertEquals(dto, accountService.unlockAccount(1));
     }
 
     @Test
     public void refill() {
-        AccountDTO accountDTO = new AccountDTO(2, false, 100);
+        AccountDTO accountDTO = new AccountDTO(2, false, 100, 2);
         assertEquals(accountDTO, accountService.refill(2));
     }
 
@@ -87,8 +88,8 @@ public class AccountServiceImplTest {
         accountService.lockAccount(1);
         accountService.lockAccount(3);
         Collection<AccountDTO> dtos = new ArrayList<>();
-        dtos.add(new AccountDTO(1, true, 0));
-        dtos.add(new AccountDTO(3, true, 0));
+        dtos.add(new AccountDTO(1, true, 0, 1));
+        dtos.add(new AccountDTO(3, true, 0, 1));
         assertEquals(dtos, accountService.getAccountsByClientIdAndLock(1, true));
     }
 
@@ -96,7 +97,7 @@ public class AccountServiceImplTest {
     public void createAccount() {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov",
                 1, 1, "Optimist", encoder.encode("qwerty")));
-        AccountDTO accountDTO = new AccountDTO(4, false, 0);
+        AccountDTO accountDTO = new AccountDTO(4, false, 0, 1);
         assertEquals(accountDTO, accountService.createAccount(new AccountDTO(false, 0), 1));
     }
 
@@ -110,7 +111,7 @@ public class AccountServiceImplTest {
 
     @Test
     public void findById() {
-        AccountDTO accountDTO = new AccountDTO(3, false, 0);
+        AccountDTO accountDTO = new AccountDTO(3, false, 0, 1);
         assertEquals(accountDTO, accountService.findById(3));
     }
 }

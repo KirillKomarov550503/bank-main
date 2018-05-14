@@ -138,7 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
             transaction = optionalTransactionDTO.get();
             logger.info("Return data about transaction");
         } else {
-            String error = "There is no such transaction in database";g
+            String error = "There is no such transaction in database";
             logger.error(error);
             throw new NotFoundException(error);
         }

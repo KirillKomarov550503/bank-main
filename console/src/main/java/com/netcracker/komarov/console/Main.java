@@ -45,35 +45,35 @@ public class Main implements CommandLineRunner {
 
     private void enterLike() {
         DataBase.executeProperty("init.table.path", "dao\\src\\main\\resources\\path.properties");
-        while (true) {
-            printMainMenu();
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Input number of variant: ");
-            Menu menu = null;
-            try {
-                switch (scanner.nextInt()) {
-                    case 1:
-                        menu = visitorMenu;
-                        break;
-                    case 2:
-                        menu = clientMenu;
-                        break;
-                    case 3:
-                        menu = adminMenu;
-                        break;
-                    case 0:
-                        DataBase.closeConnection();
-                        scanner.close();
-                        System.exit(0);
-                        break;
-                    default:
-                        break;
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                printMainMenu();
+                System.out.println("Input number of variant: ");
+                Menu menu = null;
+                try {
+                    switch (scanner.nextInt()) {
+                        case 1:
+                            menu = visitorMenu;
+                            break;
+                        case 2:
+                            menu = clientMenu;
+                            break;
+                        case 3:
+                            menu = adminMenu;
+                            break;
+                        case 0:
+                            DataBase.closeConnection();
+                            System.exit(0);
+                            break;
+                        default:
+                            break;
+                    }
+                    if (menu != null) {
+                        menu.printMenu();
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Wrong input variant");
                 }
-                if (menu != null) {
-                    menu.printMenu();
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Wrong input variant");
             }
         }
     }

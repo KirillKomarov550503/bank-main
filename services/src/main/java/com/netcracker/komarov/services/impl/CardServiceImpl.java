@@ -35,7 +35,7 @@ public class CardServiceImpl implements CardService {
             card.setLocked(true);
             temp = cardDAO.update(card);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -47,7 +47,7 @@ public class CardServiceImpl implements CardService {
         try {
             temp = cardDAO.add(card);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -59,7 +59,7 @@ public class CardServiceImpl implements CardService {
         try {
             cards = cardDAO.getLockedCardsByClientId(clientId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return cards;
     }
@@ -71,7 +71,7 @@ public class CardServiceImpl implements CardService {
         try {
             cards = cardDAO.getUnlockedCardsByClientId(clientId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return cards;
     }
@@ -82,7 +82,7 @@ public class CardServiceImpl implements CardService {
         try {
             cards = cardDAO.getCardsByAccountId(accountId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return cards;
     }
@@ -98,7 +98,7 @@ public class CardServiceImpl implements CardService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return cards;
     }
@@ -116,7 +116,7 @@ public class CardServiceImpl implements CardService {
                     .orElse(null);
             card = cardDAO.getById(cardId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         Connection connection = DataBase.getConnection();
         Card temp = null;
@@ -146,7 +146,7 @@ public class CardServiceImpl implements CardService {
         try {
             cards = cardDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return cards;
     }

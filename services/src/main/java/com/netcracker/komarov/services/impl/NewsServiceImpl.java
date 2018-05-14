@@ -49,12 +49,12 @@ public class NewsServiceImpl implements NewsService {
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
-            e.printStackTrace();
+            System.out.println("SQL exception");
         } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("SQL exception");
             }
         }
     }
@@ -65,7 +65,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             temp = newsDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -81,13 +81,13 @@ public class NewsServiceImpl implements NewsService {
                         try {
                             stream = Stream.of(newsDAO.getById(clientNews.getNewsId()));
                         } catch (SQLException e) {
-                            e.printStackTrace();
+                            System.out.println("SQL exception");
                         }
                         return stream;
                     })
                     .collect(Collectors.toList());
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return newsCollection;
     }
@@ -98,7 +98,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             temp = newsDAO.getById(newsId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -110,7 +110,7 @@ public class NewsServiceImpl implements NewsService {
             news.setAdminId(adminId);
             temp = newsDAO.add(news);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -122,7 +122,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsCollection = newsDAO.getNewsByStatus(newsStatus);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return newsCollection;
     }

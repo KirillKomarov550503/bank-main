@@ -25,7 +25,7 @@ public class PersonServiceImpl implements PersonService {
         try {
             temp = personDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }

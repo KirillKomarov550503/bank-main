@@ -2,6 +2,7 @@ package com.netcracker.komarov.console.menu;
 
 import com.netcracker.komarov.console.utils.Input;
 import com.netcracker.komarov.console.utils.Output;
+import com.netcracker.komarov.console.utils.Producer;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.RequestStatus;
@@ -49,60 +50,58 @@ public class ClientMenu implements Menu {
     @Override
     public void printMenu() {
         boolean flag = true;
-        Scanner scanner = new Scanner(System.in);
-        while (flag) {
-            printTextMenu();
-            switch (scanner.nextInt()) {
-                case 1:
-                    Account account = new Account();
-                    account.setBalance(0.0);
-                    account.setLocked(false);
-                    accountService.createAccount(account, Input.inputClientId());
-                    break;
-                case 2:
-                    Card card = new Card();
-                    card.setLocked(false);
-                    card.setPin(Input.inputCardPIN());
-                    cardService.createCard(card, Input.inputAccountId());
-                    break;
-                case 3:
-                    try {
-                        transactionService.createTransaction(Input.inputTransactionDTO());
-                    } catch (TransactionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                    break;
-                case 4:
-                    accountService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    accountService.lockAccount(Input.inputAccountId());
-                    break;
+        try (Scanner scanner = new Scanner(System.in);) {
+            while (flag) {
+                printTextMenu();
+                switch (scanner.nextInt()) {
+                    case 1:
+                        Account account = Producer.produceAccount();
+                        accountService.createAccount(account, Input.inputClientId());
+                        break;
+                    case 2:
+                        Card card = Producer.produceCard();
+                        card.setPin(Input.inputCardPIN());
+                        cardService.createCard(card, Input.inputAccountId());
+                        break;
+                    case 3:
+                        try {
+                            transactionService.createTransaction(Input.inputTransactionDTO());
+                        } catch (TransactionException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case 4:
+                        accountService.getUnlockAccounts(Input.inputClientId()).forEach(Output::printAccount);
+                        accountService.lockAccount(Input.inputAccountId());
+                        break;
 
-                case 5:
-                    cardService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
-                    cardService.lockCard(Input.inputCardId());
-                    break;
-                case 6:
-                    accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
-                    requestService.saveRequest(Input.inputAccountId(), RequestStatus.ACCOUNT);
-                    break;
-                case 7:
-                    cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
-                    requestService.saveRequest(Input.inputCardId(), RequestStatus.ACCOUNT);
-                    break;
-                case 8:
-                    transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
-                    break;
-                case 9:
-                    newsService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
-                    break;
-                case 10:
-                    accountService.refill(Input.inputAccountId());
-                    break;
-                case 0:
-                    flag = false;
-                    scanner.close();
-                    break;
+                    case 5:
+                        cardService.getUnlockCards(Input.inputClientId()).forEach(Output::printCard);
+                        cardService.lockCard(Input.inputCardId());
+                        break;
+                    case 6:
+                        accountService.getLockAccounts(Input.inputClientId()).forEach(Output::printAccount);
+                        requestService.saveRequest(Input.inputAccountId(), RequestStatus.ACCOUNT);
+                        break;
+                    case 7:
+                        cardService.getLockCards(Input.inputClientId()).forEach(Output::printCard);
+                        requestService.saveRequest(Input.inputCardId(), RequestStatus.ACCOUNT);
+                        break;
+                    case 8:
+                        transactionService.showStories(Input.inputClientId()).forEach(Output::printTransaction);
+                        break;
+                    case 9:
+                        newsService.getAllPersonalNews(Input.inputClientId()).forEach(Output::printNews);
+                        break;
+                    case 10:
+                        accountService.refill(Input.inputAccountId());
+                        break;
+                    case 0:
+                        flag = false;
+                        break;
+                }
             }
         }
+
     }
 }

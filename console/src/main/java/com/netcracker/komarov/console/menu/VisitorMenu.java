@@ -32,20 +32,20 @@ public class VisitorMenu implements Menu {
     @Override
     public void printMenu() {
         boolean flag = true;
-        Scanner scanner = new Scanner(System.in);
-        while (flag) {
-            printTextMenu();
-            switch (scanner.nextInt()) {
-                case 1:
-                    newsService.getAllNews().forEach(Output::printNews);
-                    break;
-                case 2:
-                    clientService.registration(Input.inputPerson(Role.CLIENT));
-                    break;
-                case 0:
-                    flag = false;
-                    scanner.close();
-                    break;
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (flag) {
+                printTextMenu();
+                switch (scanner.nextInt()) {
+                    case 1:
+                        newsService.getAllNews().forEach(Output::printNews);
+                        break;
+                    case 2:
+                        clientService.registration(Input.inputPerson(Role.CLIENT));
+                        break;
+                    case 0:
+                        flag = false;
+                        break;
+                }
             }
         }
     }

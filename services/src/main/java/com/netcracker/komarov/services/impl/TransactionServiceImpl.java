@@ -35,7 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             transactions = transactionDAO.getByClientId(clientId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return transactions;
     }
@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return newTransaction;
     }

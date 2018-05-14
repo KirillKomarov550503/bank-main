@@ -54,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
         try {
             admins = adminDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return admins;
     }

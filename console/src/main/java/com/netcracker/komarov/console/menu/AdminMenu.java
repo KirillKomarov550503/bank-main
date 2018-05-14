@@ -54,61 +54,61 @@ public class AdminMenu implements Menu {
     @Override
     public void printMenu() {
         boolean flag = true;
-        Scanner scanner = new Scanner(System.in);
-        while (flag) {
-            printTextMenu();
-            switch (scanner.nextInt()) {
-                case 1:
-                    accountService.getAllAccountRequest().forEach(System.out::println);
-                    accountService.unlockAccount(Input.inputAccountId());
-                    break;
-                case 2:
-                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
-                    cardService.unlockCard(Input.inputCardId());
-                    break;
-                case 3:
-                    newsService.addGeneralNews(Input.inputNews(), Input.inputAdminId());
-                    break;
-                case 4:
-                    newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
-                    long newsId = Input.inputNewsId();
-                    Collection<Long> clientIds = Input.inputClientIds();
-                    newsService.addClientNews(clientIds, newsId);
-                    break;
-                case 5:
-                    personService.getAllPeople().forEach(System.out::println);
-                    break;
-                case 6:
-                    clientService.getAllClients().forEach(System.out::println);
-                    break;
-                case 7:
-                    accountService.getAllAccounts().forEach(System.out::println);
-                    break;
-                case 8:
-                    cardService.getAllCards().forEach(System.out::println);
-                    break;
-                case 9:
-                    newsService.getAllNewsByStatus(NewsStatus.GENERAL).forEach(System.out::println);
-                    break;
-                case 10:
-                    newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
-                    break;
-                case 11:
-                    accountService.getAllAccountRequest().forEach(System.out::println);
-                    break;
-                case 12:
-                    cardService.getAllUnlockCardRequest().forEach(System.out::println);
-                    break;
-                case 13:
-                    adminService.addAdmin(Input.inputPerson(Role.ADMIN));
-                    break;
-                case 14:
-                    adminService.getAllAdmin().forEach(System.out::println);
-                    break;
-                case 0:
-                    flag = false;
-                    scanner.close();
-                    break;
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (flag) {
+                printTextMenu();
+                switch (scanner.nextInt()) {
+                    case 1:
+                        accountService.getAllAccountRequest().forEach(System.out::println);
+                        accountService.unlockAccount(Input.inputAccountId());
+                        break;
+                    case 2:
+                        cardService.getAllUnlockCardRequest().forEach(System.out::println);
+                        cardService.unlockCard(Input.inputCardId());
+                        break;
+                    case 3:
+                        newsService.addGeneralNews(Input.inputNews(), Input.inputAdminId());
+                        break;
+                    case 4:
+                        newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
+                        long newsId = Input.inputNewsId();
+                        Collection<Long> clientIds = Input.inputClientIds();
+                        newsService.addClientNews(clientIds, newsId);
+                        break;
+                    case 5:
+                        personService.getAllPeople().forEach(System.out::println);
+                        break;
+                    case 6:
+                        clientService.getAllClients().forEach(System.out::println);
+                        break;
+                    case 7:
+                        accountService.getAllAccounts().forEach(System.out::println);
+                        break;
+                    case 8:
+                        cardService.getAllCards().forEach(System.out::println);
+                        break;
+                    case 9:
+                        newsService.getAllNewsByStatus(NewsStatus.GENERAL).forEach(System.out::println);
+                        break;
+                    case 10:
+                        newsService.getAllNewsByStatus(NewsStatus.CLIENT).forEach(System.out::println);
+                        break;
+                    case 11:
+                        accountService.getAllAccountRequest().forEach(System.out::println);
+                        break;
+                    case 12:
+                        cardService.getAllUnlockCardRequest().forEach(System.out::println);
+                        break;
+                    case 13:
+                        adminService.addAdmin(Input.inputPerson(Role.ADMIN));
+                        break;
+                    case 14:
+                        adminService.getAllAdmin().forEach(System.out::println);
+                        break;
+                    case 0:
+                        flag = false;
+                        break;
+                }
             }
         }
     }

@@ -51,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
                 e1.printStackTrace();
             }
             System.out.println("SQL exception");
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
 
         return addRes;
@@ -64,7 +64,7 @@ public class ClientServiceImpl implements ClientService {
         try {
             clients = clientDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return clients;
     }

@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
             account.setLocked(true);
             temp = accountDAO.update(account);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             accounts = accountDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return accounts;
     }
@@ -64,7 +64,7 @@ public class AccountServiceImpl implements AccountService {
                     .orElse(null);
             account = accountDAO.getById(accountId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         Connection connection = DataBase.getConnection();
         Account temp = null;
@@ -98,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return accounts;
     }
@@ -112,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
             account.setBalance(balance + 100.0);
             temp = accountDAO.update(account);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return temp;
     }
@@ -123,7 +123,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             accounts = accountDAO.getLockedAccountsByClientId(clientId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return accounts;
     }
@@ -134,7 +134,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             accounts = accountDAO.getUnlockedAccountsByClientId(clientId);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL exception");
         }
         return accounts;
     }

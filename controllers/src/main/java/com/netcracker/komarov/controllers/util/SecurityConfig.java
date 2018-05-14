@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 @ComponentScan("com.netcracker.komarov")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String prefix = "/bank/v1";
     @Autowired
     @Qualifier("customUserDetailsService")
     private UserDetailsService userDetailsService;
@@ -25,9 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().passwordEncoder(customPasswordEncoder)
-//                .withUser("Superadmin")
-//                .password("$2a$04$lfTvmNsZbBiOE453VZgI4.oy5ZIctOsBJbWm8aPC.2FqMQ6oDn7.6").authorities("ADMIN");
         auth.userDetailsService(userDetailsService).passwordEncoder(customPasswordEncoder);
     }
 
@@ -35,8 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-//                .antMatchers(prefix + "/news**", prefix + "/news/**", prefix + "/registration").permitAll()
-                .antMatchers("/bank/**").permitAll()
+                .antMatchers(prefix + "/admins*", prefix + "/admins/**").hasAuthority("ADMIN")
+                .antMatchers(prefix + "/clients*", prefix + "/clients/**").hasAuthority("CLIENT")
+                .antMatchers(prefix + "/news*", prefix + "/news/**").permitAll()
+                .antMatchers(prefix + "/registration*").anonymous()
                 .and()
                 .httpBasic()
                 .and()

@@ -34,14 +34,14 @@ public class SwaggerConfig {
 
     @Bean
     public Docket dockect() {
-        List<SecurityReference> references = Collections.singletonList(new SecurityReference("test",
+        List<SecurityReference> references = Collections.singletonList(new SecurityReference("bank",
                 Stream.of(new AuthorizationScope("", ""))
                         .toArray(AuthorizationScope[]::new)));
         List<SecurityContext> securityContexts = Collections
                 .singletonList(SecurityContext.builder().securityReferences(references).build());
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("Bank")
-                .securitySchemes(Collections.singletonList(new BasicAuth("test")))
+                .securitySchemes(Collections.singletonList(new BasicAuth("bank")))
                 .securityContexts(securityContexts)
                 .apiInfo(apiInfo())
                 .select()

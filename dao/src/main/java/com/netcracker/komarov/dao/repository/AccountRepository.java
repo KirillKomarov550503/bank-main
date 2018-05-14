@@ -10,7 +10,6 @@ import java.util.Collection;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-
     Collection<Account> findAccountsByLocked(boolean locked);
 
     @Query("select a from Account a where a.locked = :locked and a.client.id = :client_id")

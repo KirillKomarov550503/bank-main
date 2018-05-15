@@ -11,7 +11,6 @@ import com.netcracker.komarov.services.dto.converter.TransactionConverter;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,21 @@ public class TransactionServiceImpl implements TransactionService {
         return transactions.stream()
                 .map(transaction -> transactionConverter.convertToDTO(transaction))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean contain(long clientId, long transactionId) throws NotFoundException {
+        Optional<Transaction> optionalTransaction = transactionRepository.findById(transactionId);
+        boolean contain;
+        if (optionalTransaction.isPresent()) {
+            Transaction transaction = optionalTransaction.get();
+            contain = transaction.getAccountFromId() == transactionId;
+        } else {
+            String error = "No such transaction";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return contain;
     }
 
     @Transactional

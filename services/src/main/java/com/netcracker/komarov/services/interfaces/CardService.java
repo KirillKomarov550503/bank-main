@@ -22,4 +22,6 @@ public interface CardService {
     void deleteById(long cardId) throws NotFoundException;
 
     CardDTO findById(long cardId) throws NotFoundException;
+
+    boolean contain(long accountId, long cardId) throws NotFoundException;
 }

@@ -48,9 +48,19 @@ public class CardServiceImpl implements CardService {
                 .collect(Collectors.toList());
     }
 
-    public boolean contains(long accountId, long cardId) {
-        Card card = cardRepository.findById(cardId).get();
-        return card.getAccount().getId() == accountId;
+    @Override
+    public boolean contain(long accountId, long cardId) throws NotFoundException{
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        boolean contain;
+        if(optionalCard.isPresent()){
+            Card card = optionalCard.get();
+            contain = card.getAccount().getId() == accountId;
+        } else {
+            String error = "No such card";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return contain;
     }
 
     @Transactional

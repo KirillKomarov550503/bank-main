@@ -13,4 +13,6 @@ public interface TransactionService {
     Collection<TransactionDTO> showStories(long clientId) throws NotFoundException;
 
     TransactionDTO findById(long transactionId) throws NotFoundException;
+
+    boolean contain(long clientId, long transactionId) throws NotFoundException;
 }

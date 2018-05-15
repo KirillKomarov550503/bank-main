@@ -17,6 +17,14 @@ spring:
           use_jdbc_metadata_defaults: false
 server:
   port: 8080
+
+admin:
+  name: Name
+  surname: Surname
+  passportId: 1
+  phoneNumber: 1
+  username: superadmin
+  password: superadmin
 #logging:
 #  pattern:
 #    console:

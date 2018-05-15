@@ -115,7 +115,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO findById(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
-        Client client = null;
+        Client client;
         if (optionalClient.isPresent()) {
             client = optionalClient.get();
             logger.info("Return client");

@@ -44,9 +44,19 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
-    public boolean contain(long clientId, long accountId) {
-        Account account = accountRepository.findById(accountId).get();
-        return account.getClient().getId() == clientId;
+    @Override
+    public boolean contain(long clientId, long accountId) throws NotFoundException {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        boolean contain;
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            contain = account.getClient().getId() == clientId;
+        } else {
+            String error = "No such account";
+            logger.error(error);
+            throw new NotFoundException(error);
+        }
+        return contain;
     }
 
     @Transactional

@@ -22,5 +22,7 @@ public interface AccountService {
     void deleteById(long accountId) throws NotFoundException;
 
     AccountDTO findById(long accountId) throws NotFoundException;
+
+    boolean contain(long clientId, long accountId) throws NotFoundException;
 }
 

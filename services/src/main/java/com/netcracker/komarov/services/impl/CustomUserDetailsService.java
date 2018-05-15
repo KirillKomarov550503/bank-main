@@ -1,10 +1,19 @@
 package com.netcracker.komarov.services.impl;
 
+import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
+import com.netcracker.komarov.dao.factory.RepositoryFactory;
+import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
+import com.netcracker.komarov.services.dto.entity.AdminDTO;
+import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.interfaces.AdminService;
+import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,22 +26,60 @@ import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
     private PersonRepository personRepository;
-
+    private AdminService adminService;
     private Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
+    @Value("${admin.name}")
+    private String adminName;
+
+    @Value("${admin.surname}")
+    private String adminSurname;
+
+    @Value("${admin.passportId}")
+    private long adminPassportId;
+
+    @Value("${admin.phoneNumber}")
+    private long adminPhoneNumber;
+
+    @Value("${admin.username}")
+    private String adminUsername;
+
+    @Value("${admin.password}")
+    private String adminPassword;
+
+    @Autowired
+    public CustomUserDetailsService(RepositoryFactory repositoryFactory, AdminService adminService) {
+        this.personRepository = repositoryFactory.getPersonRepository();
+        this.adminService = adminService;
+    }
 
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Username: " + username);
-        if (username.equals("superadmin")) {
-            return new User(username, "$2a$04$lfTvmNsZbBiOE453VZgI4.oy5ZIctOsBJbWm8aPC.2FqMQ6oDn7.6",
-                    Collections.singletonList(new SimpleGrantedAuthority("ADMIN")));
+        Person person = personRepository.findPersonByUsername(username);
+        User user;
+        if (username.equals(adminUsername)) {
+            if (person == null) {
+                PersonDTO temp = new PersonDTO();
+                temp.setName(adminName);
+                temp.setSurname(adminSurname);
+                temp.setPassportId(adminPassportId);
+                temp.setPhoneNumber(adminPhoneNumber);
+                temp.setUsername(adminUsername);
+                temp.setPassword(adminPassword);
+                AdminDTO dto = adminService.addAdmin(temp);
+                user = new User(dto.getLogin(), dto.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ADMIN")));
+            } else {
+                user = new User(person.getUsername(), person.getPassword(),
+                        Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())));
+            }
         } else {
-            Person person = personRepository.findPersonByUsername(username);
-            return new User(person.getUsername(), person.getPassword(),
+            user = new User(person.getUsername(), person.getPassword(),
                     Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())));
         }
+        return user;
     }
 }

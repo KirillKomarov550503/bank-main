@@ -11,7 +11,6 @@ import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +27,15 @@ public class ClientServiceImpl implements ClientService {
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
     private PersonRepository personRepository;
-    private CustomPasswordEncoder customPasswordEncoder;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(ClientRepository clientRepository, ClientConverter clientConverter,
-                             PersonConverter personConverter, PersonRepository personRepository,
-                             CustomPasswordEncoder customPasswordEncoder) {
+                             PersonConverter personConverter, PersonRepository personRepository) {
         this.clientRepository = clientRepository;
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
         this.personRepository = personRepository;
-        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     private Collection<ClientDTO> convertCollection(Collection<Client> clients) {
@@ -54,7 +50,7 @@ public class ClientServiceImpl implements ClientService {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
         String password = person.getPassword();
-        person.setPassword(customPasswordEncoder.encode(password));
+        person.setPassword(password);
         Client client = new Client();
         client.setPerson(person);
         person.setClient(client);
@@ -79,7 +75,7 @@ public class ClientServiceImpl implements ClientService {
             Client oldClient = optionalClient.get();
             Person newPerson = newClient.getPerson();
             String password = newPerson.getPassword();
-            newPerson.setPassword(customPasswordEncoder.encode(password));
+            newPerson.setPassword(password);
             Person oldPerson = oldClient.getPerson();
             newPerson.setId(oldPerson.getId());
             oldClient.setPerson(newPerson);

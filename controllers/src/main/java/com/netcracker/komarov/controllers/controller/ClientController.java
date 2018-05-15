@@ -3,6 +3,7 @@ package com.netcracker.komarov.controllers.controller;
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +40,12 @@ public class ClientController {
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody ClientDTO requestClientDTO, @PathVariable long clientId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
             requestClientDTO.setId(clientId);
             ClientDTO dto = clientService.update(requestClientDTO);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -58,12 +54,11 @@ public class ClientController {
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long clientId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client");
-        } else {
+        try {
             clientService.deleteById(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -72,11 +67,11 @@ public class ClientController {
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long clientId) {
         ResponseEntity responseEntity;
-        ClientDTO dto = clientService.findById(clientId);
-        if (dto == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
+            ClientDTO dto = clientService.findById(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }

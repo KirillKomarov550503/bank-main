@@ -4,6 +4,7 @@ package com.netcracker.komarov.controllers.controller;
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,18 +57,12 @@ public class AdminController {
     @ApiOperation(value = "Updating information about admin")
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody AdminDTO requestAdminDTO, @PathVariable long adminId) {
-        AdminDTO adminDTO = adminService.findById(adminId);
         ResponseEntity responseEntity;
-        if (adminDTO == null) {
-            responseEntity = notFound("No such admin in database");
-        } else {
-            requestAdminDTO.setId(adminId);
+        try {
             AdminDTO dto = adminService.update(requestAdminDTO);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -76,12 +71,11 @@ public class AdminController {
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long adminId) {
         ResponseEntity responseEntity;
-        AdminDTO adminDTO = adminService.findById(adminId);
-        if (adminDTO == null) {
-            responseEntity = notFound("No such admin in database");
-        } else {
+        try {
             adminService.deleteById(adminId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Admin was deleted"));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -90,11 +84,11 @@ public class AdminController {
     @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long adminId) {
         ResponseEntity responseEntity;
-        AdminDTO dto = adminService.findById(adminId);
-        if (dto == null) {
-            responseEntity = notFound("No such admin in database");
-        } else {
+        try {
+            AdminDTO dto = adminService.findById(adminId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }

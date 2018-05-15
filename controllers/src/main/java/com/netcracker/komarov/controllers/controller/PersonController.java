@@ -2,6 +2,7 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,12 @@ public class PersonController {
     @RequestMapping(value = "/admins/people/{personId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long personId) {
         ResponseEntity responseEntity;
-        PersonDTO dto = personService.findById(personId);
-        if (dto == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(gson.toJson("No such person in database"));
-        } else {
+        try {
+            PersonDTO dto = personService.findById(personId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(gson.toJson(e.getMessage()));
         }
         return responseEntity;
     }

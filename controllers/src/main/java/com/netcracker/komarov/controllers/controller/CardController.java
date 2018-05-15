@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -21,15 +20,12 @@ public class CardController {
     private CardService cardService;
     private ClientService clientService;
     private AccountService accountService;
-    private Gson gson;
 
     @Autowired
-    public CardController(CardService cardService, ClientService clientService,
-                          AccountService accountService, Gson gson) {
+    public CardController(CardService cardService, ClientService clientService, AccountService accountService) {
         this.cardService = cardService;
         this.clientService = clientService;
         this.accountService = accountService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new card")
@@ -40,8 +36,9 @@ public class CardController {
         try {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
+                requestCardDTO.setAccountId(accountId);
                 CardDTO dto = cardService.createCard(requestCardDTO);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -63,7 +60,7 @@ public class CardController {
             if (accountService.contain(clientId, accountId)) {
                 if (cardService.contain(accountId, cardId)) {
                     CardDTO dto = cardService.lockCard(cardId);
-                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
                     throw new LogicException("Account do not contain this card");
                 }
@@ -84,7 +81,7 @@ public class CardController {
         ResponseEntity responseEntity;
         try {
             CardDTO dto = cardService.unlockCard(cardId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         } catch (LogicException e) {
@@ -100,7 +97,7 @@ public class CardController {
         ResponseEntity responseEntity;
         try {
             Collection<CardDTO> dtos = cardService.getCardsByClientIdAndLock(clientId, lock);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -115,7 +112,7 @@ public class CardController {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
                 Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -135,21 +132,32 @@ public class CardController {
         if (dtos == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of cards" : dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         }
         return responseEntity;
     }
 
     @ApiOperation(value = "Deleting card by ID")
-    @RequestMapping(value = "/cards/{cardId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteById(@PathVariable long cardId) {
+    @RequestMapping(value = "/clients/{clientId}accounts/{accountId}/cards/{cardId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long clientId, @PathVariable long accountId,
+                                     @PathVariable long cardId) {
         ResponseEntity responseEntity;
         try {
-            cardService.deleteById(cardId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Card was deleted"));
+            clientService.findById(clientId);
+            if (accountService.contain(clientId, accountId)) {
+                if (cardService.contain(accountId, cardId)) {
+                    cardService.deleteById(cardId);
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).build();
+                } else {
+                    throw new LogicException("Account do not contain this card");
+                }
+            } else {
+                throw new LogicException("Client do not contain this account");
+            }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -165,7 +173,7 @@ public class CardController {
             if (accountService.contain(clientId, accountId)) {
                 if (cardService.contain(accountId, cardId)) {
                     CardDTO dto = cardService.findById(cardId);
-                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
                     throw new LogicException("Account do not contain this card");
                 }
@@ -181,10 +189,10 @@ public class CardController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.RequestStatus;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.LogicException;
@@ -27,16 +26,14 @@ public class RequestController {
     private RequestService requestService;
     private ClientService clientService;
     private AccountService accountService;
-    private Gson gson;
 
     @Autowired
     public RequestController(RequestService requestService, ClientService clientService,
-                             AccountService accountService, CardService cardService, Gson gson) {
+                             AccountService accountService, CardService cardService) {
         this.requestService = requestService;
         this.clientService = clientService;
         this.accountService = accountService;
         this.cardService = cardService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Sending request to unlock account")
@@ -48,7 +45,7 @@ public class RequestController {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
                 RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -71,7 +68,7 @@ public class RequestController {
             if (accountService.contain(clientId, accountId)) {
                 if (cardService.contain(accountId, cardId)) {
                     RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
-                    responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+                    responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
                 } else {
                     throw new LogicException("Account do not contain this card");
                 }
@@ -95,7 +92,7 @@ public class RequestController {
             responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of requests" : dtos));
+                    .body(dtos);
         }
         return responseEntity;
     }
@@ -106,7 +103,7 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             requestService.delete(requestId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Request was deleted"));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -119,7 +116,7 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             RequestDTO dto = requestService.findById(requestId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -127,10 +124,10 @@ public class RequestController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

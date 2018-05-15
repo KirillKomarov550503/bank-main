@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -18,15 +17,12 @@ import java.util.Collection;
 @RequestMapping(value = "/bank/v1")
 public class AccountController {
     private AccountService accountService;
-    private Gson gson;
     private ClientService clientService;
 
     @Autowired
-    public AccountController(AccountService accountService,
-                             ClientService clientService, Gson gson) {
+    public AccountController(AccountService accountService, ClientService clientService) {
         this.accountService = accountService;
         this.clientService = clientService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new account")
@@ -35,7 +31,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             AccountDTO dto = accountService.createAccount(new AccountDTO(false, 0), clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -48,7 +44,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             AccountDTO dto = accountService.unlockAccount(accountId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         } catch (LogicException e) {
@@ -65,7 +61,7 @@ public class AccountController {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
                 AccountDTO dto = accountService.lockAccount(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -85,7 +81,7 @@ public class AccountController {
         try {
             if (accountService.contain(clientId, accountId)) {
                 AccountDTO dto = accountService.refill(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -104,8 +100,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             Collection<AccountDTO> dtos = accountService.getAccountsByClientIdAndLock(clientId, lock);
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         } catch (LogicException e) {
@@ -118,8 +113,7 @@ public class AccountController {
     @RequestMapping(value = "/admins/accounts", method = RequestMethod.GET)
     public ResponseEntity getAll() {
         Collection<AccountDTO> dtos = accountService.getAllAccounts();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Deleting account by ID")
@@ -130,7 +124,7 @@ public class AccountController {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
                 accountService.deleteById(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Account was deleted"));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -150,7 +144,7 @@ public class AccountController {
             clientService.findById(clientId);
             if (accountService.contain(clientId, accountId)) {
                 AccountDTO dto = accountService.findById(accountId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
                 throw new LogicException("Client do not contain this account");
             }
@@ -163,10 +157,10 @@ public class AccountController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 }

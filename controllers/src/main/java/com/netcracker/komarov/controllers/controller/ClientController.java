@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -15,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/bank/v1")
 public class ClientController {
     private ClientService clientService;
-    private Gson gson;
 
     @Autowired
-    public ClientController(ClientService clientService, Gson gson) {
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Registration of news client")
@@ -31,7 +28,7 @@ public class ClientController {
         if (dto == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         }
         return responseEntity;
     }
@@ -43,7 +40,7 @@ public class ClientController {
         try {
             requestClientDTO.setId(clientId);
             ClientDTO dto = clientService.update(requestClientDTO);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -56,7 +53,7 @@ public class ClientController {
         ResponseEntity responseEntity;
         try {
             clientService.deleteById(clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Client was deleted"));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -69,7 +66,7 @@ public class ClientController {
         ResponseEntity responseEntity;
         try {
             ClientDTO dto = clientService.findById(clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -77,10 +74,10 @@ public class ClientController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

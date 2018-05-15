@@ -1,7 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -18,13 +17,10 @@ import java.util.Collection;
 @RequestMapping("/bank/v1/admins")
 public class AdminController {
     private AdminService adminService;
-    private Gson gson;
 
     @Autowired
-    public AdminController(AdminService adminService,
-                           Gson gson) {
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new admin")
@@ -35,7 +31,7 @@ public class AdminController {
         if (dto == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         }
         return responseEntity;
     }
@@ -49,7 +45,7 @@ public class AdminController {
             responseEntity = internalServerError("Server error");
         } else {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of admins" : dtos));
+                    .body(dtos);
         }
         return responseEntity;
     }
@@ -59,8 +55,9 @@ public class AdminController {
     public ResponseEntity update(@RequestBody AdminDTO requestAdminDTO, @PathVariable long adminId) {
         ResponseEntity responseEntity;
         try {
+            requestAdminDTO.setId(adminId);
             AdminDTO dto = adminService.update(requestAdminDTO);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -73,7 +70,7 @@ public class AdminController {
         ResponseEntity responseEntity;
         try {
             adminService.deleteById(adminId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Admin was deleted"));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -86,7 +83,7 @@ public class AdminController {
         ResponseEntity responseEntity;
         try {
             AdminDTO dto = adminService.findById(adminId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -94,10 +91,10 @@ public class AdminController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 }

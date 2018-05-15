@@ -65,10 +65,16 @@ public class RequestServiceImpl implements RequestService {
                 Optional<Account> optionalAccount = accountRepository.findById(requestId);
                 if (optionalAccount.isPresent()) {
                     Account account = optionalAccount.get();
-                    account.setRequest(request);
-                    request.setAccount(account);
-                    res = requestRepository.save(request);
-                    logger.info("Add request to unlock account");
+                    if(account.isLocked()){
+                        account.setRequest(request);
+                        request.setAccount(account);
+                        res = requestRepository.save(request);
+                        logger.info("Add request to unlock account");
+                    } else {
+                        String error= "This account is unlocking";
+                        logger.error(error);
+                        throw new LogicException(error);
+                    }
                 } else {
                     String error = "There is no such account in database";
                     logger.error(error);
@@ -91,10 +97,16 @@ public class RequestServiceImpl implements RequestService {
                     Optional<Card> optionalCard = cardRepository.findById(requestId);
                     if (optionalCard.isPresent()) {
                         Card card = optionalCard.get();
-                        card.setRequest(request);
-                        request.setCard(card);
-                        res = requestRepository.save(request);
-                        logger.info("Add request to unlock card");
+                        if(card.isLocked()){
+                            card.setRequest(request);
+                            request.setCard(card);
+                            res = requestRepository.save(request);
+                            logger.info("Add request to unlock card");
+                        } else {
+                            String error= "This card is unlocking";
+                            logger.error(error);
+                            throw new LogicException(error);
+                        }
                     } else {
                         String error = "There is no such card in database";
                         logger.error(error);

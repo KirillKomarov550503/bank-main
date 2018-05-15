@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -19,13 +18,11 @@ import java.util.Collection;
 public class TransactionController {
     private TransactionService transactionService;
     private ClientService clientService;
-    private Gson gson;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, ClientService clientService, Gson gson) {
+    public TransactionController(TransactionService transactionService, ClientService clientService) {
         this.transactionService = transactionService;
         this.clientService = clientService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new transaction")
@@ -35,7 +32,7 @@ public class TransactionController {
         ResponseEntity responseEntity;
         try {
             TransactionDTO dto = transactionService.createTransaction(requestTransactionDTO, clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         } catch (LogicException e) {
@@ -51,7 +48,7 @@ public class TransactionController {
         try {
             Collection<TransactionDTO> dtos = transactionService.showStories(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "You haven't transactions yet" : dtos));
+                    .body(dtos);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -66,7 +63,7 @@ public class TransactionController {
             clientService.findById(clientId);
             if (transactionService.contain(clientId, transactionId)) {
                 TransactionDTO dto = transactionService.findById(transactionId);
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
                 throw new LogicException("Client do not contain this transaction");
             }
@@ -79,10 +76,10 @@ public class TransactionController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

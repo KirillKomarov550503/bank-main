@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
@@ -19,26 +18,21 @@ import java.util.Collection;
 @RequestMapping("/bank/v1")
 public class PersonController {
     private PersonService personService;
-    private Gson gson;
 
     @Autowired
-    public PersonController(PersonService personService, Gson gson) {
+    public PersonController(PersonService personService) {
         this.personService = personService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Selecting all people")
     @RequestMapping(value = "/admins/people", method = RequestMethod.GET)
     public ResponseEntity getAll() {
         Collection<PersonDTO> dtos = personService.getAllPeople();
-        Gson gson = new Gson();
         ResponseEntity responseEntity;
         if (dtos == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(gson.toJson("Server error"));
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of people" : dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         }
         return responseEntity;
     }
@@ -49,10 +43,9 @@ public class PersonController {
         ResponseEntity responseEntity;
         try {
             PersonDTO dto = personService.findById(personId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(gson.toJson(e.getMessage()));
+            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         return responseEntity;
     }

@@ -1,11 +1,8 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.google.gson.Gson;
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.interfaces.AdminService;
-import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.NewsService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +16,10 @@ import java.util.Collection;
 @RequestMapping("/bank/v1")
 public class NewsController {
     private NewsService newsService;
-    private AdminService adminService;
-    private ClientService clientService;
-    private Gson gson;
 
     @Autowired
-    public NewsController(NewsService newsService, AdminService adminService,
-                          ClientService clientService, Gson gson) {
+    public NewsController(NewsService newsService) {
         this.newsService = newsService;
-        this.adminService = adminService;
-        this.clientService = clientService;
-        this.gson = gson;
     }
 
     @ApiOperation(value = "Creation of new news")
@@ -38,7 +28,7 @@ public class NewsController {
         ResponseEntity responseEntity;
         try {
             NewsDTO dto = newsService.addNews(newsDTO, adminId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -51,7 +41,7 @@ public class NewsController {
         ResponseEntity responseEntity;
         try {
             Collection<NewsDTO> dtos = newsService.getAllClientNewsById(clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -66,8 +56,7 @@ public class NewsController {
         if (dtos == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list" : dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         }
         return responseEntity;
     }
@@ -78,7 +67,7 @@ public class NewsController {
         ResponseEntity responseEntity;
         try {
             NewsDTO dto = newsService.findById(newsId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -104,8 +93,7 @@ public class NewsController {
         if (dtos == null) {
             responseEntity = internalServerError("Server error");
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of news" : dtos));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         }
         return responseEntity;
     }
@@ -117,7 +105,7 @@ public class NewsController {
         ResponseEntity responseEntity;
         try {
             NewsDTO dto = newsService.addClientNews(clientIds, newsId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -131,7 +119,7 @@ public class NewsController {
         try {
             requestNewsDTO.setId(newsId);
             NewsDTO dto = newsService.update(requestNewsDTO);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
         }
@@ -139,10 +127,10 @@ public class NewsController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
     private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(message));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

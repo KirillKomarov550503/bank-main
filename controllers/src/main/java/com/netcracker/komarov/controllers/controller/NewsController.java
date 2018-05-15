@@ -2,9 +2,8 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.google.gson.Gson;
 import com.netcracker.komarov.dao.entity.NewsStatus;
-import com.netcracker.komarov.services.dto.entity.AdminDTO;
-import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.NewsService;
@@ -36,17 +35,12 @@ public class NewsController {
     @ApiOperation(value = "Creation of new news")
     @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.POST)
     public ResponseEntity add(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
-        AdminDTO adminDTO = adminService.findById(adminId);
         ResponseEntity responseEntity;
-        if (adminDTO == null) {
-            responseEntity = notFound("No such admin in database");
-        } else {
+        try {
             NewsDTO dto = newsService.addNews(newsDTO, adminId);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -54,17 +48,12 @@ public class NewsController {
     @ApiOperation(value = "Selecting all client news by client ID")
     @RequestMapping(value = "/client/{clientId}/news", method = RequestMethod.GET)
     public ResponseEntity getAllClientNewsById(@PathVariable long clientId) {
-        ClientDTO clientDTO = clientService.findById(clientId);
         ResponseEntity responseEntity;
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
             Collection<NewsDTO> dtos = newsService.getAllClientNewsById(clientId);
-            if (dtos == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dtos));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -87,11 +76,11 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long newsId) {
         ResponseEntity responseEntity;
-        NewsDTO dto = newsService.findById(newsId);
-        if (dto == null) {
-            responseEntity = notFound("No such news in database");
-        } else {
+        try {
+            NewsDTO dto = newsService.findById(newsId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -125,17 +114,12 @@ public class NewsController {
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.POST)
     public ResponseEntity sendNewsToClients(@PathVariable long newsId,
                                             @RequestBody Collection<Long> clientIds) {
-        NewsDTO newsDTO = newsService.findById(newsId);
         ResponseEntity responseEntity;
-        if (newsDTO == null) {
-            responseEntity = notFound("No such news in database");
-        } else {
+        try {
             NewsDTO dto = newsService.addClientNews(clientIds, newsId);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -144,17 +128,12 @@ public class NewsController {
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody NewsDTO requestNewsDTO, @PathVariable long newsId) {
         ResponseEntity responseEntity;
-        NewsDTO newsDTO = newsService.findById(newsId);
-        if (newsDTO == null) {
-            responseEntity = notFound("No such news in database");
-        } else {
+        try {
             requestNewsDTO.setId(newsId);
             NewsDTO dto = newsService.update(requestNewsDTO);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }

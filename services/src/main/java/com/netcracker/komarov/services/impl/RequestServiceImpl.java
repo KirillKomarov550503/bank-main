@@ -3,7 +3,6 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.Request;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
 import com.netcracker.komarov.dao.repository.RequestRepository;
@@ -32,11 +31,12 @@ public class RequestServiceImpl implements RequestService {
     private Logger logger = LoggerFactory.getLogger(RequestServiceImpl.class);
 
     @Autowired
-    public RequestServiceImpl(RepositoryFactory repositoryFactory, RequestConverter requestConverter) {
-        this.requestRepository = repositoryFactory.getRequestRepository();
-        this.accountRepository = repositoryFactory.getAccountRepository();
-        this.cardRepository = repositoryFactory.getCardRepository();
-        this.converter = requestConverter;
+    public RequestServiceImpl(RequestRepository requestRepository, AccountRepository accountRepository,
+                              CardRepository cardRepository, RequestConverter converter) {
+        this.requestRepository = requestRepository;
+        this.accountRepository = accountRepository;
+        this.cardRepository = cardRepository;
+        this.converter = converter;
     }
 
     private Collection<RequestDTO> convertCollection(Collection<Request> requests) {
@@ -65,13 +65,13 @@ public class RequestServiceImpl implements RequestService {
                 Optional<Account> optionalAccount = accountRepository.findById(requestId);
                 if (optionalAccount.isPresent()) {
                     Account account = optionalAccount.get();
-                    if(account.isLocked()){
+                    if (account.isLocked()) {
                         account.setRequest(request);
                         request.setAccount(account);
                         res = requestRepository.save(request);
                         logger.info("Add request to unlock account");
                     } else {
-                        String error= "This account is unlocking";
+                        String error = "This account is unlocking";
                         logger.error(error);
                         throw new LogicException(error);
                     }
@@ -97,13 +97,13 @@ public class RequestServiceImpl implements RequestService {
                     Optional<Card> optionalCard = cardRepository.findById(requestId);
                     if (optionalCard.isPresent()) {
                         Card card = optionalCard.get();
-                        if(card.isLocked()){
+                        if (card.isLocked()) {
                             card.setRequest(request);
                             request.setCard(card);
                             res = requestRepository.save(request);
                             logger.info("Add request to unlock card");
                         } else {
-                            String error= "This card is unlocking";
+                            String error = "This card is unlocking";
                             logger.error(error);
                             throw new LogicException(error);
                         }

@@ -3,7 +3,6 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Request;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.RequestRepository;
@@ -31,10 +30,11 @@ public class AccountServiceImpl implements AccountService {
     private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
-    public AccountServiceImpl(RepositoryFactory repositoryFactory, AccountConverter accountConverter) {
-        this.accountRepository = repositoryFactory.getAccountRepository();
-        this.requestRepository = repositoryFactory.getRequestRepository();
-        this.clientRepository = repositoryFactory.getClientRepository();
+    public AccountServiceImpl(AccountRepository accountRepository, RequestRepository requestRepository,
+                              ClientRepository clientRepository, AccountConverter accountConverter) {
+        this.accountRepository = accountRepository;
+        this.requestRepository = requestRepository;
+        this.clientRepository = clientRepository;
         this.accountConverter = accountConverter;
     }
 

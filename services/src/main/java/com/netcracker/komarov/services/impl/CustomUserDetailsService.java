@@ -1,19 +1,14 @@
 package com.netcracker.komarov.services.impl;
 
-import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
-import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,8 +44,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private String adminPassword;
 
     @Autowired
-    public CustomUserDetailsService(RepositoryFactory repositoryFactory, AdminService adminService) {
-        this.personRepository = repositoryFactory.getPersonRepository();
+    public CustomUserDetailsService(PersonRepository personRepository, AdminService adminService) {
+        this.personRepository = personRepository;
         this.adminService = adminService;
     }
 

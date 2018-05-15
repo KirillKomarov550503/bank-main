@@ -4,7 +4,6 @@ import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Request;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
@@ -34,12 +33,14 @@ public class CardServiceImpl implements CardService {
     private Logger logger = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
-    public CardServiceImpl(RepositoryFactory repositoryFactory, CardConverter cardConverter) {
-        this.requestRepository = repositoryFactory.getRequestRepository();
-        this.cardRepository = repositoryFactory.getCardRepository();
-        this.accountRepository = repositoryFactory.getAccountRepository();
+    public CardServiceImpl(RequestRepository requestRepository, CardRepository cardRepository,
+                           AccountRepository accountRepository, CardConverter cardConverter,
+                           ClientRepository clientRepository) {
+        this.requestRepository = requestRepository;
+        this.cardRepository = cardRepository;
+        this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
-        this.clientRepository = repositoryFactory.getClientRepository();
+        this.clientRepository = clientRepository;
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -49,10 +50,10 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean contain(long accountId, long cardId) throws NotFoundException{
+    public boolean contain(long accountId, long cardId) throws NotFoundException {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
         boolean contain;
-        if(optionalCard.isPresent()){
+        if (optionalCard.isPresent()) {
             Card card = optionalCard.get();
             contain = card.getAccount().getId() == accountId;
         } else {

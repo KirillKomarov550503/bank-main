@@ -3,7 +3,6 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Transaction;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.TransactionRepository;
@@ -33,11 +32,12 @@ public class TransactionServiceImpl implements TransactionService {
     private Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
-    public TransactionServiceImpl(RepositoryFactory repositoryFactory, TransactionConverter transactionConverter) {
-        this.transactionRepository = repositoryFactory.getTransactionRepository();
-        this.accountRepository = repositoryFactory.getAccountRepository();
-        this.clientRepository = repositoryFactory.getClientRepository();
+    public TransactionServiceImpl(TransactionRepository transactionRepository, AccountRepository accountRepository,
+                                  TransactionConverter transactionConverter, ClientRepository clientRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
         this.transactionConverter = transactionConverter;
+        this.clientRepository = clientRepository;
     }
 
     private Collection<TransactionDTO> convertCollection(Collection<Transaction> transactions) {

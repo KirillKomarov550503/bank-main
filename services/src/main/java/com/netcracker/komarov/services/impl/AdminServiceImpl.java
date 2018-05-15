@@ -3,7 +3,6 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.AdminConverter;
@@ -33,12 +32,13 @@ public class AdminServiceImpl implements AdminService {
     private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
-    public AdminServiceImpl(RepositoryFactory repositoryFactory, AdminConverter adminConverter,
-                            PersonConverter personConverter, CustomPasswordEncoder customPasswordEncoder) {
-        this.adminRepository = repositoryFactory.getAdminRepository();
+    public AdminServiceImpl(PersonRepository personRepository, AdminRepository adminRepository,
+                            AdminConverter adminConverter, PersonConverter personConverter,
+                            CustomPasswordEncoder customPasswordEncoder) {
+        this.personRepository = personRepository;
+        this.adminRepository = adminRepository;
         this.adminConverter = adminConverter;
         this.personConverter = personConverter;
-        this.personRepository = repositoryFactory.getPersonRepository();
         this.customPasswordEncoder = customPasswordEncoder;
     }
 

@@ -4,7 +4,6 @@ import com.netcracker.komarov.dao.entity.Admin;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.News;
 import com.netcracker.komarov.dao.entity.NewsStatus;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.AdminRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.NewsRepository;
@@ -34,10 +33,11 @@ public class NewsServiceImpl implements NewsService {
     private Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
 
     @Autowired
-    public NewsServiceImpl(RepositoryFactory repositoryFactory, NewsConverter newsConverter) {
-        this.newsRepository = repositoryFactory.getNewsRepository();
-        this.clientRepository = repositoryFactory.getClientRepository();
-        this.adminRepository = repositoryFactory.getAdminRepository();
+    public NewsServiceImpl(NewsRepository newsRepository, ClientRepository clientRepository,
+                           AdminRepository adminRepository, NewsConverter newsConverter) {
+        this.newsRepository = newsRepository;
+        this.clientRepository = clientRepository;
+        this.adminRepository = adminRepository;
         this.newsConverter = newsConverter;
     }
 

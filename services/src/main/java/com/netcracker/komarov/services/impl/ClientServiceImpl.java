@@ -3,7 +3,6 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Role;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.ClientConverter;
@@ -33,12 +32,13 @@ public class ClientServiceImpl implements ClientService {
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
-    public ClientServiceImpl(RepositoryFactory repositoryFactory, ClientConverter clientConverter,
-                             PersonConverter personConverter, CustomPasswordEncoder customPasswordEncoder) {
-        this.clientRepository = repositoryFactory.getClientRepository();
-        this.personRepository = repositoryFactory.getPersonRepository();
+    public ClientServiceImpl(ClientRepository clientRepository, ClientConverter clientConverter,
+                             PersonConverter personConverter, PersonRepository personRepository,
+                             CustomPasswordEncoder customPasswordEncoder) {
+        this.clientRepository = clientRepository;
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
+        this.personRepository = personRepository;
         this.customPasswordEncoder = customPasswordEncoder;
     }
 

@@ -1,7 +1,6 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.factory.RepositoryFactory;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
@@ -24,8 +23,8 @@ public class PersonServiceImpl implements PersonService {
     private Logger logger = LoggerFactory.getLogger(PersonServiceImpl.class);
 
     @Autowired
-    public PersonServiceImpl(RepositoryFactory repositoryFactory, PersonConverter personConverter) {
-        this.personRepository = repositoryFactory.getPersonRepository();
+    public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter) {
+        this.personRepository = personRepository;
         this.personConverter = personConverter;
     }
 

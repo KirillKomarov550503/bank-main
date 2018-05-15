@@ -88,8 +88,7 @@ public class NewsController {
 
     @ApiOperation(value = "Sending news to clients")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.POST)
-    public ResponseEntity sendNewsToClients(@PathVariable long newsId,
-                                            @RequestBody Collection<Long> clientIds) {
+    public ResponseEntity sendNewsToClients(@PathVariable long newsId, @RequestBody Collection<Long> clientIds) {
         ResponseEntity responseEntity;
         try {
             NewsDTO dto = newsService.addClientNews(clientIds, newsId);

@@ -2,7 +2,8 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.google.gson.Gson;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
-import com.netcracker.komarov.services.dto.entity.ClientDTO;
+import com.netcracker.komarov.services.exception.LogicException;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLEncoder;
 import java.util.Collection;
 
 @RestController
@@ -32,16 +34,11 @@ public class AccountController {
     @RequestMapping(value = "/clients/{clientId}/accounts", method = RequestMethod.POST)
     public ResponseEntity create(@PathVariable long clientId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
             AccountDTO dto = accountService.createAccount(new AccountDTO(false, 0), clientId);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -49,17 +46,14 @@ public class AccountController {
     @ApiOperation(value = "Unlocking account by ID")
     @RequestMapping(value = "/admins/requests/accounts/{accountId}", method = RequestMethod.PATCH)
     public ResponseEntity unlock(@PathVariable long accountId) {
-        AccountDTO accountDTO = accountService.findById(accountId);
         ResponseEntity responseEntity;
-        if (accountDTO == null) {
-            responseEntity = notFound("No such account in database");
-        } else {
+        try {
             AccountDTO dto = accountService.unlockAccount(accountId);
-            if (dto == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -68,22 +62,18 @@ public class AccountController {
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.PATCH)
     public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            AccountDTO accountDTO = accountService.findById(accountId);
-            if (accountDTO == null) {
-                responseEntity = notFound("No such account in database");
-            } else {
+        try {
+            clientService.findById(clientId);
+            if (accountService.contain(clientId, accountId)) {
                 AccountDTO dto = accountService.lockAccount(accountId);
-                if (dto == null) {
-                    responseEntity = internalServerError("Server error");
-                } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-                }
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            } else {
+                throw new LogicException("Client do not contain this account");
             }
-
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -92,21 +82,18 @@ public class AccountController {
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
     public ResponseEntity refill(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            AccountDTO accountDTO = accountService.findById(accountId);
-            if (accountDTO == null) {
-                responseEntity = notFound("No such account in database");
-            } else {
+        clientService.findById(clientId);
+        try {
+            if (accountService.contain(clientId, accountId)) {
                 AccountDTO dto = accountService.refill(accountId);
-                if (dto == null) {
-                    responseEntity = internalServerError("Server error");
-                } else {
-                    responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
-                }
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            } else {
+                throw new LogicException("Client do not contain this account");
             }
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -116,17 +103,14 @@ public class AccountController {
     public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
             Collection<AccountDTO> dtos = accountService.getAccountsByClientIdAndLock(clientId, lock);
-            if (dtos == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dtos.isEmpty() ? "Empty list of accounts" : dtos));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -143,17 +127,18 @@ public class AccountController {
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            AccountDTO accountDTO = accountService.findById(accountId);
-            if (accountDTO == null) {
-                responseEntity = notFound("No such account in database");
-            } else {
+        try {
+            clientService.findById(clientId);
+            if (accountService.contain(clientId, accountId)) {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson("Account was deleted"));
+            } else {
+                throw new LogicException("Client do not contain this account");
             }
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -162,16 +147,18 @@ public class AccountController {
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            AccountDTO dto = accountService.findById(accountId);
-            if (dto == null) {
-                responseEntity = notFound("No such client in database");
-            } else {
+        try {
+            clientService.findById(clientId);
+            if (accountService.contain(clientId, accountId)) {
+                AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            } else {
+                throw new LogicException("Client do not contain this account");
             }
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

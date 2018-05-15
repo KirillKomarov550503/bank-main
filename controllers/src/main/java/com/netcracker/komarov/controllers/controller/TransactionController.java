@@ -1,9 +1,9 @@
 package com.netcracker.komarov.controllers.controller;
 
 import com.google.gson.Gson;
-import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
-import com.netcracker.komarov.services.exception.TransactionException;
+import com.netcracker.komarov.services.exception.LogicException;
+import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
 import io.swagger.annotations.ApiOperation;
@@ -32,20 +32,14 @@ public class TransactionController {
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.POST)
     public ResponseEntity createTransaction(@RequestBody TransactionDTO requestTransactionDTO,
                                             @PathVariable long clientId) {
-        ResponseEntity responseEntity = null;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            TransactionDTO dto = null;
-            try {
-                dto = transactionService.createTransaction(requestTransactionDTO, clientId);
-            } catch (TransactionException e) {
-                responseEntity = internalServerError(e.getMessage());
-            }
-            if (dto != null) {
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
-            }
+        ResponseEntity responseEntity;
+        try {
+            TransactionDTO dto = transactionService.createTransaction(requestTransactionDTO, clientId);
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -53,18 +47,13 @@ public class TransactionController {
     @ApiOperation(value = "Selecting all transaction by client ID")
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.GET)
     public ResponseEntity showTransactionStory(@PathVariable long clientId) {
-        ClientDTO clientDTO = clientService.findById(clientId);
         ResponseEntity responseEntity;
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
+        try {
             Collection<TransactionDTO> dtos = transactionService.showStories(clientId);
-            if (dtos == null) {
-                responseEntity = internalServerError("Server error");
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK)
-                        .body(gson.toJson(dtos.isEmpty() ? "You haven't transactions yet" : dtos));
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(gson.toJson(dtos.isEmpty() ? "You haven't transactions yet" : dtos));
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
         }
         return responseEntity;
     }
@@ -73,16 +62,18 @@ public class TransactionController {
     @RequestMapping(value = "/clients/{clientId}/transactions/{transactionId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long clientId, @PathVariable long transactionId) {
         ResponseEntity responseEntity;
-        ClientDTO clientDTO = clientService.findById(clientId);
-        if (clientDTO == null) {
-            responseEntity = notFound("No such client in database");
-        } else {
-            TransactionDTO dto = transactionService.findById(transactionId);
-            if (dto == null) {
-                responseEntity = notFound("No such transaction in database");
-            } else {
+        try {
+            clientService.findById(clientId);
+            if (transactionService.contain(clientId, transactionId)) {
+                TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(gson.toJson(dto));
+            } else {
+                throw new LogicException("Client do not contain this transaction");
             }
+        } catch (NotFoundException e) {
+            responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

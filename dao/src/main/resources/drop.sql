@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS transaction;
-DROP TABLE IF EXISTS unlockcardrequest;
-DROP TABLE IF EXISTS unlockaccountrequest;
+DROP TABLE IF EXISTS request;
 DROP TABLE IF EXISTS card;
 DROP TABLE IF EXISTS account;
 DROP TABLE IF EXISTS client;

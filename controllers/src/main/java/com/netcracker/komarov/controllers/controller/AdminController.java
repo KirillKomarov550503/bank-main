@@ -27,27 +27,14 @@ public class AdminController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity add(@RequestBody PersonDTO requestPersonDTO) {
         AdminDTO dto = adminService.addAdmin(requestPersonDTO);
-        ResponseEntity responseEntity;
-        if (dto == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @ApiOperation(value = "Selecting all admins")
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public ResponseEntity getAllAdmins() {
-        ResponseEntity responseEntity;
         Collection<AdminDTO> dtos = adminService.getAllAdmin();
-        if (dtos == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Updating information about admin")
@@ -92,9 +79,5 @@ public class AdminController {
 
     private ResponseEntity notFound(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-    }
-
-    private ResponseEntity internalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 }

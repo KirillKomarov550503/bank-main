@@ -24,13 +24,7 @@ public class ClientController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ResponseEntity save(@RequestBody PersonDTO personDTO) {
         ClientDTO dto = clientService.save(personDTO);
-        ResponseEntity responseEntity;
-        if (dto == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @ApiOperation(value = "Updating information about client")
@@ -74,10 +68,6 @@ public class ClientController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-    }
-
-    private ResponseEntity internalServerError(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

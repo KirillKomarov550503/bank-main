@@ -51,14 +51,8 @@ public class NewsController {
     @ApiOperation(value = "Selecting all general news")
     @RequestMapping(value = "/news", method = RequestMethod.GET)
     public ResponseEntity findAllGeneralNews() {
-        ResponseEntity responseEntity;
         Collection<NewsDTO> dtos = newsService.getAllNewsByStatus(NewsStatus.GENERAL);
-        if (dtos == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Selecting news by ID")
@@ -80,7 +74,6 @@ public class NewsController {
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
             required = false, defaultValue = "false") boolean client) {
         Collection<NewsDTO> dtos;
-        ResponseEntity responseEntity;
         if (filter) {
             if (client) {
                 dtos = newsService.getAllNewsByStatus(NewsStatus.CLIENT);
@@ -90,12 +83,7 @@ public class NewsController {
         } else {
             dtos = newsService.getAllNews();
         }
-        if (dtos == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Sending news to clients")
@@ -127,10 +115,6 @@ public class NewsController {
     }
 
     private ResponseEntity notFound(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-    }
-
-    private ResponseEntity internalServerError(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

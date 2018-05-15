@@ -87,14 +87,7 @@ public class RequestController {
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
     public ResponseEntity getAllRequests() {
         Collection<RequestDTO> dtos = requestService.findAllRequests();
-        ResponseEntity responseEntity;
-        if (dtos == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Deleting request by ID")

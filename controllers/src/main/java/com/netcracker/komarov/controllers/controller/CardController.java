@@ -128,13 +128,7 @@ public class CardController {
     @RequestMapping(value = "/admins/cards", method = RequestMethod.GET)
     public ResponseEntity getAll() {
         Collection<CardDTO> dtos = cardService.getAllCards();
-        ResponseEntity responseEntity;
-        if (dtos == null) {
-            responseEntity = internalServerError("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Deleting card by ID")

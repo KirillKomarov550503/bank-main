@@ -28,13 +28,7 @@ public class PersonController {
     @RequestMapping(value = "/admins/people", method = RequestMethod.GET)
     public ResponseEntity getAll() {
         Collection<PersonDTO> dtos = personService.getAllPeople();
-        ResponseEntity responseEntity;
-        if (dtos == null) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
-        } else {
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
-        }
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Selecting person by ID")

@@ -47,7 +47,7 @@ public class RequestController {
                 RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
@@ -70,10 +70,10 @@ public class RequestController {
                     RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
                     responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
                 } else {
-                    throw new LogicException("Account do not contain this card");
+                    responseEntity = internalServerError("Account do not contain this card");
                 }
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());

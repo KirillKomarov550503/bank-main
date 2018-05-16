@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 @ComponentScan("com.netcracker.komarov")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String prefix = "/bank/v1";
+    private static final String PREFIX = "/bank/v1";
     @Autowired
     @Qualifier("customUserDetailsService")
     private UserDetailsService userDetailsService;
@@ -33,10 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(prefix + "/admins*", prefix + "/admins/**").hasAuthority("ADMIN")
-                .antMatchers(prefix + "/clients*", prefix + "/clients/**").hasAuthority("CLIENT")
-                .antMatchers(prefix + "/news*", prefix + "/news/**").permitAll()
-                .antMatchers(prefix + "/registration*").anonymous()
+                .antMatchers(PREFIX + "/admins*", PREFIX + "/admins/**").hasAuthority("ADMIN")
+                .antMatchers(PREFIX + "/clients*", PREFIX + "/clients/**").hasAuthority("CLIENT")
+                .antMatchers(PREFIX + "/news*", PREFIX + "/news/**").permitAll()
+                .antMatchers(PREFIX + "/registration*").anonymous()
                 .and()
                 .httpBasic()
                 .and()

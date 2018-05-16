@@ -40,12 +40,10 @@ public class CardController {
                 CardDTO dto = cardService.createCard(requestCardDTO);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -62,10 +60,10 @@ public class CardController {
                     CardDTO dto = cardService.lockCard(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    throw new LogicException("Account do not contain this card");
+                    responseEntity = internalServerError("Account do not contain this card");
                 }
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
@@ -114,12 +112,10 @@ public class CardController {
                 Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -143,15 +139,13 @@ public class CardController {
                     cardService.deleteById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).build();
                 } else {
-                    throw new LogicException("Account do not contain this card");
+                    responseEntity = internalServerError("Account do not contain this card");
                 }
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -169,15 +163,13 @@ public class CardController {
                     CardDTO dto = cardService.findById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    throw new LogicException("Account do not contain this card");
+                    responseEntity = internalServerError("Account do not contain this card");
                 }
             } else {
-                throw new LogicException("Client dot not contain this account");
+                responseEntity = internalServerError("Client dot not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

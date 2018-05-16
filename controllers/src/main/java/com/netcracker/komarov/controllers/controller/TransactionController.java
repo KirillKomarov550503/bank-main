@@ -65,12 +65,10 @@ public class TransactionController {
                 TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                throw new LogicException("Client do not contain this transaction");
+                responseEntity = internalServerError("Client do not contain this transaction");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

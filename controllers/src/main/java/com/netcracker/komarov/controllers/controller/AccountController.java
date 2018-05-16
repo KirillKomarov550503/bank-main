@@ -63,7 +63,7 @@ public class AccountController {
                 AccountDTO dto = accountService.lockAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
@@ -103,8 +103,6 @@ public class AccountController {
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -126,12 +124,10 @@ public class AccountController {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }
@@ -146,12 +142,10 @@ public class AccountController {
                 AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = internalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

@@ -31,14 +31,14 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Selecting all admins")
-    @RequestMapping(value = "/admins", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllAdmins() {
         Collection<AdminDTO> dtos = adminService.getAllAdmin();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
     @ApiOperation(value = "Updating information about admin")
-    @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{adminId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody AdminDTO requestAdminDTO, @PathVariable long adminId) {
         ResponseEntity responseEntity;
         try {
@@ -52,7 +52,7 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Deleting admin from system by ID")
-    @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{adminId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long adminId) {
         ResponseEntity responseEntity;
         try {
@@ -65,7 +65,7 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Selecting admin by ID")
-    @RequestMapping(value = "/admins/{adminId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{adminId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long adminId) {
         ResponseEntity responseEntity;
         try {

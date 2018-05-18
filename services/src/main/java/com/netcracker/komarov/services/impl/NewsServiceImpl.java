@@ -132,35 +132,30 @@ public class NewsServiceImpl implements NewsService {
         Collection<Client> clients = clientRepository.findAll();
         Optional<News> optionalNews = newsRepository.findById(newsId);
         News news;
-        News temp;
-        if (optionalNews.isPresent()) {
-            news = optionalNews.get();
-            if (clientIds.size() == 0) {
-                for (Client client : clients) {
-                    news.getClients().add(client);
-                    client.getNewsSet().add(news);
-                }
-            } else {
-                for (long clientId : clientIds) {
-                    Optional<Client> optionalClient = clientRepository.findById(clientId);
-                    if (optionalClient.isPresent()) {
-                        Client client = optionalClient.get();
-                        news.getClients().add(client);
-                        client.getNewsSet().add(news);
-                    } else {
-                        String error = "Client with ID " + clientId + " absent in database";
-                        logger.error(error);
-                        throw new NotFoundException(error);
-                    }
-                }
-            }
-            temp = newsRepository.save(news);
-            logger.info("Send news to client");
-        } else {
-            String error = "There is no such news in database";
-            logger.error(error);
-            throw new NotFoundException(error);
-        }
+        News temp = null;
+//        if (optionalNews.isPresent()) {
+//            news = optionalNews.get();
+//             else {
+//                for (long clientId : clientIds) {
+//                    Optional<Client> optionalClient = clientRepository.findById(clientId);
+//                    if (optionalClient.isPresent()) {
+//                        Client client = optionalClient.get();
+//                        news.getClients().add(client);
+//                        client.getNewsSet().add(news);
+//                    } else {
+//                        String error = "Client with ID " + clientId + " absent in database";
+//                        logger.error(error);
+//                        throw new NotFoundException(error);
+//                    }
+//                }
+//            }
+//            temp = newsRepository.save(news);
+//            logger.info("Send news to client");
+//        } else {
+//            String error = "There is no such news in database";
+//            logger.error(error);
+//            throw new NotFoundException(error);
+//        }
         return newsConverter.convertToDTO(temp);
     }
 

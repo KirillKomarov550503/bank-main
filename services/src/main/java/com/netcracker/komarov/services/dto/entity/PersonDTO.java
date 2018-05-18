@@ -1,9 +1,12 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 public class PersonDTO implements Serializable {
+    @JsonIgnore
     private long id;
     private String name;
     private String surname;

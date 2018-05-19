@@ -69,6 +69,8 @@ public class TransactionController {
             }
         } catch (NotFoundException e) {
             responseEntity = notFound(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = internalServerError(e.getMessage());
         }
         return responseEntity;
     }

@@ -47,18 +47,24 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean contain(long clientId, long transactionId) throws NotFoundException {
+    public boolean contain(long clientId, long transactionId) throws NotFoundException, LogicException {
         Optional<Transaction> optionalTransaction = transactionRepository.findById(transactionId);
-        boolean contain;
         if (optionalTransaction.isPresent()) {
             Transaction transaction = optionalTransaction.get();
-            contain = transaction.getAccountFromId() == transactionId;
+            long accountFromId = transaction.getAccountFromId();
+            Account account = accountRepository.findById(accountFromId).get();
+            if (account.getClient().getId() != clientId) {
+                String error = "You do not have access to show this transaction";
+                logger.error(error);
+                throw new LogicException(error);
+            }
+
         } else {
             String error = "No such transaction";
             logger.error(error);
             throw new NotFoundException(error);
         }
-        return contain;
+        return true;
     }
 
     @Transactional

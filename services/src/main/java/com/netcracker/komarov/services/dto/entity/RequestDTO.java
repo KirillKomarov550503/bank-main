@@ -1,8 +1,11 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestDTO implements Serializable {
     private long id;
     private AccountDTO accountDTO;

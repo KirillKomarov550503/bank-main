@@ -9,14 +9,26 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class AdminDTO implements Serializable {
+    @ApiModelProperty(position = 1)
     private long id;
+
+    @ApiModelProperty(position = 2)
     private String name;
+
+    @ApiModelProperty(position = 3)
     private String surname;
+
+    @ApiModelProperty(position = 6)
     private String login;
 
+    @ApiModelProperty(position = 7)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @ApiModelProperty(position = 4)
     private long phoneNumber;
+
+    @ApiModelProperty(position = 5)
     private long passportId;
 
     @JsonIgnore

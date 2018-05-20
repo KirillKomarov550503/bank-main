@@ -8,13 +8,25 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class PersonDTO implements Serializable {
+    @ApiModelProperty(position = 1)
     private long id;
+
+    @ApiModelProperty(position = 2)
     private String name;
+
+    @ApiModelProperty(position = 3)
     private String surname;
+
+    @ApiModelProperty(position = 4)
     private long phoneNumber;
+
+    @ApiModelProperty(position = 5)
     private long passportId;
+
+    @ApiModelProperty(position = 6)
     private String username;
 
+    @ApiModelProperty(position = 7)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

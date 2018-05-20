@@ -5,7 +5,6 @@ import com.netcracker.komarov.services.ServiceContext;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +27,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = ServiceContext.class)
 public class ClientServiceImplTest {
     @Autowired
-    private CustomPasswordEncoder encoder;
-    @Autowired
     private ClientService clientService;
 
     @Before
@@ -50,7 +47,7 @@ public class ClientServiceImplTest {
         PersonDTO personDTO = new PersonDTO(0, "Tony", "Stark",
                 4444, 9, "Iron_man", "Jarvis");
         ClientDTO clientDTO = new ClientDTO(4, "Tony", "Stark",
-                "Iron_man", encoder.encode("Jarvis"), 4444, 9, Role.CLIENT);
+                "Iron_man", "Jarvis", 4444, 9, Role.CLIENT);
         assertEquals(clientDTO, clientService.save(personDTO));
     }
 
@@ -58,11 +55,11 @@ public class ClientServiceImplTest {
     public void findAllClients() {
         Collection<ClientDTO> clients = new ArrayList<>();
         ClientDTO dto1 = new ClientDTO(1, "Max", "Ul",
-                "Pessimist", encoder.encode("password"), 1, 1, Role.CLIENT);
+                "Pessimist", "password", 1, 1, Role.CLIENT);
         ClientDTO dto2 = new ClientDTO(2, "Pav", "Zar",
-                "Dancer", encoder.encode("disco"), 2, 2, Role.CLIENT);
+                "Dancer", "disco", 2, 2, Role.CLIENT);
         ClientDTO dto3 = new ClientDTO(3, "Kir", "Kom",
-                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
+                "Optimist", "qwerty", 3, 3, Role.CLIENT);
         clients.add(dto1);
         clients.add(dto2);
         clients.add(dto3);
@@ -72,9 +69,9 @@ public class ClientServiceImplTest {
     @Test
     public void update() {
         ClientDTO dto = new ClientDTO(3, "Kirill", "Komarov",
-                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
+                "Optimist", "qwerty", 3, 3, Role.CLIENT);
         ClientDTO res = new ClientDTO(3, "Kirill", "Komarov",
-                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
+                "Optimist", "qwerty", 3, 3, Role.CLIENT);
         assertEquals(res, clientService.update(dto));
     }
 
@@ -89,7 +86,7 @@ public class ClientServiceImplTest {
     @Test
     public void findById() {
         ClientDTO clientDTO = new ClientDTO(2, "Pav", "Zar",
-                "Dancer", encoder.encode("disco"), 2, 2, Role.CLIENT);
+                "Dancer", "disco", 2, 2, Role.CLIENT);
         assertEquals(clientDTO, clientService.findById(2));
     }
 }

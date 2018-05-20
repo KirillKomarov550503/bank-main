@@ -34,9 +34,9 @@ public class TransactionController {
             TransactionDTO dto = transactionService.createTransaction(requestTransactionDTO, clientId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -47,9 +47,10 @@ public class TransactionController {
         ResponseEntity responseEntity;
         try {
             Collection<TransactionDTO> dtos = transactionService.showStories(clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(dtos);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -64,19 +65,21 @@ public class TransactionController {
                 TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = internalServerError("Client do not contain this transaction");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this transaction");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
+        } catch (LogicException e) {
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity notFound(String message) {
+    private ResponseEntity getNotFoundResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    private ResponseEntity internalServerError(String message) {
+    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

@@ -1,5 +1,9 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -8,6 +12,8 @@ public class CardDTO implements Serializable {
     private boolean locked;
     private double balance;
     private long accountId;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int pin;
 
     public CardDTO() {
@@ -21,26 +27,35 @@ public class CardDTO implements Serializable {
         this.pin = pin;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public boolean isLocked() {
         return locked;
     }
 
+    @JsonIgnore
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public double getBalance() {
         return balance;
     }
 
+    @JsonIgnore
     public void setBalance(double balance) {
         this.balance = balance;
     }
@@ -53,10 +68,13 @@ public class CardDTO implements Serializable {
         this.pin = pin;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getAccountId() {
         return accountId;
     }
 
+    @JsonIgnore
     public void setAccountId(long accountId) {
         this.accountId = accountId;
     }

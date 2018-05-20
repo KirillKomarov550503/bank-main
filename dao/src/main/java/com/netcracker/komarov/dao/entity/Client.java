@@ -31,14 +31,6 @@ public class Client extends BaseEntity {
         this.person = person;
     }
 
-    public Set<News> getNewsSet() {
-        return newsSet;
-    }
-
-    public void setNewsSet(Set<News> newsSet) {
-        this.newsSet = newsSet;
-    }
-
     public Set<Account> getAccounts() {
         return accounts;
     }

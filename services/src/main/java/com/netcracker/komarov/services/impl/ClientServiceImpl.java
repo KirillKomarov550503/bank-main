@@ -9,9 +9,9 @@ import com.netcracker.komarov.services.dto.converter.ClientConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +28,15 @@ public class ClientServiceImpl implements ClientService {
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
     private PersonRepository personRepository;
-    private CustomPasswordEncoder customPasswordEncoder;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(ClientRepository clientRepository, ClientConverter clientConverter,
-                             PersonConverter personConverter, PersonRepository personRepository,
-                             CustomPasswordEncoder customPasswordEncoder) {
+                             PersonConverter personConverter, PersonRepository personRepository) {
         this.clientRepository = clientRepository;
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
         this.personRepository = personRepository;
-        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     private Collection<ClientDTO> convertCollection(Collection<Client> clients) {
@@ -50,16 +47,25 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO save(PersonDTO personDTO) {
+    public ClientDTO save(PersonDTO personDTO) throws LogicException {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
-        String password = person.getPassword();
-        person.setPassword(customPasswordEncoder.encode(password));
-        Client client = new Client();
-        client.setPerson(person);
-        person.setClient(client);
-        logger.info("Registration of new client");
-        return clientConverter.convertToDTO(clientRepository.save(client));
+        Person temp = personRepository.findPersonByUsername(person.getUsername());
+        Client clientRes;
+        if (temp == null) {
+            String password = person.getPassword();
+            person.setPassword(password);
+            Client client = new Client();
+            client.setPerson(person);
+            person.setClient(client);
+            clientRes = clientRepository.save(client);
+            logger.info("Registration of new client");
+        } else {
+            String error = "This username is already exist";
+            logger.error(error);
+            throw new LogicException(error);
+        }
+        return clientConverter.convertToDTO(clientRes);
     }
 
     @Transactional
@@ -79,7 +85,7 @@ public class ClientServiceImpl implements ClientService {
             Client oldClient = optionalClient.get();
             Person newPerson = newClient.getPerson();
             String password = newPerson.getPassword();
-            newPerson.setPassword(customPasswordEncoder.encode(password));
+            newPerson.setPassword(password);
             Person oldPerson = oldClient.getPerson();
             newPerson.setId(oldPerson.getId());
             oldClient.setPerson(newPerson);
@@ -99,7 +105,6 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
-            client.setNewsSet(null);
             clientRepository.save(client);
             personRepository.deleteById(client.getPerson().getId());
             logger.info("Client was deleted");

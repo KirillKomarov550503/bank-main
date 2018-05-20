@@ -1,19 +1,35 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public class PersonDTO implements Serializable {
-    @JsonIgnore
+    @ApiModelProperty(position = 1)
     private long id;
+
+    @ApiModelProperty(position = 2)
     private String name;
+
+    @ApiModelProperty(position = 3)
     private String surname;
+
+    @ApiModelProperty(position = 4)
     private long phoneNumber;
+
+    @ApiModelProperty(position = 5)
     private long passportId;
+
+    @ApiModelProperty(position = 6)
     private String username;
+
+    @ApiModelProperty(position = 7)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
     public PersonDTO() {
     }
 
@@ -28,10 +44,13 @@ public class PersonDTO implements Serializable {
         this.password = password;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }

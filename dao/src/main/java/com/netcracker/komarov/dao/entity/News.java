@@ -1,13 +1,11 @@
 package com.netcracker.komarov.dao.entity;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "news")
-public class News extends BaseEntity{
+public class News extends BaseEntity {
 
     @Column(name = "date", length = 20)
     private String date;
@@ -18,35 +16,14 @@ public class News extends BaseEntity{
     @Column(name = "text", columnDefinition = "Text")
     private String text;
 
-    @ManyToMany(mappedBy = "newsSet")
-    private Set<Client> clients = new HashSet<>();
-
-    @ManyToOne()
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
+    @Column(name = "admin_id")
+    private long adminId;
 
     @Column(name = "news_status")
     @Enumerated(EnumType.STRING)
     private NewsStatus newsStatus;
 
     public News() {
-    }
-
-    public News(String date, String title, String text, Set<Client> clients, Admin admin, NewsStatus newsStatus) {
-        this.date = date;
-        this.title = title;
-        this.text = text;
-        this.clients = clients;
-        this.admin = admin;
-        this.newsStatus = newsStatus;
-    }
-
-    public Set<Client> getClients() {
-        return clients;
-    }
-
-    public void setClients(Set<Client> clients) {
-        this.clients = clients;
     }
 
     public NewsStatus getNewsStatus() {
@@ -90,12 +67,12 @@ public class News extends BaseEntity{
         this.id = id;
     }
 
-    public Admin getAdmin() {
-        return admin;
+    public long getAdminId() {
+        return adminId;
     }
 
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
+    public void setAdminId(long adminId) {
+        this.adminId = adminId;
     }
 
     @Override
@@ -104,17 +81,17 @@ public class News extends BaseEntity{
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         News news = (News) o;
-        return Objects.equals(date, news.date) &&
+        return adminId == news.adminId &&
+                Objects.equals(date, news.date) &&
                 Objects.equals(title, news.title) &&
                 Objects.equals(text, news.text) &&
-                Objects.equals(admin, news.admin) &&
                 newsStatus == news.newsStatus;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), date, title, text, admin, newsStatus);
+        return Objects.hash(super.hashCode(), date, title, text, adminId, newsStatus);
     }
 
     @Override
@@ -123,7 +100,7 @@ public class News extends BaseEntity{
                 "date='" + date + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
-                ", admin=" + admin +
+                ", adminId=" + adminId +
                 ", newsStatus=" + newsStatus +
                 ", id=" + id +
                 '}';

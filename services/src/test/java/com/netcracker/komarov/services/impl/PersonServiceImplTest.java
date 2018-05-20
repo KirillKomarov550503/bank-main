@@ -5,7 +5,6 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.interfaces.PersonService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class PersonServiceImplTest {
-    @Autowired
-    private CustomPasswordEncoder encoder;
     @Autowired
     private AdminService adminService;
 
@@ -56,13 +53,13 @@ public class PersonServiceImplTest {
     @Test
     public void getAllPeople() {
         PersonDTO personDTO1 = new PersonDTO(2, "Tony", "Stark",
-                1, 1, "Iron_Man", encoder.encode("Jarvis"));
+                1, 1, "Iron_Man", "Jarvis");
         PersonDTO personDTO2 = new PersonDTO(1, "Steve", "Rodgers",
-                2, 2, "Captain_America", encoder.encode("shield"));
+                2, 2, "Captain_America", "shield");
         PersonDTO personDTO3 = new PersonDTO(4, "Stephen", "Strange",
-                3, 3, "Doctor_Strange", encoder.encode("shamballa"));
+                3, 3, "Doctor_Strange", "shamballa");
         PersonDTO personDTO4 = new PersonDTO(3, "Peter", "Parker",
-                4, 4, "Spider-man", encoder.encode("Mary_Jane"));
+                4, 4, "Spider-man", "Mary_Jane");
         Collection<PersonDTO> dtos = new ArrayList<>();
         dtos.add(personDTO2);
         dtos.add(personDTO1);
@@ -74,7 +71,7 @@ public class PersonServiceImplTest {
     @Test
     public void findById() {
         PersonDTO personDTO = new PersonDTO(4, "Stephen", "Strange",
-                3, 3, "Doctor_Strange", encoder.encode("shamballa"));
+                3, 3, "Doctor_Strange", "shamballa");
         assertEquals(personDTO, personService.findById(4));
     }
 }

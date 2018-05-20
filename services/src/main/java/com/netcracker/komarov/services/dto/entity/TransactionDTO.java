@@ -1,5 +1,9 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -21,10 +25,13 @@ public class TransactionDTO implements Serializable {
         this.date = date;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
@@ -53,10 +60,13 @@ public class TransactionDTO implements Serializable {
         this.money = money;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getDate() {
         return date;
     }
 
+    @JsonIgnore
     public void setDate(String date) {
         this.date = date;
     }

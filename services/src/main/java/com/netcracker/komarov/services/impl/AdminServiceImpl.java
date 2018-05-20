@@ -9,9 +9,9 @@ import com.netcracker.komarov.services.dto.converter.AdminConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +28,15 @@ public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
     private AdminConverter adminConverter;
     private PersonConverter personConverter;
-    private CustomPasswordEncoder customPasswordEncoder;
     private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
     public AdminServiceImpl(PersonRepository personRepository, AdminRepository adminRepository,
-                            AdminConverter adminConverter, PersonConverter personConverter,
-                            CustomPasswordEncoder customPasswordEncoder) {
+                            AdminConverter adminConverter, PersonConverter personConverter) {
         this.personRepository = personRepository;
         this.adminRepository = adminRepository;
         this.adminConverter = adminConverter;
         this.personConverter = personConverter;
-        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     private Collection<AdminDTO> convertCollection(Collection<Admin> admins) {
@@ -50,16 +47,25 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO addAdmin(PersonDTO personDTO) {
+    public AdminDTO addAdmin(PersonDTO personDTO) throws LogicException{
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.ADMIN);
-        String password = person.getPassword();
-        person.setPassword(customPasswordEncoder.encode(password));
-        Admin admin = new Admin();
-        admin.setPerson(person);
-        person.setAdmin(admin);
-        Admin adminRes = adminRepository.save(admin);
-        logger.info("Add to system new admin");
+        Person temp = personRepository.findPersonByUsername(person.getUsername());
+        Admin adminRes;
+        if (temp == null) {
+            String password = person.getPassword();
+            person.setPassword(password);
+            Admin admin = new Admin();
+            admin.setPerson(person);
+            person.setAdmin(admin);
+            adminRes = adminRepository.save(admin);
+            logger.info("Add to system new admin");
+        } else {
+            String error = "This username is already exist";
+            logger.error(error);
+            throw new LogicException(error);
+
+        }
         return adminConverter.convertToDTO(adminRes);
     }
 
@@ -81,7 +87,7 @@ public class AdminServiceImpl implements AdminService {
             Person oldPerson = oldAdmin.getPerson();
             Person newPerson = newClient.getPerson();
             String password = newPerson.getPassword();
-            newPerson.setPassword(customPasswordEncoder.encode(password));
+            newPerson.setPassword(password);
             newPerson.setId(oldPerson.getId());
             oldAdmin.setPerson(newPerson);
             resAdmin = adminRepository.saveAndFlush(oldAdmin);

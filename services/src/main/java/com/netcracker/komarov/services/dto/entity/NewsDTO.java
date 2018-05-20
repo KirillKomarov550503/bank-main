@@ -1,13 +1,28 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonPropertyOrder({"id", "title", "text", "status", "date"})
 public class NewsDTO implements Serializable {
+    @ApiModelProperty(position = 1)
     private long id;
+
+    @ApiModelProperty(position = 2)
     private String date;
+
+    @ApiModelProperty(position = 3)
     private String title;
+
+    @ApiModelProperty(position = 4)
     private String text;
+
+    @ApiModelProperty(position = 5)
     private String status;
 
     public NewsDTO() {
@@ -21,18 +36,24 @@ public class NewsDTO implements Serializable {
         this.status = status;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
 
+    @ApiModelProperty(readOnly = true, hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getDate() {
         return date;
     }
 
+    @JsonIgnore
     public void setDate(String date) {
         this.date = date;
     }

@@ -2,6 +2,7 @@ package com.netcracker.komarov.services.interfaces;
 
 import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ public interface NewsService {
 
     NewsDTO addNews(NewsDTO newsDTO, long adminId) throws NotFoundException;
 
-    NewsDTO addClientNews(Collection<Long> clientIds, long newsId) throws NotFoundException;
+    NewsDTO addClientNews(Collection<Long> clientIds, long newsId) throws NotFoundException, LogicException;
 
     NewsDTO update(NewsDTO newsDTO) throws NotFoundException;
 }

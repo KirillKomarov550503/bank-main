@@ -33,7 +33,7 @@ public class AccountController {
             AccountDTO dto = accountService.createAccount(new AccountDTO(false, 0), clientId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -46,9 +46,9 @@ public class AccountController {
             AccountDTO dto = accountService.unlockAccount(accountId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -63,12 +63,12 @@ public class AccountController {
                 AccountDTO dto = accountService.lockAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -83,12 +83,12 @@ public class AccountController {
                 AccountDTO dto = accountService.refill(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                throw new LogicException("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -102,7 +102,7 @@ public class AccountController {
             Collection<AccountDTO> dtos = accountService.getAccountsByClientIdAndLock(clientId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -124,10 +124,10 @@ public class AccountController {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -142,19 +142,19 @@ public class AccountController {
                 AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity notFound(String message) {
+    private ResponseEntity getNotFoundResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    private ResponseEntity internalServerError(String message) {
+    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 }

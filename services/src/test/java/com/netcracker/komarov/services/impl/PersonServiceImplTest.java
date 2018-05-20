@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class PersonServiceImplTest {
+    @Autowired
+    private PasswordEncoder encoder;
     @Autowired
     private AdminService adminService;
 
@@ -53,13 +56,13 @@ public class PersonServiceImplTest {
     @Test
     public void getAllPeople() {
         PersonDTO personDTO1 = new PersonDTO(2, "Tony", "Stark",
-                1, 1, "Iron_Man", "Jarvis");
+                1, 1, "Iron_Man", encoder.encode("Jarvis"));
         PersonDTO personDTO2 = new PersonDTO(1, "Steve", "Rodgers",
-                2, 2, "Captain_America", "shield");
+                2, 2, "Captain_America", encoder.encode("shield"));
         PersonDTO personDTO3 = new PersonDTO(4, "Stephen", "Strange",
-                3, 3, "Doctor_Strange", "shamballa");
+                3, 3, "Doctor_Strange", encoder.encode("shamballa"));
         PersonDTO personDTO4 = new PersonDTO(3, "Peter", "Parker",
-                4, 4, "Spider-man", "Mary_Jane");
+                4, 4, "Spider-man", encoder.encode("Mary_Jane"));
         Collection<PersonDTO> dtos = new ArrayList<>();
         dtos.add(personDTO2);
         dtos.add(personDTO1);
@@ -71,7 +74,7 @@ public class PersonServiceImplTest {
     @Test
     public void findById() {
         PersonDTO personDTO = new PersonDTO(4, "Stephen", "Strange",
-                3, 3, "Doctor_Strange", "shamballa");
+                3, 3, "Doctor_Strange", encoder.encode("shamballa"));
         assertEquals(personDTO, personService.findById(4));
     }
 }

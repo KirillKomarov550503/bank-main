@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class AccountServiceImplTest {
+    @Autowired
+    private PasswordEncoder encoder;
     @Mock
     @Autowired
     private AccountService accountService;
@@ -93,7 +96,7 @@ public class AccountServiceImplTest {
     @Test
     public void createAccount() {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov",
-                1, 1, "Optimist", "qwerty"));
+                1, 1, "Optimist", encoder.encode("qwerty")));
         AccountDTO accountDTO = new AccountDTO(4, false, 0, 1);
         assertEquals(accountDTO, accountService.createAccount(new AccountDTO(false, 0), 1));
     }

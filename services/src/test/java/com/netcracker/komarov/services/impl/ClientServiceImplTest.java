@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceContext.class)
 public class ClientServiceImplTest {
+    @Autowired
+    private PasswordEncoder encoder;
     @Autowired
     private ClientService clientService;
 
@@ -47,7 +50,7 @@ public class ClientServiceImplTest {
         PersonDTO personDTO = new PersonDTO(0, "Tony", "Stark",
                 4444, 9, "Iron_man", "Jarvis");
         ClientDTO clientDTO = new ClientDTO(4, "Tony", "Stark",
-                "Iron_man", "Jarvis", 4444, 9, Role.CLIENT);
+                "Iron_man", encoder.encode("Jarvis"), 4444, 9, Role.CLIENT);
         assertEquals(clientDTO, clientService.save(personDTO));
     }
 
@@ -55,11 +58,11 @@ public class ClientServiceImplTest {
     public void findAllClients() {
         Collection<ClientDTO> clients = new ArrayList<>();
         ClientDTO dto1 = new ClientDTO(1, "Max", "Ul",
-                "Pessimist", "password", 1, 1, Role.CLIENT);
+                "Pessimist", encoder.encode("password"), 1, 1, Role.CLIENT);
         ClientDTO dto2 = new ClientDTO(2, "Pav", "Zar",
-                "Dancer", "disco", 2, 2, Role.CLIENT);
+                "Dancer", encoder.encode("disco"), 2, 2, Role.CLIENT);
         ClientDTO dto3 = new ClientDTO(3, "Kir", "Kom",
-                "Optimist", "qwerty", 3, 3, Role.CLIENT);
+                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
         clients.add(dto1);
         clients.add(dto2);
         clients.add(dto3);
@@ -69,9 +72,9 @@ public class ClientServiceImplTest {
     @Test
     public void update() {
         ClientDTO dto = new ClientDTO(3, "Kirill", "Komarov",
-                "Optimist", "qwerty", 3, 3, Role.CLIENT);
+                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
         ClientDTO res = new ClientDTO(3, "Kirill", "Komarov",
-                "Optimist", "qwerty", 3, 3, Role.CLIENT);
+                "Optimist", encoder.encode("qwerty"), 3, 3, Role.CLIENT);
         assertEquals(res, clientService.update(dto));
     }
 
@@ -86,7 +89,7 @@ public class ClientServiceImplTest {
     @Test
     public void findById() {
         ClientDTO clientDTO = new ClientDTO(2, "Pav", "Zar",
-                "Dancer", "disco", 2, 2, Role.CLIENT);
+                "Dancer", encoder.encode("disco"), 2, 2, Role.CLIENT);
         assertEquals(clientDTO, clientService.findById(2));
     }
 }

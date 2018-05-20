@@ -15,6 +15,7 @@ import com.netcracker.komarov.services.interfaces.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +29,18 @@ public class ClientServiceImpl implements ClientService {
     private ClientConverter clientConverter;
     private PersonConverter personConverter;
     private PersonRepository personRepository;
+    private PasswordEncoder passwordEncoder;
     private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(ClientRepository clientRepository, ClientConverter clientConverter,
-                             PersonConverter personConverter, PersonRepository personRepository) {
+                             PersonConverter personConverter, PersonRepository personRepository,
+                             PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
         this.clientConverter = clientConverter;
         this.personConverter = personConverter;
         this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private Collection<ClientDTO> convertCollection(Collection<Client> clients) {
@@ -54,7 +58,7 @@ public class ClientServiceImpl implements ClientService {
         Client clientRes;
         if (temp == null) {
             String password = person.getPassword();
-            person.setPassword(password);
+            person.setPassword(passwordEncoder.encode(password));
             Client client = new Client();
             client.setPerson(person);
             person.setClient(client);
@@ -85,7 +89,7 @@ public class ClientServiceImpl implements ClientService {
             Client oldClient = optionalClient.get();
             Person newPerson = newClient.getPerson();
             String password = newPerson.getPassword();
-            newPerson.setPassword(password);
+            newPerson.setPassword(passwordEncoder.encode(password));
             Person oldPerson = oldClient.getPerson();
             newPerson.setId(oldPerson.getId());
             oldClient.setPerson(newPerson);

@@ -15,6 +15,7 @@ import com.netcracker.komarov.services.interfaces.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +29,18 @@ public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
     private AdminConverter adminConverter;
     private PersonConverter personConverter;
+    private PasswordEncoder passwordEncoder;
     private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
     public AdminServiceImpl(PersonRepository personRepository, AdminRepository adminRepository,
-                            AdminConverter adminConverter, PersonConverter personConverter) {
+                            AdminConverter adminConverter, PersonConverter personConverter
+            , PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
         this.adminRepository = adminRepository;
         this.adminConverter = adminConverter;
         this.personConverter = personConverter;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private Collection<AdminDTO> convertCollection(Collection<Admin> admins) {
@@ -47,14 +51,14 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO addAdmin(PersonDTO personDTO) throws LogicException{
+    public AdminDTO addAdmin(PersonDTO personDTO) throws LogicException {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.ADMIN);
         Person temp = personRepository.findPersonByUsername(person.getUsername());
         Admin adminRes;
         if (temp == null) {
             String password = person.getPassword();
-            person.setPassword(password);
+            person.setPassword(passwordEncoder.encode(password));
             Admin admin = new Admin();
             admin.setPerson(person);
             person.setAdmin(admin);
@@ -87,7 +91,7 @@ public class AdminServiceImpl implements AdminService {
             Person oldPerson = oldAdmin.getPerson();
             Person newPerson = newClient.getPerson();
             String password = newPerson.getPassword();
-            newPerson.setPassword(password);
+            newPerson.setPassword(passwordEncoder.encode(password));
             newPerson.setId(oldPerson.getId());
             oldAdmin.setPerson(newPerson);
             resAdmin = adminRepository.saveAndFlush(oldAdmin);

@@ -25,8 +25,4 @@ admin:
   phoneNumber: 1
   username: superadmin
   password: superadmin
-logging:
-  level:
-    org.hibernate: INFO
-    org.springframework: ERROR
 

@@ -1,6 +1,5 @@
-package com.netcracker.komarov.controllers.util;
+package com.netcracker.komarov.services.security.config;
 
-import com.netcracker.komarov.services.util.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;

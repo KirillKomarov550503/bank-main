@@ -1,4 +1,4 @@
-package com.netcracker.komarov.services.security.config;
+package com.netcracker.komarov.services.security.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

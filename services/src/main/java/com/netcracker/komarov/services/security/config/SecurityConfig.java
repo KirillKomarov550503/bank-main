@@ -1,9 +1,14 @@
 package com.netcracker.komarov.services.security.config;
 
+import com.netcracker.komarov.services.security.filter.ContainFilter;
+import com.netcracker.komarov.services.security.utils.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,9 +28,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomPasswordEncoder customPasswordEncoder;
 
+    @Autowired
+    private ContainFilter containFilter;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(customPasswordEncoder);
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(customPasswordEncoder);
+        return authenticationProvider;
+    }
+
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(containFilter);
+        registrationBean.addUrlPatterns(PREFIX + "/clients/*", PREFIX + "/admins/*");
+        return registrationBean;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class ClientController {
             ClientDTO dto = clientService.update(requestClientDTO);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -49,7 +49,7 @@ public class ClientController {
             clientService.deleteById(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -62,12 +62,12 @@ public class ClientController {
             ClientDTO dto = clientService.findById(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity notFound(String message) {
+    private ResponseEntity getNotFoundResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

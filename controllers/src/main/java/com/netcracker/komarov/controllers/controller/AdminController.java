@@ -46,7 +46,7 @@ public class AdminController {
             AdminDTO dto = adminService.update(requestAdminDTO);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -59,7 +59,7 @@ public class AdminController {
             adminService.deleteById(adminId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -72,12 +72,12 @@ public class AdminController {
             AdminDTO dto = adminService.findById(adminId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity notFound(String message) {
+    private ResponseEntity getNotFoundResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

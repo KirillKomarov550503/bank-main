@@ -47,12 +47,12 @@ public class RequestController {
                 RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -70,15 +70,15 @@ public class RequestController {
                     RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
                     responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
                 } else {
-                    responseEntity = internalServerError("Account do not contain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
                 }
             } else {
-                responseEntity = internalServerError("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
-            responseEntity = internalServerError(e.getMessage());
+            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -98,7 +98,7 @@ public class RequestController {
             requestService.delete(requestId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -111,16 +111,16 @@ public class RequestController {
             RequestDTO dto = requestService.findById(requestId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = notFound(e.getMessage());
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity notFound(String message) {
+    private ResponseEntity getNotFoundResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    private ResponseEntity internalServerError(String message) {
+    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

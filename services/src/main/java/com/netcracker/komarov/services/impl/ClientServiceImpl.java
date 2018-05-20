@@ -95,7 +95,6 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
-            client.setNewsSet(null);
             clientRepository.save(client);
             personRepository.deleteById(client.getPerson().getId());
             logger.info("Client was deleted");

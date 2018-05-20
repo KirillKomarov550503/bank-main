@@ -1,14 +1,13 @@
 package com.netcracker.komarov.services.impl;
 
-import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.Client;
-import com.netcracker.komarov.dao.entity.News;
-import com.netcracker.komarov.dao.entity.NewsStatus;
+import com.netcracker.komarov.dao.entity.*;
 import com.netcracker.komarov.dao.repository.AdminRepository;
+import com.netcracker.komarov.dao.repository.ClientNewsRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
 import com.netcracker.komarov.dao.repository.NewsRepository;
 import com.netcracker.komarov.services.dto.converter.NewsConverter;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.NewsService;
 import org.slf4j.Logger;
@@ -18,9 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,15 +29,18 @@ public class NewsServiceImpl implements NewsService {
     private ClientRepository clientRepository;
     private AdminRepository adminRepository;
     private NewsConverter newsConverter;
+    private ClientNewsRepository clientNewsRepository;
     private Logger logger = LoggerFactory.getLogger(NewsServiceImpl.class);
 
     @Autowired
     public NewsServiceImpl(NewsRepository newsRepository, ClientRepository clientRepository,
-                           AdminRepository adminRepository, NewsConverter newsConverter) {
+                           AdminRepository adminRepository, NewsConverter newsConverter,
+                           ClientNewsRepository clientNewsRepository) {
         this.newsRepository = newsRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
         this.newsConverter = newsConverter;
+        this.clientNewsRepository = clientNewsRepository;
     }
 
     private Collection<NewsDTO> convertCollection(Collection<News> newsCollection) {
@@ -58,26 +60,22 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Collection<NewsDTO> getAllClientNewsById(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
-        Collection<News> resultCollection = new ArrayList<>();
+        List<News> resultCollection;
         if (optionalClient.isPresent()) {
-            Collection<News> clientsNews = newsRepository.findAll()
+            System.err.println("Collection: " + clientNewsRepository.findAll());
+            resultCollection = clientNewsRepository.findAll()
                     .stream()
-                    .filter(news -> news.getNewsStatus().equals(NewsStatus.CLIENT))
+                    .filter(clientNews -> clientNews.getClientId() == clientId
+                            || clientNews.getClientId() == 0L)
+                    .map(clientNews -> newsRepository.findById(clientNews.getNewsId()).get())
                     .collect(Collectors.toList());
-            for (News news : clientsNews) {
-                Collection<Client> clients = news.getClients();
-                for (Client client : clients) {
-                    if (client.getId() == clientId) {
-                        resultCollection.add(news);
-                    }
-                }
-            }
             logger.info("Return all client news By client ID");
         } else {
             String error = "There is no such client in database";
             logger.error(error);
             throw new NotFoundException(error);
         }
+
         return convertCollection(resultCollection);
     }
 
@@ -104,13 +102,11 @@ public class NewsServiceImpl implements NewsService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         news.setDate(simpleDateFormat.format(new Date()));
         Optional<Admin> optionalAdmin = adminRepository.findById(adminId);
-        News temp = null;
+        News temp;
         if (optionalAdmin.isPresent()) {
-            Admin admin = optionalAdmin.get();
-            news.setAdmin(admin);
-            admin.getNews().add(news);
-            logger.info("Addition new general new to database");
+            news.setAdminId(adminId);
             temp = newsRepository.save(news);
+            logger.info("Add new news to database");
         } else {
             String error = "There is no such admin in database";
             logger.error(error);
@@ -128,40 +124,34 @@ public class NewsServiceImpl implements NewsService {
 
     @Transactional
     @Override
-    public NewsDTO addClientNews(Collection<Long> clientIds, long newsId) throws NotFoundException {
-        Collection<Client> clients = clientRepository.findAll();
+    public NewsDTO addClientNews(Collection<Long> clientIds, long newsId) throws NotFoundException, LogicException {
         Optional<News> optionalNews = newsRepository.findById(newsId);
         News news;
-        News temp;
+        for (Long clientId : clientIds) {
+            if (!clientRepository.findById(clientId).isPresent()) {
+                String error = "Client with ID " + clientId + " absent in database";
+                logger.error(error);
+                throw new NotFoundException(error);
+            }
+        }
         if (optionalNews.isPresent()) {
             news = optionalNews.get();
-            if (clientIds.size() == 0) {
-                for (Client client : clients) {
-                    news.getClients().add(client);
-                    client.getNewsSet().add(news);
-                }
-            } else {
-                for (long clientId : clientIds) {
-                    Optional<Client> optionalClient = clientRepository.findById(clientId);
-                    if (optionalClient.isPresent()) {
-                        Client client = optionalClient.get();
-                        news.getClients().add(client);
-                        client.getNewsSet().add(news);
-                    } else {
-                        String error = "Client with ID " + clientId + " absent in database";
-                        logger.error(error);
-                        throw new NotFoundException(error);
-                    }
-                }
+            if (news.getNewsStatus().equals(NewsStatus.GENERAL)) {
+                String error = "Try to send general news to clients";
+                logger.error(error);
+                throw new LogicException(error);
             }
-            temp = newsRepository.save(news);
-            logger.info("Send news to client");
+            if (clientIds.isEmpty()) {
+                clientNewsRepository.save(new ClientNews(0L, newsId));
+            } else {
+                clientIds.forEach(clientId -> clientNewsRepository.save(new ClientNews(clientId, newsId)));
+            }
         } else {
             String error = "There is no such news in database";
             logger.error(error);
             throw new NotFoundException(error);
         }
-        return newsConverter.convertToDTO(temp);
+        return newsConverter.convertToDTO(news);
     }
 
     @Transactional

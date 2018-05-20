@@ -58,7 +58,6 @@ public class TransactionServiceImpl implements TransactionService {
                 logger.error(error);
                 throw new LogicException(error);
             }
-
         } else {
             String error = "No such transaction";
             logger.error(error);

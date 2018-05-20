@@ -9,6 +9,7 @@ import com.netcracker.komarov.services.dto.converter.AdminConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import org.slf4j.Logger;
@@ -46,16 +47,25 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO addAdmin(PersonDTO personDTO) {
+    public AdminDTO addAdmin(PersonDTO personDTO) throws LogicException{
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.ADMIN);
-        String password = person.getPassword();
-        person.setPassword(password);
-        Admin admin = new Admin();
-        admin.setPerson(person);
-        person.setAdmin(admin);
-        Admin adminRes = adminRepository.save(admin);
-        logger.info("Add to system new admin");
+        Person temp = personRepository.findPersonByUsername(person.getUsername());
+        Admin adminRes;
+        if (temp == null) {
+            String password = person.getPassword();
+            person.setPassword(password);
+            Admin admin = new Admin();
+            admin.setPerson(person);
+            person.setAdmin(admin);
+            adminRes = adminRepository.save(admin);
+            logger.info("Add to system new admin");
+        } else {
+            String error = "This username is already exist";
+            logger.error(error);
+            throw new LogicException(error);
+
+        }
         return adminConverter.convertToDTO(adminRes);
     }
 

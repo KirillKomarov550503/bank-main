@@ -9,6 +9,7 @@ import com.netcracker.komarov.services.dto.converter.ClientConverter;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.ClientDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
 import org.slf4j.Logger;
@@ -46,16 +47,25 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public ClientDTO save(PersonDTO personDTO) {
+    public ClientDTO save(PersonDTO personDTO) throws LogicException {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.CLIENT);
-        String password = person.getPassword();
-        person.setPassword(password);
-        Client client = new Client();
-        client.setPerson(person);
-        person.setClient(client);
-        logger.info("Registration of new client");
-        return clientConverter.convertToDTO(clientRepository.save(client));
+        Person temp = personRepository.findPersonByUsername(person.getUsername());
+        Client clientRes;
+        if (temp == null) {
+            String password = person.getPassword();
+            person.setPassword(password);
+            Client client = new Client();
+            client.setPerson(person);
+            person.setClient(client);
+            clientRes = clientRepository.save(client);
+            logger.info("Registration of new client");
+        } else {
+            String error = "This username is already exist";
+            logger.error(error);
+            throw new LogicException(error);
+        }
+        return clientConverter.convertToDTO(clientRes);
     }
 
     @Transactional

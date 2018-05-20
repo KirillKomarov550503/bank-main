@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClientNewsRepository extends JpaRepository<ClientNews, Long> {
+    ClientNews findClientNewsByClientIdAndAndNewsId(long clientId, long newsId);
 }

@@ -43,6 +43,11 @@ public class NewsServiceImpl implements NewsService {
         this.clientNewsRepository = clientNewsRepository;
     }
 
+    private boolean isAbsentInDatabase(long clientId, long newsId) {
+        ClientNews clientNews = clientNewsRepository.findClientNewsByClientIdAndAndNewsId(clientId, newsId);
+        return clientNews == null;
+    }
+
     private Collection<NewsDTO> convertCollection(Collection<News> newsCollection) {
         return newsCollection.stream()
                 .map(news -> newsConverter.convertToDTO(news))
@@ -142,9 +147,13 @@ public class NewsServiceImpl implements NewsService {
                 throw new LogicException(error);
             }
             if (clientIds.isEmpty()) {
-                clientNewsRepository.save(new ClientNews(0L, newsId));
+                if (isAbsentInDatabase(0L, newsId)) {
+                    clientNewsRepository.save(new ClientNews(0L, newsId));
+                }
             } else {
-                clientIds.forEach(clientId -> clientNewsRepository.save(new ClientNews(clientId, newsId)));
+                clientIds.stream()
+                        .filter(clientId -> isAbsentInDatabase(clientId, newsId))
+                        .forEach(clientId -> clientNewsRepository.save(new ClientNews(clientId, newsId)));
             }
         } else {
             String error = "There is no such news in database";

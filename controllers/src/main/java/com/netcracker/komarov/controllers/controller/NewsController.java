@@ -58,6 +58,21 @@ public class NewsController {
         ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(url, NewsJson[].class);
         return convertMultipleNewsJson(responseEntity);
     }
+    @ApiOperation(value = "Select news by ID")
+    @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
+    public ResponseEntity findGeneralNewsById(@PathVariable long newsId) {
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("newsId", newsId);
+        String url = SERVER_PREFIX + "/news/{newsId}";
+        ResponseEntity responseEntity;
+        try {
+            ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
+            responseEntity = convertSingleNewsJson(temp);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+        }
+        return responseEntity;
+    }
 
     @ApiOperation(value = "Selecting news by ID")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.GET)

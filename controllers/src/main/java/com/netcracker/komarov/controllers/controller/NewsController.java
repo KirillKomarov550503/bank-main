@@ -1,11 +1,15 @@
 package com.netcracker.komarov.controllers.controller;
 
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
+import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.interfaces.AdminService;
+import com.netcracker.komarov.services.interfaces.ClientService;
 import com.netcracker.komarov.services.json.NewsJson;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -21,12 +25,16 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/bank/v1")
 public class NewsController {
+    private final ClientService clientService;
     private RestTemplate restTemplate;
     private static final String SERVER_PREFIX = "http://localhost:8081/bank/v1";
+    private AdminService adminService;
 
     @Autowired
-    public NewsController(RestTemplate restTemplate) {
+    public NewsController(RestTemplate restTemplate, AdminService adminService, ClientService clientService) {
         this.restTemplate = restTemplate;
+        this.adminService = adminService;
+        this.clientService = clientService;
     }
 
     @ApiOperation(value = "Creation of new news")
@@ -36,9 +44,15 @@ public class NewsController {
         vars.put("adminId", adminId);
         String url = SERVER_PREFIX + "/admins/{adminId}/news";
         HttpEntity request = new HttpEntity<>(newsDTO);
-        ResponseEntity<NewsJson> responseEntity = restTemplate.exchange(url, HttpMethod.POST,
-                request, NewsJson.class, vars);
-        return convertSingleNewsJson(responseEntity);
+        ResponseEntity responseEntity;
+        try {
+            adminService.findById(adminId);
+            ResponseEntity<NewsJson> temp = restTemplate.postForEntity(url, request, NewsJson.class, vars);
+            responseEntity = convertSingleNewsJson(temp);
+        } catch (NotFoundException e) {
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
+        }
+        return responseEntity;
     }
 
     @ApiOperation(value = "Selecting all client news by client ID")
@@ -49,10 +63,13 @@ public class NewsController {
         String url = SERVER_PREFIX + "/clients/{clientId}/news";
         ResponseEntity responseEntity;
         try {
+            clientService.findById(clientId);
             ResponseEntity<NewsJson[]> temp = restTemplate.getForEntity(url, NewsJson[].class, vars);
             responseEntity = convertMultipleNewsJson(temp);
         } catch (HttpStatusCodeException e) {
-            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            responseEntity = getExceptionFromNewsMicroservice(e);
+        } catch (NotFoundException e) {
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
@@ -76,7 +93,7 @@ public class NewsController {
             ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
             responseEntity = convertSingleNewsJson(temp);
         } catch (HttpStatusCodeException e) {
-            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            responseEntity = getExceptionFromNewsMicroservice(e);
         }
         return responseEntity;
     }
@@ -92,7 +109,7 @@ public class NewsController {
             ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
             responseEntity = convertSingleNewsJson(temp);
         } catch (HttpStatusCodeException e) {
-            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            responseEntity = getExceptionFromNewsMicroservice(e);
         }
         return responseEntity;
     }
@@ -174,5 +191,9 @@ public class NewsController {
 
     private ResponseEntity getExceptionFromNewsMicroservice(HttpStatusCodeException e) {
         return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+    }
+
+    private ResponseEntity getNotFoundResponseEntity(String exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
     }
 }

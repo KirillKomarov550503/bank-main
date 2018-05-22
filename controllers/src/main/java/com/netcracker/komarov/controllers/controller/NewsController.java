@@ -1,70 +1,76 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.netcracker.komarov.dao.entity.NewsStatus;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
-import com.netcracker.komarov.services.exception.LogicException;
-import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.interfaces.NewsService;
+import com.netcracker.komarov.services.json.NewsJson;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/bank/v1")
 public class NewsController {
-    private NewsService newsService;
+    private RestTemplate restTemplate;
+    private static final String SERVER_PREFIX = "http://localhost:8081/bank/v1";
 
     @Autowired
-    public NewsController(NewsService newsService) {
-        this.newsService = newsService;
+    public NewsController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @ApiOperation(value = "Creation of new news")
     @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.POST)
     public ResponseEntity add(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
-        ResponseEntity responseEntity;
-        try {
-            NewsDTO dto = newsService.addNews(newsDTO, adminId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        }
-        return responseEntity;
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("adminId", adminId);
+        String url = SERVER_PREFIX + "/admins/{adminId}/news";
+        HttpEntity request = new HttpEntity<>(newsDTO);
+        ResponseEntity<NewsJson> responseEntity = restTemplate.exchange(url, HttpMethod.POST,
+                request, NewsJson.class, vars);
+        return convertSingleNewsJson(responseEntity);
     }
 
     @ApiOperation(value = "Selecting all client news by client ID")
     @RequestMapping(value = "/client/{clientId}/news", method = RequestMethod.GET)
     public ResponseEntity getAllClientNewsById(@PathVariable long clientId) {
-        ResponseEntity responseEntity;
-        try {
-            Collection<NewsDTO> dtos = newsService.getAllClientNewsById(clientId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        }
-        return responseEntity;
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("clientId", clientId);
+        String url = SERVER_PREFIX + "/client/{clientId}/news";
+        ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(url, NewsJson[].class, vars);
+        return convertMultipleNewsJson(responseEntity);
     }
 
     @ApiOperation(value = "Selecting all general news")
     @RequestMapping(value = "/news", method = RequestMethod.GET)
     public ResponseEntity findAllGeneralNews() {
-        Collection<NewsDTO> dtos = newsService.getAllNewsByStatus(NewsStatus.GENERAL);
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+        String url = SERVER_PREFIX + "/news";
+        ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(url, NewsJson[].class);
+        return convertMultipleNewsJson(responseEntity);
     }
 
     @ApiOperation(value = "Selecting news by ID")
-    @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long newsId) {
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("newsId", newsId);
+        String url = SERVER_PREFIX + "/admins/news/{newsId}";
         ResponseEntity responseEntity;
         try {
-            NewsDTO dto = newsService.findById(newsId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
+            responseEntity = convertSingleNewsJson(temp);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
         return responseEntity;
     }
@@ -74,53 +80,44 @@ public class NewsController {
     public ResponseEntity getCollection(@RequestParam(name = "filter",
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
             required = false, defaultValue = "false") boolean client) {
-        Collection<NewsDTO> dtos;
-        if (filter) {
-            if (client) {
-                dtos = newsService.getAllNewsByStatus(NewsStatus.CLIENT);
-            } else {
-                dtos = newsService.getAllNewsByStatus(NewsStatus.GENERAL);
-            }
-        } else {
-            dtos = newsService.getAllNews();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+        String url = SERVER_PREFIX + "/admins/news";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
+                .queryParam("filter", filter)
+                .queryParam("client", client);
+        ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(builder.build().toUri(), NewsJson[].class);
+        return convertMultipleNewsJson(responseEntity);
     }
 
     @ApiOperation(value = "Sending news to clients")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.POST)
     public ResponseEntity sendNewsToClients(@PathVariable long newsId, @RequestBody Collection<Long> clientIds) {
-        ResponseEntity responseEntity;
-        try {
-            NewsDTO dto = newsService.addClientNews(clientIds, newsId);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
-        }
-        return responseEntity;
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("newsId", newsId);
+        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        HttpEntity request = new HttpEntity<>(clientIds);
+        ResponseEntity<NewsJson> responseEntity = restTemplate.exchange(url, HttpMethod.POST,
+                request, NewsJson.class, vars);
+        return convertSingleNewsJson(responseEntity);
     }
 
     @ApiOperation(value = "Remarking news")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody NewsDTO requestNewsDTO, @PathVariable long newsId) {
-        ResponseEntity responseEntity;
-        try {
-            requestNewsDTO.setId(newsId);
-            NewsDTO dto = newsService.update(requestNewsDTO);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        }
-        return responseEntity;
+        Map<String, Long> vars = new HashMap<>();
+        vars.put("newsId", newsId);
+        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        HttpEntity request = new HttpEntity<>(requestNewsDTO);
+        ResponseEntity<NewsJson> responseEntity = restTemplate.exchange(url, HttpMethod.PUT,
+                request, NewsJson.class, vars);
+        return convertSingleNewsJson(responseEntity);
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    private ResponseEntity<NewsDTO> convertSingleNewsJson(ResponseEntity<NewsJson> responseEntity) {
+        return ResponseEntity.status(responseEntity.getStatusCode()).body(new NewsDTO(responseEntity.getBody()));
     }
 
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+    private ResponseEntity<Collection<NewsDTO>> convertMultipleNewsJson(ResponseEntity<NewsJson[]> responseEntity) {
+        return ResponseEntity.status(responseEntity.getStatusCode())
+                .body(Stream.of(responseEntity.getBody()).map(NewsDTO::new).collect(Collectors.toList()));
     }
 }

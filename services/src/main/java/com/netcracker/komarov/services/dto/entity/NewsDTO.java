@@ -3,6 +3,7 @@ package com.netcracker.komarov.services.dto.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.netcracker.komarov.services.json.NewsJson;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -26,6 +27,14 @@ public class NewsDTO implements Serializable {
     private String status;
 
     public NewsDTO() {
+    }
+
+    public NewsDTO(NewsJson json) {
+        id = json.getId();
+        date = json.getDate();
+        title = json.getTitle();
+        text = json.getText();
+        status = json.getStatus();
     }
 
     public NewsDTO(long id, String date, String title, String text, String status) {

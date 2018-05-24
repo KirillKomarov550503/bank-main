@@ -59,7 +59,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 AccountDTO dto = accountService.lockAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
@@ -79,11 +79,11 @@ public class AccountController {
         ResponseEntity responseEntity;
         clientService.findById(clientId);
         try {
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 AccountDTO dto = accountService.refill(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                throw new LogicException("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -120,7 +120,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
@@ -138,7 +138,7 @@ public class AccountController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {

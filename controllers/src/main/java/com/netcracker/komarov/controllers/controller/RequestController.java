@@ -43,11 +43,11 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -65,15 +65,15 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (accountService.contain(clientId, accountId)) {
+            if (accountService.isContain(clientId, accountId)) {
                 if (cardService.contain(accountId, cardId)) {
                     RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
                     responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not isContain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());

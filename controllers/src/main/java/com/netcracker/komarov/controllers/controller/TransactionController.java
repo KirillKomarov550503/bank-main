@@ -61,7 +61,7 @@ public class TransactionController {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            if (transactionService.contain(clientId, transactionId)) {
+            if (transactionService.isContain(clientId, transactionId)) {
                 TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {

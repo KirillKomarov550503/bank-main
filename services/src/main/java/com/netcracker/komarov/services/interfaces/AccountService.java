@@ -23,6 +23,6 @@ public interface AccountService {
 
     AccountDTO findById(long accountId) throws NotFoundException;
 
-    boolean contain(long clientId, long accountId) throws NotFoundException;
+    boolean isContain(long clientId, long accountId) throws NotFoundException;
 }
 

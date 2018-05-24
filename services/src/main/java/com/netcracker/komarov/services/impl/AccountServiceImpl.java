@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean contain(long clientId, long accountId) throws NotFoundException {
+    public boolean isContain(long clientId, long accountId) throws NotFoundException {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         boolean contain;
         if (optionalAccount.isPresent()) {

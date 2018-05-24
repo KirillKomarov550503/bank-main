@@ -14,5 +14,5 @@ public interface TransactionService {
 
     TransactionDTO findById(long transactionId) throws NotFoundException;
 
-    boolean contain(long clientId, long transactionId) throws NotFoundException, LogicException;
+    boolean isContain(long clientId, long transactionId) throws NotFoundException, LogicException;
 }

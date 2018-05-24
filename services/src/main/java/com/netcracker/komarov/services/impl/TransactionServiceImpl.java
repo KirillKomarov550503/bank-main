@@ -47,7 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean contain(long clientId, long transactionId) throws NotFoundException, LogicException {
+    public boolean isContain(long clientId, long transactionId) throws NotFoundException, LogicException {
         Optional<Transaction> optionalTransaction = transactionRepository.findById(transactionId);
         if (optionalTransaction.isPresent()) {
             Transaction transaction = optionalTransaction.get();

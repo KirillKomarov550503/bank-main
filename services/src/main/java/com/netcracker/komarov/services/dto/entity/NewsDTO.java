@@ -24,6 +24,7 @@ public class NewsDTO implements Serializable {
     private String text;
 
     @ApiModelProperty(position = 5)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String status;
 
     public NewsDTO() {

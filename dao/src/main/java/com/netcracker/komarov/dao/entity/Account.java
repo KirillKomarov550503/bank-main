@@ -22,9 +22,6 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Card> cards = new HashSet<>();
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Request request;
-
     public Account() {
     }
 
@@ -64,14 +61,6 @@ public class Account extends BaseEntity {
 
     public void setCards(Set<Card> cards) {
         this.cards = cards;
-    }
-
-    public Request getRequest() {
-        return request;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
     }
 
     @Override

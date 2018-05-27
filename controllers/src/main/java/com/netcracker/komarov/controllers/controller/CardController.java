@@ -40,7 +40,7 @@ public class CardController {
                 CardDTO dto = cardService.createCard(requestCardDTO);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -56,14 +56,14 @@ public class CardController {
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                if (cardService.contain(accountId, cardId)) {
+                if (cardService.isContain(accountId, cardId)) {
                     CardDTO dto = cardService.lockCard(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not isContain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -112,7 +112,7 @@ public class CardController {
                 Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -135,14 +135,14 @@ public class CardController {
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                if (cardService.contain(accountId, cardId)) {
+                if (cardService.isContain(accountId, cardId)) {
                     cardService.deleteById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).build();
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not isContain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -159,14 +159,14 @@ public class CardController {
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                if (cardService.contain(accountId, cardId)) {
+                if (cardService.isContain(accountId, cardId)) {
                     CardDTO dto = cardService.findById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not isContain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client dot not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client dot not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());

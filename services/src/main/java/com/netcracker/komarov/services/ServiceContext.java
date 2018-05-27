@@ -2,10 +2,12 @@ package com.netcracker.komarov.services;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "com.netcracker.komarov")
 @EnableJpaRepositories("com.netcracker.komarov.dao.repository")
 @EntityScan("com.netcracker.komarov.dao.entity")
+@EnableFeignClients
 public class ServiceContext {
 }

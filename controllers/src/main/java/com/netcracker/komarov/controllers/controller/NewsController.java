@@ -22,8 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/bank/v1")
@@ -70,7 +68,7 @@ public class NewsController {
             clientService.findById(clientId);
             responseEntity = restTemplate.getForEntity(url, NewsDTO[].class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
@@ -100,7 +98,7 @@ public class NewsController {
         try {
             responseEntity = restTemplate.getForEntity(url, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -115,7 +113,7 @@ public class NewsController {
         try {
             responseEntity = restTemplate.getForEntity(url, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -133,7 +131,7 @@ public class NewsController {
         try {
             responseEntity = restTemplate.getForEntity(builder.build().toUri(), NewsDTO[].class);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -149,7 +147,7 @@ public class NewsController {
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -165,7 +163,7 @@ public class NewsController {
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -181,7 +179,7 @@ public class NewsController {
             HttpEntity httpEntity = new HttpEntity<>(null);
             responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class, vars);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromNewsMicroservice(e);
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
@@ -192,12 +190,7 @@ public class NewsController {
         return "http://" + info.getIPAddr() + ":" + info.getPort() + "/bank/v1";
     }
 
-    private ResponseEntity<Collection<NewsDTO>> convertArrayToCollection(ResponseEntity<NewsDTO[]> responseEntity) {
-        return ResponseEntity.status(responseEntity.getStatusCode())
-                .body(Stream.of(responseEntity.getBody()).collect(Collectors.toList()));
-    }
-
-    private ResponseEntity getExceptionFromNewsMicroservice(HttpStatusCodeException e) {
+    private ResponseEntity getExceptionFromNewsService(HttpStatusCodeException e) {
         return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
     }
 

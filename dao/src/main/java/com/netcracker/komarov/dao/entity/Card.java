@@ -20,9 +20,6 @@ public class Card extends BaseEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Request request;
-
     public Card() {
 
     }
@@ -31,14 +28,6 @@ public class Card extends BaseEntity {
         this.locked = locked;
         this.pin = pin;
         this.account = account;
-    }
-
-    public Request getRequest() {
-        return request;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
     }
 
     public long getId() {

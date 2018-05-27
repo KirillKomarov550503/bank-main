@@ -1,13 +1,12 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.netcracker.komarov.services.dto.RequestStatus;
+import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
-import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.interfaces.RequestService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,21 +15,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collection;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
 @RequestMapping("/bank/v1")
 public class RequestController {
     private CardService cardService;
-    private RequestService requestService;
     private ClientService clientService;
     private AccountService accountService;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
-    public RequestController(RequestService requestService, ClientService clientService,
+    public RequestController(RequestFeignClient requestFeignClient, ClientService clientService,
                              AccountService accountService, CardService cardService) {
-        this.requestService = requestService;
+        this.requestFeignClient = requestFeignClient;
         this.clientService = clientService;
         this.accountService = accountService;
         this.cardService = cardService;
@@ -44,15 +42,18 @@ public class RequestController {
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                RequestDTO dto = requestService.saveRequest(accountId, RequestStatus.ACCOUNT);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
+                if (accountService.findById(accountId).isLocked()) {
+                    responseEntity = requestFeignClient.save(new RequestDTO(accountId, Status.ACCOUNT));
+                } else {
+                    responseEntity = getInternalServerErrorResponseEntity("Account is unlocking now");
+                }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
     }
@@ -66,19 +67,22 @@ public class RequestController {
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                if (cardService.contain(accountId, cardId)) {
-                    RequestDTO dto = requestService.saveRequest(cardId, RequestStatus.CARD);
-                    responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
+                if (cardService.isContain(accountId, cardId)) {
+                    if (cardService.findById(cardId).isLocked()) {
+                        responseEntity = requestFeignClient.save(new RequestDTO(cardId, Status.CARD));
+                    } else {
+                        responseEntity = getInternalServerErrorResponseEntity("Card is unlocking now");
+                    }
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not isContain this card");
+                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not isContain this account");
+                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
     }
@@ -86,8 +90,7 @@ public class RequestController {
     @ApiOperation(value = "Selecting all unlock requests")
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
     public ResponseEntity getAllRequests() {
-        Collection<RequestDTO> dtos = requestService.findAllRequests();
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+        return requestFeignClient.findAllRequests();
     }
 
     @ApiOperation(value = "Deleting request by ID")
@@ -95,10 +98,9 @@ public class RequestController {
     public ResponseEntity deleteById(@PathVariable long requestId) {
         ResponseEntity responseEntity;
         try {
-            requestService.delete(requestId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = requestFeignClient.deleteById(requestId);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
     }
@@ -108,12 +110,15 @@ public class RequestController {
     public ResponseEntity findById(@PathVariable long requestId) {
         ResponseEntity responseEntity;
         try {
-            RequestDTO dto = requestService.findById(requestId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = requestFeignClient.findById(requestId);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
+    }
+
+    private ResponseEntity getExceptionFromRequestService(HttpStatusCodeException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {

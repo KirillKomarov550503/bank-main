@@ -1,12 +1,13 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.services.ServiceContext;
-import com.netcracker.komarov.services.dto.RequestStatus;
+import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
+import com.netcracker.komarov.services.dto.entity.RequestDTO;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.interfaces.RequestService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +40,7 @@ public class AccountServiceImplTest {
     private ClientService clientService;
 
     @Autowired
-    private RequestService requestService;
+    private RequestFeignClient requestFeignClient;
 
     @Before
     public void init() {
@@ -72,7 +73,7 @@ public class AccountServiceImplTest {
     @Test
     public void unlockAccount() {
         accountService.lockAccount(1);
-        requestService.saveRequest(1, RequestStatus.ACCOUNT);
+        requestFeignClient.save(new RequestDTO(1L, Status.ACCOUNT));
         AccountDTO dto = new AccountDTO(1, false, 0, 1);
         assertEquals(dto, accountService.unlockAccount(1));
     }

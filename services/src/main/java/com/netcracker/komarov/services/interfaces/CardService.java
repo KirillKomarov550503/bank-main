@@ -23,5 +23,5 @@ public interface CardService {
 
     CardDTO findById(long cardId) throws NotFoundException;
 
-    boolean contain(long accountId, long cardId) throws NotFoundException;
+    boolean isContain(long accountId, long cardId) throws NotFoundException;
 }

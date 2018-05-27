@@ -1,47 +1,47 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.netcracker.komarov.services.dto.Status;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestDTO implements Serializable {
-    private long id;
-    private AccountDTO accountDTO;
-    private CardDTO cardDTO;
+    private Long id;
+    private Long entityId;
+    private Status status;
 
     public RequestDTO() {
     }
 
-    public RequestDTO(long id, AccountDTO accountDTO, CardDTO cardDTO) {
-        this.id = id;
-        this.accountDTO = accountDTO;
-        this.cardDTO = cardDTO;
+    public RequestDTO(Long entityId, Status status) {
+        this.entityId = entityId;
+        this.status = status;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public AccountDTO getAccountDTO() {
-        return accountDTO;
+    public Long getEntityId() {
+        return entityId;
     }
 
-    public void setAccountDTO(AccountDTO accountDTO) {
-        this.accountDTO = accountDTO;
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 
-    public CardDTO getCardDTO() {
-        return cardDTO;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setCardDTO(CardDTO cardDTO) {
-        this.cardDTO = cardDTO;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -49,23 +49,23 @@ public class RequestDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RequestDTO that = (RequestDTO) o;
-        return id == that.id &&
-                Objects.equals(accountDTO, that.accountDTO) &&
-                Objects.equals(cardDTO, that.cardDTO);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(entityId, that.entityId) &&
+                status == that.status;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, accountDTO, cardDTO);
+        return Objects.hash(id, entityId, status);
     }
 
     @Override
     public String toString() {
         return "RequestDTO{" +
                 "id=" + id +
-                ", accountDTO=" + accountDTO +
-                ", cardDTO=" + cardDTO +
+                ", entityId=" + entityId +
+                ", status=" + status +
                 '}';
     }
 }

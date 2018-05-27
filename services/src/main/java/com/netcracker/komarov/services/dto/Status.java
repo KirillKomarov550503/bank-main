@@ -1,5 +1,5 @@
 package com.netcracker.komarov.services.dto;
 
-public enum RequestStatus {
+public enum Status {
     ACCOUNT, CARD
 }

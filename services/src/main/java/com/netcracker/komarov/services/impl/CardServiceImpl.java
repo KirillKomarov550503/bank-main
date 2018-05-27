@@ -3,15 +3,16 @@ package com.netcracker.komarov.services.impl;
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.Client;
-import com.netcracker.komarov.dao.entity.Request;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
 import com.netcracker.komarov.dao.repository.ClientRepository;
-import com.netcracker.komarov.dao.repository.RequestRepository;
+import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
+import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
-    private RequestRepository requestRepository;
+    private RequestFeignClient requestFeignClient;
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
@@ -33,10 +34,10 @@ public class CardServiceImpl implements CardService {
     private Logger logger = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
-    public CardServiceImpl(RequestRepository requestRepository, CardRepository cardRepository,
+    public CardServiceImpl(RequestFeignClient requestFe, CardRepository cardRepository,
                            AccountRepository accountRepository, CardConverter cardConverter,
                            ClientRepository clientRepository) {
-        this.requestRepository = requestRepository;
+        this.requestFeignClient = requestFe;
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
@@ -50,7 +51,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean contain(long accountId, long cardId) throws NotFoundException {
+    public boolean isContain(long accountId, long cardId) throws NotFoundException {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
         boolean contain;
         if (optionalCard.isPresent()) {
@@ -144,21 +145,22 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public CardDTO unlockCard(long cardId) throws LogicException, NotFoundException {
-        Optional<Request> optionalRequest = requestRepository.findAll()
+        Optional<RequestDTO> optionalRequest = requestFeignClient.findAllRequests().getBody()
                 .stream()
-                .filter(request -> request.getCard() != null)
-                .filter(request -> request.getCard().getId() == cardId)
+                .filter(request -> Status.CARD.equals(request.getStatus()))
+                .filter(request -> request.getEntityId() == cardId)
                 .findFirst();
         Card res;
         if (optionalRequest.isPresent()) {
-            Card card = optionalRequest.get().getCard();
+            RequestDTO requestDTO = optionalRequest.get();
+            Card card = cardRepository.findById(requestDTO.getEntityId()).get();
             if (card.isLocked()) {
                 card.setLocked(false);
                 res = cardRepository.save(card);
-                requestRepository.deleteRequestById(optionalRequest.get().getId());
-                logger.info("Card was unlocked");
+                requestFeignClient.deleteById(requestDTO.getId());
+                logger.info("Successful unlocking card with ID: " + card.getId());
             } else {
-                String error = "This account is already unlocked";
+                String error = "This card is already unlocked";
                 logger.error(error);
                 throw new LogicException(error);
             }

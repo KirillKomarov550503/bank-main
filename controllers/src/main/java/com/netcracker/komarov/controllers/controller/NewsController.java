@@ -4,9 +4,12 @@ import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AdminService;
 import com.netcracker.komarov.services.interfaces.ClientService;
-import com.netcracker.komarov.services.json.NewsJson;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.Application;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -27,14 +30,16 @@ import java.util.stream.Stream;
 public class NewsController {
     private final ClientService clientService;
     private RestTemplate restTemplate;
-    private static final String SERVER_PREFIX = "http://localhost:8081/bank/v1";
     private AdminService adminService;
+    private EurekaClient eurekaClient;
 
     @Autowired
-    public NewsController(RestTemplate restTemplate, AdminService adminService, ClientService clientService) {
+    public NewsController(RestTemplate restTemplate, AdminService adminService,
+                          ClientService clientService, @Qualifier("eurekaClient") EurekaClient eurekaClient) {
         this.restTemplate = restTemplate;
         this.adminService = adminService;
         this.clientService = clientService;
+        this.eurekaClient = eurekaClient;
     }
 
     @ApiOperation(value = "Creation of new news")
@@ -42,13 +47,12 @@ public class NewsController {
     public ResponseEntity add(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("adminId", adminId);
-        String url = SERVER_PREFIX + "/admins/{adminId}/news";
+        String url = getDomain() + "/admins/{adminId}/news";
         HttpEntity request = new HttpEntity<>(newsDTO);
         ResponseEntity responseEntity;
         try {
             adminService.findById(adminId);
-            ResponseEntity<NewsJson> temp = restTemplate.postForEntity(url, request, NewsJson.class, vars);
-            responseEntity = convertSingleNewsJson(temp);
+            responseEntity = restTemplate.postForEntity(url, request, NewsDTO.class, vars);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
         }
@@ -60,12 +64,11 @@ public class NewsController {
     public ResponseEntity getAllClientNewsById(@PathVariable long clientId) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("clientId", clientId);
-        String url = SERVER_PREFIX + "/clients/{clientId}/news";
+        String url = getDomain() + "/clients/{clientId}/news";
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
-            ResponseEntity<NewsJson[]> temp = restTemplate.getForEntity(url, NewsJson[].class, vars);
-            responseEntity = convertMultipleNewsJson(temp);
+            responseEntity = restTemplate.getForEntity(url, NewsDTO[].class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         } catch (NotFoundException e) {
@@ -77,9 +80,14 @@ public class NewsController {
     @ApiOperation(value = "Selecting all general news")
     @RequestMapping(value = "/news", method = RequestMethod.GET)
     public ResponseEntity findAllGeneralNews() {
-        String url = SERVER_PREFIX + "/news";
-        ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(url, NewsJson[].class);
-        return convertMultipleNewsJson(responseEntity);
+        String url = getDomain() + "/news";
+        ResponseEntity responseEntity;
+        try {
+            responseEntity = restTemplate.getForEntity(url, NewsDTO[].class);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
+        }
+        return responseEntity;
     }
 
     @ApiOperation(value = "Select news by ID")
@@ -87,11 +95,10 @@ public class NewsController {
     public ResponseEntity findGeneralNewsById(@PathVariable long newsId) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("newsId", newsId);
-        String url = SERVER_PREFIX + "/news/{newsId}";
+        String url = getDomain() + "/news/{newsId}";
         ResponseEntity responseEntity;
         try {
-            ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
-            responseEntity = convertSingleNewsJson(temp);
+            responseEntity = restTemplate.getForEntity(url, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         }
@@ -103,11 +110,10 @@ public class NewsController {
     public ResponseEntity findById(@PathVariable long newsId) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("newsId", newsId);
-        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        String url = getDomain() + "/admins/news/{newsId}";
         ResponseEntity responseEntity;
         try {
-            ResponseEntity<NewsJson> temp = restTemplate.getForEntity(url, NewsJson.class, vars);
-            responseEntity = convertSingleNewsJson(temp);
+            responseEntity = restTemplate.getForEntity(url, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         }
@@ -119,12 +125,17 @@ public class NewsController {
     public ResponseEntity getCollection(@RequestParam(name = "filter",
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
             required = false, defaultValue = "false") boolean client) {
-        String url = SERVER_PREFIX + "/admins/news";
+        String url = getDomain() + "/admins/news";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
                 .queryParam("filter", filter)
                 .queryParam("client", client);
-        ResponseEntity<NewsJson[]> responseEntity = restTemplate.getForEntity(builder.build().toUri(), NewsJson[].class);
-        return convertMultipleNewsJson(responseEntity);
+        ResponseEntity responseEntity;
+        try {
+            responseEntity = restTemplate.getForEntity(builder.build().toUri(), NewsDTO[].class);
+        } catch (HttpStatusCodeException e) {
+            responseEntity = getExceptionFromNewsMicroservice(e);
+        }
+        return responseEntity;
     }
 
     @ApiOperation(value = "Sending news to clients")
@@ -132,13 +143,11 @@ public class NewsController {
     public ResponseEntity sendNewsToClients(@PathVariable long newsId, @RequestBody Collection<Long> clientIds) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("newsId", newsId);
-        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        String url = getDomain() + "/admins/news/{newsId}";
         HttpEntity request = new HttpEntity<>(clientIds);
         ResponseEntity responseEntity;
         try {
-            ResponseEntity<NewsJson> temp = restTemplate.exchange(url, HttpMethod.POST,
-                    request, NewsJson.class, vars);
-            responseEntity = convertSingleNewsJson(temp);
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         }
@@ -150,13 +159,11 @@ public class NewsController {
     public ResponseEntity update(@RequestBody NewsDTO requestNewsDTO, @PathVariable long newsId) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("newsId", newsId);
-        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        String url = getDomain() + "/admins/news/{newsId}";
         HttpEntity request = new HttpEntity<>(requestNewsDTO);
         ResponseEntity responseEntity;
         try {
-            ResponseEntity<NewsJson> temp = restTemplate.exchange(url, HttpMethod.PUT,
-                    request, NewsJson.class, vars);
-            responseEntity = convertSingleNewsJson(temp);
+            responseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, NewsDTO.class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         }
@@ -166,27 +173,28 @@ public class NewsController {
     @ApiOperation(value = "Delete news by ID")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long newsId) {
-        String url = SERVER_PREFIX + "/admins/news/{newsId}";
+        String url = getDomain() + "/admins/news/{newsId}";
         Map<String, Long> vars = new HashMap<>();
         vars.put("newsId", newsId);
         ResponseEntity responseEntity;
         try {
             HttpEntity httpEntity = new HttpEntity<>(null);
-            ResponseEntity<Void> temp = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class, vars);
-            responseEntity = ResponseEntity.status(temp.getStatusCode()).build();
+            responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsMicroservice(e);
         }
         return responseEntity;
     }
 
-    private ResponseEntity<NewsDTO> convertSingleNewsJson(ResponseEntity<NewsJson> responseEntity) {
-        return ResponseEntity.status(responseEntity.getStatusCode()).body(new NewsDTO(responseEntity.getBody()));
+    private String getDomain() {
+        Application application = eurekaClient.getApplication("bank-news");
+        InstanceInfo info = application.getInstances().get(0);
+        return "http://" + info.getIPAddr() + ":" + info.getPort() + "/bank/v1";
     }
 
-    private ResponseEntity<Collection<NewsDTO>> convertMultipleNewsJson(ResponseEntity<NewsJson[]> responseEntity) {
+    private ResponseEntity<Collection<NewsDTO>> convertArrayToCollection(ResponseEntity<NewsDTO[]> responseEntity) {
         return ResponseEntity.status(responseEntity.getStatusCode())
-                .body(Stream.of(responseEntity.getBody()).map(NewsDTO::new).collect(Collectors.toList()));
+                .body(Stream.of(responseEntity.getBody()).collect(Collectors.toList()));
     }
 
     private ResponseEntity getExceptionFromNewsMicroservice(HttpStatusCodeException e) {

@@ -1,20 +1,19 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.netcracker.komarov.services.json.NewsJson;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @JsonPropertyOrder({"id", "title", "text", "status", "date"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsDTO implements Serializable {
-    @ApiModelProperty(position = 1)
+    @ApiModelProperty(position = 1, readOnly = true, hidden = true)
     private long id;
 
-    @ApiModelProperty(position = 2)
+    @ApiModelProperty(position = 2, readOnly = true, hidden = true)
     private String date;
 
     @ApiModelProperty(position = 3)
@@ -24,18 +23,9 @@ public class NewsDTO implements Serializable {
     private String text;
 
     @ApiModelProperty(position = 5)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String status;
 
     public NewsDTO() {
-    }
-
-    public NewsDTO(NewsJson json) {
-        id = json.getId();
-        date = json.getDate();
-        title = json.getTitle();
-        text = json.getText();
-        status = json.getStatus();
     }
 
     public NewsDTO(long id, String date, String title, String text, String status) {
@@ -46,24 +36,18 @@ public class NewsDTO implements Serializable {
         this.status = status;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
-    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getDate() {
         return date;
     }
 
-    @JsonIgnore
     public void setDate(String date) {
         this.date = date;
     }
@@ -82,10 +66,6 @@ public class NewsDTO implements Serializable {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setStatus(String status) {

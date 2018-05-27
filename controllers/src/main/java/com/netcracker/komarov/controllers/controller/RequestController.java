@@ -2,7 +2,6 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
-import com.netcracker.komarov.services.exception.ExternalServiceException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
 @RequestMapping("/bank/v1")
@@ -48,20 +45,15 @@ public class RequestController {
                 if (accountService.findById(accountId).isLocked()) {
                     responseEntity = requestFeignClient.save(new RequestDTO(accountId, Status.ACCOUNT));
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account is unlocking now");
+                    responseEntity = getResponseEntityOfInternalServerError("Account is unlocking now");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getResponseEntityOfInternalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (HttpServerErrorException e) {
-            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
-//            responseEntity = getExceptionFromRequestService(e);
-        } catch (HttpStatusCodeException e) {
-            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            responseEntity = getResponseEntityOfNotFoundException(e.getMessage());
         } catch (FeignException e) {
-            responseEntity = ResponseEntity.status(e.status()).body(e.getMessage());
+            responseEntity = getResponseEntityOfFeignException(e);
         }
         return responseEntity;
     }
@@ -79,18 +71,18 @@ public class RequestController {
                     if (cardService.findById(cardId).isLocked()) {
                         responseEntity = requestFeignClient.save(new RequestDTO(cardId, Status.CARD));
                     } else {
-                        responseEntity = getInternalServerErrorResponseEntity("Card is unlocking now");
+                        responseEntity = getResponseEntityOfInternalServerError("Card is unlocking now");
                     }
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
+                    responseEntity = getResponseEntityOfInternalServerError("Account do not contain this card");
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getResponseEntityOfInternalServerError("Client do not contain this account");
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (ExternalServiceException e) {
-            responseEntity = getExceptionFromRequestService(e);
+            responseEntity = getResponseEntityOfNotFoundException(e.getMessage());
+        } catch (FeignException e) {
+            responseEntity = getResponseEntityOfFeignException(e);
         }
         return responseEntity;
     }
@@ -107,8 +99,8 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             responseEntity = requestFeignClient.deleteById(requestId);
-        } catch (ExternalServiceException e) {
-            responseEntity = getExceptionFromRequestService(e);
+        } catch (FeignException e) {
+            responseEntity = getResponseEntityOfFeignException(e);
         }
         return responseEntity;
     }
@@ -119,21 +111,21 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             responseEntity = requestFeignClient.findById(requestId);
-        } catch (ExternalServiceException e) {
-            responseEntity = getExceptionFromRequestService(e);
+        } catch (FeignException e) {
+            responseEntity = getResponseEntityOfFeignException(e);
         }
         return responseEntity;
     }
 
-    private ResponseEntity getExceptionFromRequestService(ExternalServiceException e) {
-        return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+    private ResponseEntity getResponseEntityOfFeignException(FeignException e) {
+        return ResponseEntity.status(e.status()).body(e.getMessage().split("\n")[1]);
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
+    private ResponseEntity getResponseEntityOfNotFoundException(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
+    private ResponseEntity getResponseEntityOfInternalServerError(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 }

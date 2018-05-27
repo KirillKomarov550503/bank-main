@@ -2,11 +2,13 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
+import com.netcracker.komarov.services.exception.ExternalServiceException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.ClientService;
+import feign.FeignException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
@@ -52,8 +55,13 @@ public class RequestController {
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
+        } catch (HttpServerErrorException e) {
+            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+//            responseEntity = getExceptionFromRequestService(e);
         } catch (HttpStatusCodeException e) {
-            responseEntity = getExceptionFromRequestService(e);
+            responseEntity = ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+        } catch (FeignException e) {
+            responseEntity = ResponseEntity.status(e.status()).body(e.getMessage());
         }
         return responseEntity;
     }
@@ -81,7 +89,7 @@ public class RequestController {
             }
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (HttpStatusCodeException e) {
+        } catch (ExternalServiceException e) {
             responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
@@ -99,7 +107,7 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             responseEntity = requestFeignClient.deleteById(requestId);
-        } catch (HttpStatusCodeException e) {
+        } catch (ExternalServiceException e) {
             responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
@@ -111,14 +119,14 @@ public class RequestController {
         ResponseEntity responseEntity;
         try {
             responseEntity = requestFeignClient.findById(requestId);
-        } catch (HttpStatusCodeException e) {
+        } catch (ExternalServiceException e) {
             responseEntity = getExceptionFromRequestService(e);
         }
         return responseEntity;
     }
 
-    private ResponseEntity getExceptionFromRequestService(HttpStatusCodeException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+    private ResponseEntity getExceptionFromRequestService(ExternalServiceException e) {
+        return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {

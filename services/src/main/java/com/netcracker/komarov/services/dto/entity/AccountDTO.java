@@ -1,58 +1,63 @@
 package com.netcracker.komarov.services.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountDTO implements Serializable {
-    private long id;
-    private boolean locked;
-    private double balance;
-    private long clientId;
+    @ApiModelProperty(readOnly = true, hidden = true)
+    private Long id;
+    private Boolean locked;
+    private Double balance;
+    private Long clientId;
 
     public AccountDTO() {
     }
 
-    public AccountDTO(boolean locked, double balance) {
+    public AccountDTO(Boolean locked, Double balance) {
         this.locked = locked;
         this.balance = balance;
     }
 
-    public AccountDTO(long id, boolean locked, double balance, long clientId) {
+    public AccountDTO(Long id, Boolean locked, Double balance, Long clientId) {
         this.id = id;
         this.locked = locked;
         this.balance = balance;
         this.clientId = clientId;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
-    public long getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
-    public void setClientId(long clientId) {
+    public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
 
@@ -61,10 +66,10 @@ public class AccountDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountDTO that = (AccountDTO) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 locked == that.locked &&
                 Double.compare(that.balance, balance) == 0 &&
-                clientId == that.clientId;
+                Objects.equals(clientId, that.clientId);
     }
 
     @Override

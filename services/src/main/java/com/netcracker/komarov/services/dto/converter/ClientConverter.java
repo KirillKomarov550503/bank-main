@@ -20,9 +20,7 @@ public class ClientConverter implements Converter<ClientDTO, Client> {
             clientDTO.setSurname(person.getSurname());
             clientDTO.setLogin(person.getUsername());
             clientDTO.setPassportId(person.getPassportId());
-            clientDTO.setPassword(person.getPassword());
             clientDTO.setPhoneNumber(person.getPhoneNumber());
-            clientDTO.setRole(person.getRole());
         }
         return clientDTO;
     }

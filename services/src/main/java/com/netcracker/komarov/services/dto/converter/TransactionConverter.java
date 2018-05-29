@@ -26,7 +26,6 @@ public class TransactionConverter implements Converter<TransactionDTO, Transacti
         Transaction transaction = new Transaction();
         transaction.setAccountFromId(dto.getAccountFromId());
         transaction.setAccountToId(dto.getAccountToId());
-        transaction.setDate(dto.getDate());
         transaction.setMoney(dto.getMoney());
         return transaction;
     }

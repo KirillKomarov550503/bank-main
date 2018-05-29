@@ -11,7 +11,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsDTO implements Serializable {
     @ApiModelProperty(position = 1, readOnly = true, hidden = true)
-    private long id;
+    private Long id;
 
     @ApiModelProperty(position = 2, readOnly = true, hidden = true)
     private String date;
@@ -36,7 +36,7 @@ public class NewsDTO implements Serializable {
         this.status = status;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -77,7 +77,7 @@ public class NewsDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NewsDTO newsDTO = (NewsDTO) o;
-        return id == newsDTO.id &&
+        return Objects.equals(id, newsDTO.id) &&
                 Objects.equals(date, newsDTO.date) &&
                 Objects.equals(title, newsDTO.title) &&
                 Objects.equals(text, newsDTO.text) &&
@@ -86,7 +86,6 @@ public class NewsDTO implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, date, title, text, status);
     }
 

@@ -1,23 +1,25 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionDTO implements Serializable {
-    private long id;
-    private long accountFromId;
-    private long accountToId;
-    private double money;
+    @ApiModelProperty(readOnly = true, hidden = true)
+    private Long id;
+    private Long accountFromId;
+    private Long accountToId;
+    private Double money;
+    @ApiModelProperty(readOnly = true, hidden = true)
     private String date;
 
     public TransactionDTO() {
     }
 
-    public TransactionDTO(long id, long accountFromId, long accountToId, double money, String date) {
+    public TransactionDTO(Long id, Long accountFromId, Long accountToId, Double money, String date) {
         this.id = id;
         this.accountFromId = accountFromId;
         this.accountToId = accountToId;
@@ -25,48 +27,42 @@ public class TransactionDTO implements Serializable {
         this.date = date;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    @JsonIgnore
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getAccountFromId() {
+    public Long getAccountFromId() {
         return accountFromId;
     }
 
-    public void setAccountFromId(long accountFromId) {
+    public void setAccountFromId(Long accountFromId) {
         this.accountFromId = accountFromId;
     }
 
-    public long getAccountToId() {
+    public Long getAccountToId() {
         return accountToId;
     }
 
-    public void setAccountToId(long accountToId) {
+    public void setAccountToId(Long accountToId) {
         this.accountToId = accountToId;
     }
 
-    public double getMoney() {
+    public Double getMoney() {
         return money;
     }
 
-    public void setMoney(double money) {
+    public void setMoney(Double money) {
         this.money = money;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getDate() {
         return date;
     }
 
-    @JsonIgnore
     public void setDate(String date) {
         this.date = date;
     }
@@ -76,9 +72,9 @@ public class TransactionDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionDTO dto = (TransactionDTO) o;
-        return id == dto.id &&
-                accountFromId == dto.accountFromId &&
-                accountToId == dto.accountToId &&
+        return Objects.equals(id, dto.id) &&
+                Objects.equals(accountFromId, dto.accountFromId) &&
+                Objects.equals(accountToId, dto.accountToId) &&
                 Double.compare(dto.money, money) == 0 &&
                 Objects.equals(date, dto.date);
     }

@@ -18,7 +18,7 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
             dto.setPassportId(person.getPassportId());
             dto.setPhoneNumber(person.getPhoneNumber());
             dto.setUsername(person.getUsername());
-            dto.setPassword(person.getPassword());
+            dto.setRole(person.getRole());
         }
         return dto;
     }

@@ -20,9 +20,7 @@ public class AdminConverter implements Converter<AdminDTO, Admin> {
             adminDTO.setSurname(person.getSurname());
             adminDTO.setLogin(person.getUsername());
             adminDTO.setPassportId(person.getPassportId());
-            adminDTO.setPassword(person.getPassword());
             adminDTO.setPhoneNumber(person.getPhoneNumber());
-            adminDTO.setRole(person.getRole());
         }
         return adminDTO;
     }

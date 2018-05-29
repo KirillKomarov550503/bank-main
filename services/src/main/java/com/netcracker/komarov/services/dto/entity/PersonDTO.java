@@ -1,15 +1,16 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.netcracker.komarov.dao.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PersonDTO implements Serializable {
-    @ApiModelProperty(position = 1)
-    private long id;
+    @ApiModelProperty(position = 1, readOnly = true, hidden = true)
+    private Long id;
 
     @ApiModelProperty(position = 2)
     private String name;
@@ -18,23 +19,24 @@ public class PersonDTO implements Serializable {
     private String surname;
 
     @ApiModelProperty(position = 4)
-    private long phoneNumber;
+    private Long phoneNumber;
 
     @ApiModelProperty(position = 5)
-    private long passportId;
+    private Long passportId;
 
     @ApiModelProperty(position = 6)
     private String username;
 
     @ApiModelProperty(position = 7)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    private Role role;
 
     public PersonDTO() {
     }
 
-    public PersonDTO(long id, String name, String surname, long phoneNumber,
-                     long passportId, String username, String password) {
+    public PersonDTO(long id, String name, String surname, Long phoneNumber,
+                     Long passportId, String username, String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -44,13 +46,10 @@ public class PersonDTO implements Serializable {
         this.password = password;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
@@ -71,7 +70,7 @@ public class PersonDTO implements Serializable {
         this.surname = surname;
     }
 
-    public long getPhoneNumber() {
+    public Long getPhoneNumber() {
         return phoneNumber;
     }
 
@@ -79,7 +78,7 @@ public class PersonDTO implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public long getPassportId() {
+    public Long getPassportId() {
         return passportId;
     }
 
@@ -103,14 +102,22 @@ public class PersonDTO implements Serializable {
         this.password = password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonDTO personDTO = (PersonDTO) o;
-        return id == personDTO.id &&
-                phoneNumber == personDTO.phoneNumber &&
-                passportId == personDTO.passportId &&
+        return Objects.equals(id, personDTO.id) &&
+                Objects.equals(phoneNumber, personDTO.phoneNumber) &&
+                Objects.equals(passportId, personDTO.passportId) &&
                 Objects.equals(name, personDTO.name) &&
                 Objects.equals(surname, personDTO.surname) &&
                 Objects.equals(username, personDTO.username);
@@ -118,7 +125,6 @@ public class PersonDTO implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, name, surname, phoneNumber, passportId, username);
     }
 

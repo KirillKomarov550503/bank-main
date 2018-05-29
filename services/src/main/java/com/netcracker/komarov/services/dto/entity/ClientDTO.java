@@ -1,16 +1,16 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.netcracker.komarov.dao.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClientDTO implements Serializable {
-    @ApiModelProperty(position = 1)
-    private long id;
+    @ApiModelProperty(position = 1, readOnly = true, hidden = true)
+    private Long id;
 
     @ApiModelProperty(position = 2)
     private String name;
@@ -22,22 +22,21 @@ public class ClientDTO implements Serializable {
     private String login;
 
     @ApiModelProperty(position = 7)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ApiModelProperty(position = 4)
-    private long phoneNumber;
+    private Long phoneNumber;
 
     @ApiModelProperty(position = 5)
-    private long passportId;
+    private Long passportId;
 
-    @JsonIgnore
     private Role role;
 
     public ClientDTO() {
     }
 
-    public ClientDTO(long id, String name, String surname, String login, String password, long phoneNumber, long passportId, Role role) {
+    public ClientDTO(long id, String name, String surname, String login, String password,
+                     Long phoneNumber, Long passportId, Role role) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -48,13 +47,10 @@ public class ClientDTO implements Serializable {
         this.role = role;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
@@ -91,7 +87,7 @@ public class ClientDTO implements Serializable {
         this.password = password;
     }
 
-    public long getPhoneNumber() {
+    public Long getPhoneNumber() {
         return phoneNumber;
     }
 
@@ -99,7 +95,7 @@ public class ClientDTO implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public long getPassportId() {
+    public Long getPassportId() {
         return passportId;
     }
 
@@ -120,9 +116,9 @@ public class ClientDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientDTO clientDTO = (ClientDTO) o;
-        return id == clientDTO.id &&
-                phoneNumber == clientDTO.phoneNumber &&
-                passportId == clientDTO.passportId &&
+        return Objects.equals(id, clientDTO.id) &&
+                Objects.equals(phoneNumber, clientDTO.phoneNumber) &&
+                Objects.equals(passportId, clientDTO.passportId) &&
                 Objects.equals(name, clientDTO.name) &&
                 Objects.equals(surname, clientDTO.surname) &&
                 Objects.equals(login, clientDTO.login) &&

@@ -16,7 +16,6 @@ public class CardConverter implements Converter<CardDTO, Card> {
             cardDTO.setAccountId(card.getAccount().getId());
             cardDTO.setBalance(card.getAccount().getBalance());
             cardDTO.setLocked(card.isLocked());
-            cardDTO.setPin(card.getPin());
         }
         return cardDTO;
     }
@@ -25,7 +24,6 @@ public class CardConverter implements Converter<CardDTO, Card> {
     public Card convertToEntity(CardDTO dto) {
         Card card = new Card();
         card.setPin(dto.getPin());
-        card.setLocked(dto.isLocked());
         return card;
     }
 }

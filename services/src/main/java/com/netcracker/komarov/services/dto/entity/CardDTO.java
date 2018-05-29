@@ -1,25 +1,24 @@
 package com.netcracker.komarov.services.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardDTO implements Serializable {
-    private long id;
-    private boolean locked;
-    private double balance;
-    private long accountId;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int pin;
+    @ApiModelProperty(readOnly = true, hidden = true)
+    private Long id;
+    private Boolean locked;
+    private Double balance;
+    private Long accountId;
+    private Integer pin;
 
     public CardDTO() {
     }
 
-    public CardDTO(long id, boolean locked, double balance, long accountId, int pin) {
+    public CardDTO(Long id, Boolean locked, Double balance, Long accountId, Integer pin) {
         this.id = id;
         this.locked = locked;
         this.balance = balance;
@@ -27,40 +26,31 @@ public class CardDTO implements Serializable {
         this.pin = pin;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    @JsonIgnore
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    @JsonIgnore
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    @JsonIgnore
-    public void setBalance(double balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
-    public int getPin() {
+    public Integer getPin() {
         return pin;
     }
 
@@ -68,14 +58,11 @@ public class CardDTO implements Serializable {
         this.pin = pin;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public long getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    @JsonIgnore
-    public void setAccountId(long accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 
@@ -84,11 +71,11 @@ public class CardDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CardDTO cardDTO = (CardDTO) o;
-        return id == cardDTO.id &&
+        return Objects.equals(id, cardDTO.id) &&
                 locked == cardDTO.locked &&
                 Double.compare(cardDTO.balance, balance) == 0 &&
-                accountId == cardDTO.accountId &&
-                pin == cardDTO.pin;
+                Objects.equals(accountId, cardDTO.accountId) &&
+                Objects.equals(pin, cardDTO.pin);
     }
 
     @Override

@@ -1,15 +1,16 @@
 package com.netcracker.komarov.services.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.netcracker.komarov.dao.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdminDTO implements Serializable {
-    @ApiModelProperty(position = 1)
+    @ApiModelProperty(position = 1, readOnly = true, hidden = true)
     private long id;
 
     @ApiModelProperty(position = 2)
@@ -22,7 +23,6 @@ public class AdminDTO implements Serializable {
     private String login;
 
     @ApiModelProperty(position = 7)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ApiModelProperty(position = 4)
@@ -49,13 +49,10 @@ public class AdminDTO implements Serializable {
         this.role = role;
     }
 
-    @ApiModelProperty(readOnly = true, hidden = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public long getId() {
         return id;
     }
 
-    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }

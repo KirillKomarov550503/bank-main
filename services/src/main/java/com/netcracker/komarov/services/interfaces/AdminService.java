@@ -8,9 +8,9 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import java.util.Collection;
 
 public interface AdminService {
-    AdminDTO addAdmin(PersonDTO personDTO) throws LogicException;
+    AdminDTO saveAdmin(PersonDTO personDTO) throws LogicException;
 
-    Collection<AdminDTO> getAllAdmin();
+    Collection<AdminDTO> findAllAdmins();
 
     AdminDTO update(AdminDTO adminDTO) throws NotFoundException;
 

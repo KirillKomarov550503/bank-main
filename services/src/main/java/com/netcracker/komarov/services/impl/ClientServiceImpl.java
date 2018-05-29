@@ -30,7 +30,7 @@ public class ClientServiceImpl implements ClientService {
     private PersonConverter personConverter;
     private PersonRepository personRepository;
     private PasswordEncoder passwordEncoder;
-    private Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientServiceImpl.class);
 
     @Autowired
     public ClientServiceImpl(ClientRepository clientRepository, ClientConverter clientConverter,
@@ -63,10 +63,10 @@ public class ClientServiceImpl implements ClientService {
             client.setPerson(person);
             person.setClient(client);
             clientRes = clientRepository.save(client);
-            logger.info("Registration of new client");
+            LOGGER.info("Registration of new client with ID " + personDTO.getId());
         } else {
             String error = "This username is already exist";
-            logger.error(error);
+            LOGGER.error(error);
             throw new LogicException(error);
         }
         return clientConverter.convertToDTO(clientRes);
@@ -75,7 +75,7 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     @Override
     public Collection<ClientDTO> findAllClients() {
-        logger.info("Return all clients");
+        LOGGER.info("Return all clients");
         return convertCollection(clientRepository.findAll());
     }
 
@@ -94,10 +94,10 @@ public class ClientServiceImpl implements ClientService {
             newPerson.setId(oldPerson.getId());
             oldClient.setPerson(newPerson);
             resClient = clientRepository.saveAndFlush(oldClient);
-            logger.info("Information about client was updated");
+            LOGGER.info("Information about client with ID " + clientDTO.getId() + " was updated");
         } else {
-            String error = "There is no such client in database";
-            logger.error(error);
+            String error = "There is no such client in database with ID " + clientDTO.getId();
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return clientConverter.convertToDTO(resClient);
@@ -111,10 +111,10 @@ public class ClientServiceImpl implements ClientService {
             Client client = optionalClient.get();
             clientRepository.save(client);
             personRepository.deleteById(client.getPerson().getId());
-            logger.info("Client was deleted");
+            LOGGER.info("Client with ID " + clientId + " was deleted");
         } else {
-            String error = "There is no such client in database";
-            logger.error(error);
+            String error = "There is no such client in database with ID " + clientId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
     }
@@ -126,10 +126,10 @@ public class ClientServiceImpl implements ClientService {
         Client client;
         if (optionalClient.isPresent()) {
             client = optionalClient.get();
-            logger.info("Return client");
+            LOGGER.info("Return client with ID " + clientId);
         } else {
-            String error = "There is no such client";
-            logger.error(error);
+            String error = "There is no such client with ID " + clientId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return clientConverter.convertToDTO(client);

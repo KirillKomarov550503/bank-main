@@ -6,7 +6,7 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import java.util.Collection;
 
 public interface PersonService {
-    Collection<PersonDTO> getAllPeople();
+    Collection<PersonDTO> findAllPeople();
 
     PersonDTO findById(long personId) throws NotFoundException;
 }

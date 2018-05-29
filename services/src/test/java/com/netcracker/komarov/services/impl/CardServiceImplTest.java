@@ -49,11 +49,11 @@ public class CardServiceImplTest {
     public void init() {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov",
                 1, 1, "Optimist", "qwerty"));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        cardService.createCard(new CardDTO(0, false, 0, 1, 1111));
-        cardService.createCard(new CardDTO(0, false, 0, 1, 2222));
-        cardService.createCard(new CardDTO(0, false, 0, 2, 3333));
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
+        cardService.save(new CardDTO(0, false, 0, 1, 1111));
+        cardService.save(new CardDTO(0, false, 0, 1, 2222));
+        cardService.save(new CardDTO(0, false, 0, 2, 3333));
     }
 
     @Test
@@ -65,25 +65,25 @@ public class CardServiceImplTest {
     @Test
     public void createCard() {
         CardDTO dto = new CardDTO(4, false, 0, 2, 4444);
-        assertEquals(dto, cardService.createCard(new CardDTO(0, false, 0, 2, 4444)));
+        assertEquals(dto, cardService.save(new CardDTO(0, false, 0, 2, 4444)));
     }
 
     @Test
     public void getCardsByClientIdAndLock() {
         Collection<CardDTO> dtos = new ArrayList<>();
-        assertEquals("Must return empty list", dtos, cardService.getCardsByClientIdAndLock(1, true));
+        assertEquals("Must return empty list", dtos, cardService.findCardsByClientIdAndLock(1, true));
         cardService.lockCard(1);
         cardService.lockCard(2);
         dtos.add(new CardDTO(1, true, 0, 1, 1111));
         dtos.add(new CardDTO(2, true, 0, 1, 2222));
-        assertEquals(dtos, cardService.getCardsByClientIdAndLock(1, true));
+        assertEquals(dtos, cardService.findCardsByClientIdAndLock(1, true));
     }
 
     @Test
     public void getAllCardsByAccountId() {
         Collection<CardDTO> dtos = new ArrayList<>();
         dtos.add(new CardDTO(3, false, 0, 2, 3333));
-        assertEquals(dtos, cardService.getAllCardsByAccountId(2));
+        assertEquals(dtos, cardService.findCardsByAccountId(2));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class CardServiceImplTest {
         cards.add(new CardDTO(1, false, 0, 1, 1111));
         cards.add(new CardDTO(2, false, 0, 1, 2222));
         cards.add(new CardDTO(3, false, 0, 2, 3333));
-        assertEquals(cards, cardService.getAllCards());
+        assertEquals(cards, cardService.findAllCards());
     }
 
     @Test

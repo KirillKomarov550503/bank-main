@@ -30,14 +30,14 @@ public class CardController {
 
     @ApiOperation(value = "Creation of new card")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards", method = RequestMethod.POST)
-    public ResponseEntity create(@PathVariable long clientId, @PathVariable long accountId,
-                                 @RequestBody CardDTO requestCardDTO) {
+    public ResponseEntity save(@PathVariable long clientId, @PathVariable long accountId,
+                               @RequestBody CardDTO requestCardDTO) {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
                 requestCardDTO.setAccountId(accountId);
-                CardDTO dto = cardService.createCard(requestCardDTO);
+                CardDTO dto = cardService.save(requestCardDTO);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
                 responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
@@ -50,8 +50,8 @@ public class CardController {
 
     @ApiOperation(value = "Locking of card by ID")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}", method = RequestMethod.PATCH)
-    public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId,
-                               @PathVariable long cardId) {
+    public ResponseEntity lockCard(@PathVariable long clientId, @PathVariable long accountId,
+                                   @PathVariable long cardId) {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
@@ -75,7 +75,7 @@ public class CardController {
 
     @ApiOperation(value = "Unlocking card by ID")
     @RequestMapping(value = "/admins/requests/cards/{cardId}", method = RequestMethod.PATCH)
-    public ResponseEntity unlock(@PathVariable long cardId) {
+    public ResponseEntity unlockCard(@PathVariable long cardId) {
         ResponseEntity responseEntity;
         try {
             CardDTO dto = cardService.unlockCard(cardId);
@@ -90,11 +90,11 @@ public class CardController {
 
     @ApiOperation(value = "Selecting all card by status")
     @RequestMapping(value = "/clients/{clientId}/cards/status", method = RequestMethod.GET)
-    public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
+    public ResponseEntity findByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lockAccount",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
         try {
-            Collection<CardDTO> dtos = cardService.getCardsByClientIdAndLock(clientId, lock);
+            Collection<CardDTO> dtos = cardService.findCardsByClientIdAndLock(clientId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -104,12 +104,12 @@ public class CardController {
 
     @ApiOperation(value = "Selecting all card that belong to account ID")
     @RequestMapping(value = "/clients/{clientId}/accounts{accountId}/cards", method = RequestMethod.GET)
-    public ResponseEntity getByAccountId(@PathVariable long clientId, @PathVariable long accountId) {
+    public ResponseEntity findByAccountId(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
             if (accountService.isContain(clientId, accountId)) {
-                Collection<CardDTO> dtos = cardService.getAllCardsByAccountId(accountId);
+                Collection<CardDTO> dtos = cardService.findCardsByAccountId(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
             } else {
                 responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
@@ -122,8 +122,8 @@ public class CardController {
 
     @ApiOperation(value = "Selecting all card")
     @RequestMapping(value = "/admins/cards", method = RequestMethod.GET)
-    public ResponseEntity getAll() {
-        Collection<CardDTO> dtos = cardService.getAllCards();
+    public ResponseEntity findAllCards() {
+        Collection<CardDTO> dtos = cardService.findAllCards();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 

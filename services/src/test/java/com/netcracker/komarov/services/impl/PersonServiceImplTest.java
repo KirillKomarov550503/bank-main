@@ -47,8 +47,8 @@ public class PersonServiceImplTest {
         PersonDTO personDTO4 = new PersonDTO(0, "Peter", "Parker",
                 4, 4, "Spider-man", "Mary_Jane");
         clientService.save(personDTO2);
-        adminService.addAdmin(personDTO1);
-        adminService.addAdmin(personDTO4);
+        adminService.saveAdmin(personDTO1);
+        adminService.saveAdmin(personDTO4);
         clientService.save(personDTO3);
     }
 
@@ -68,7 +68,7 @@ public class PersonServiceImplTest {
         dtos.add(personDTO1);
         dtos.add(personDTO4);
         dtos.add(personDTO3);
-        assertEquals(dtos, personService.getAllPeople());
+        assertEquals(dtos, personService.findAllPeople());
     }
 
     @Test

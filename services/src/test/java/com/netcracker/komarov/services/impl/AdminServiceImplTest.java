@@ -41,9 +41,9 @@ public class AdminServiceImplTest {
                 2, 2, "Dancer", "disco");
         PersonDTO dto3 = new PersonDTO(0, "Kir", "Kom",
                 3, 3, "Optimist", "qwerty");
-        adminService.addAdmin(dto1);
-        adminService.addAdmin(dto2);
-        adminService.addAdmin(dto3);
+        adminService.saveAdmin(dto1);
+        adminService.saveAdmin(dto2);
+        adminService.saveAdmin(dto3);
     }
 
 
@@ -53,7 +53,7 @@ public class AdminServiceImplTest {
                 encoder.encode("WTF"), 4, 4, Role.ADMIN);
         PersonDTO personDTO = new PersonDTO(0, "Alex", "Khu",
                 4, 4, "WTF", "WTF");
-        assertEquals(adminDTO, adminService.addAdmin(personDTO));
+        assertEquals(adminDTO, adminService.saveAdmin(personDTO));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AdminServiceImplTest {
         dtos.add(dto1);
         dtos.add(dto2);
         dtos.add(dto3);
-        assertEquals(dtos, adminService.getAllAdmin());
+        assertEquals(dtos, adminService.findAllAdmins());
     }
 
     @Test

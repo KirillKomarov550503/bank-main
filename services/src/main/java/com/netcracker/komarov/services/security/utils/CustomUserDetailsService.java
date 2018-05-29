@@ -71,7 +71,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 temp.setPhoneNumber(adminPhoneNumber);
                 temp.setUsername(adminUsername);
                 temp.setPassword(adminPassword);
-                AdminDTO dto = adminService.addAdmin(temp);
+                AdminDTO dto = adminService.saveAdmin(temp);
                 customUser = new CustomUser(dto.getLogin(), dto.getPassword(),
                         Collections.singletonList(new SimpleGrantedAuthority("ADMIN")), dto.getId());
             } else {

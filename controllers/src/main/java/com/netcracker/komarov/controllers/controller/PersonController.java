@@ -26,8 +26,8 @@ public class PersonController {
 
     @ApiOperation(value = "Selecting all people")
     @RequestMapping(value = "/admins/people", method = RequestMethod.GET)
-    public ResponseEntity getAll() {
-        Collection<PersonDTO> dtos = personService.getAllPeople();
+    public ResponseEntity findAllPeople() {
+        Collection<PersonDTO> dtos = personService.findAllPeople();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 

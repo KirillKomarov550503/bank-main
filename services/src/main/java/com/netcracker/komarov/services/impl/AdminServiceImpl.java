@@ -30,12 +30,12 @@ public class AdminServiceImpl implements AdminService {
     private AdminConverter adminConverter;
     private PersonConverter personConverter;
     private PasswordEncoder passwordEncoder;
-    private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
     public AdminServiceImpl(PersonRepository personRepository, AdminRepository adminRepository,
-                            AdminConverter adminConverter, PersonConverter personConverter
-            , PasswordEncoder passwordEncoder) {
+                            AdminConverter adminConverter, PersonConverter personConverter,
+                            PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
         this.adminRepository = adminRepository;
         this.adminConverter = adminConverter;
@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public AdminDTO addAdmin(PersonDTO personDTO) throws LogicException {
+    public AdminDTO saveAdmin(PersonDTO personDTO) throws LogicException {
         Person person = personConverter.convertToEntity(personDTO);
         person.setRole(Role.ADMIN);
         Person temp = personRepository.findPersonByUsername(person.getUsername());
@@ -63,10 +63,10 @@ public class AdminServiceImpl implements AdminService {
             admin.setPerson(person);
             person.setAdmin(admin);
             adminRes = adminRepository.save(admin);
-            logger.info("Add to system new admin");
+            LOGGER.info("Add to system new admin with ID " + adminRes);
         } else {
             String error = "This username is already exist";
-            logger.error(error);
+            LOGGER.error(error);
             throw new LogicException(error);
 
         }
@@ -75,8 +75,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public Collection<AdminDTO> getAllAdmin() {
-        logger.info("Return all admins");
+    public Collection<AdminDTO> findAllAdmins() {
+        LOGGER.info("Return all admins");
         return convertCollection(adminRepository.findAll());
     }
 
@@ -95,10 +95,10 @@ public class AdminServiceImpl implements AdminService {
             newPerson.setId(oldPerson.getId());
             oldAdmin.setPerson(newPerson);
             resAdmin = adminRepository.saveAndFlush(oldAdmin);
-            logger.info("Information about admin was updated");
+            LOGGER.info("Information about admin with ID " + adminDTO.getId() + " was updated");
         } else {
-            String error = "There is no such admin in database";
-            logger.error(error);
+            String error = "There is no such admin in database with ID " + adminDTO.getId();
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return adminConverter.convertToDTO(resAdmin);
@@ -111,10 +111,10 @@ public class AdminServiceImpl implements AdminService {
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
             personRepository.deleteById(admin.getPerson().getId());
-            logger.info("Client was deleted");
+            LOGGER.info("Client with ID " + adminId + " was deleted");
         } else {
-            String error = "There is no such client in database";
-            logger.error(error);
+            String error = "There is no such admin in database with ID " + adminId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
     }
@@ -125,10 +125,10 @@ public class AdminServiceImpl implements AdminService {
         Admin admin;
         if (optionalAdmin.isPresent()) {
             admin = optionalAdmin.get();
-            logger.info("Return admin");
+            LOGGER.info("Return admin with ID " + adminId);
         } else {
-            String error = "There is no such admin";
-            logger.error(error);
+            String error = "There is no such admin with ID " + adminId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return adminConverter.convertToDTO(admin);

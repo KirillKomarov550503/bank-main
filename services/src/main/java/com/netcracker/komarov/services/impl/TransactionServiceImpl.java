@@ -29,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountRepository accountRepository;
     private TransactionConverter transactionConverter;
     private ClientRepository clientRepository;
-    private Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
     public TransactionServiceImpl(TransactionRepository transactionRepository, AccountRepository accountRepository,
@@ -55,12 +55,12 @@ public class TransactionServiceImpl implements TransactionService {
             Account account = accountRepository.findById(accountFromId).get();
             if (account.getClient().getId() != clientId) {
                 String error = "You do not have access to show this transaction";
-                logger.error(error);
+                LOGGER.error(error);
                 throw new LogicException(error);
             }
         } else {
-            String error = "No such transaction";
-            logger.error(error);
+            String error = "No such transaction with ID " + transactionId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return true;
@@ -68,15 +68,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public Collection<TransactionDTO> showStories(long clientId) throws NotFoundException {
+    public Collection<TransactionDTO> findTransactionsByClientId(long clientId) throws NotFoundException {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         Collection<Transaction> transactions;
         if (optionalClient.isPresent()) {
             transactions = transactionRepository.findTransactionsByClientId(clientId);
-            logger.info("Return transaction story by client ID");
+            LOGGER.info("Return transaction story by client ID " + clientId);
         } else {
-            String error = "There is no such client in database";
-            logger.error(error);
+            String error = "There is no such client in database with ID " + clientId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return convertCollection(transactions);
@@ -84,19 +84,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionDTO createTransaction(TransactionDTO transactionDTO, long clientId) throws LogicException,
+    public TransactionDTO save(TransactionDTO transactionDTO, long clientId) throws LogicException,
             NotFoundException {
-        Transaction newTransaction = null;
+        Transaction newTransaction;
         Optional<Client> optionalClient = clientRepository.findById(clientId);
         if (!optionalClient.isPresent()) {
-            String error = "There is no such client";
-            logger.error(error);
+            String error = "There is no such client with ID " + clientId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         Optional<Account> optionalAccountFrom = accountRepository.findById(transactionDTO.getAccountFromId());
         if (!optionalAccountFrom.isPresent()) {
-            String error = "Not found account from ID";
-            logger.error(error);
+            String error = "Not found account from with ID " + transactionDTO.getAccountFromId();
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         Account accountFrom = optionalAccountFrom.get();
@@ -104,25 +104,25 @@ public class TransactionServiceImpl implements TransactionService {
             Optional<Account> optionalAccountTo = accountRepository.findById(transactionDTO.getAccountToId());
             if (!optionalAccountTo.isPresent()) {
                 String error = "There is no exist account to ID: " + transactionDTO.getAccountToId();
-                logger.error(error);
+                LOGGER.error(error);
                 throw new NotFoundException(error);
             }
             Account accountTo = optionalAccountTo.get();
             if (accountFrom.isLocked()) {
                 String error = "Your account is lock";
-                logger.error(error);
+                LOGGER.error(error);
                 throw new LogicException(error);
             }
             if (accountTo.isLocked()) {
                 String error = "Other account is lock";
-                logger.error(error);
+                LOGGER.error(error);
                 throw new LogicException(error);
             }
             double moneyFrom = accountFrom.getBalance();
             double transactionMoney = transactionDTO.getMoney();
             if (moneyFrom < transactionMoney) {
                 String error = "Not enough money on your account";
-                logger.error(error);
+                LOGGER.error(error);
                 throw new LogicException(error);
             }
             double moneyTo = accountTo.getBalance();
@@ -139,10 +139,10 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setAccountToId(accountTo.getId());
             transaction.setMoney(transactionMoney);
             newTransaction = transactionRepository.save(transaction);
-            logger.info("Transaction was completed");
+            LOGGER.info("Transaction was completed");
         } else {
             String error = "You don't own account with this ID: " + accountFrom.getId();
-            logger.error(error);
+            LOGGER.error(error);
             throw new LogicException(error);
         }
         return transactionConverter.convertToDTO(newTransaction);
@@ -152,13 +152,13 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDTO findById(long transactionId) throws NotFoundException {
         Optional<Transaction> optionalTransactionDTO = transactionRepository.findById(transactionId);
-        Transaction transaction = null;
+        Transaction transaction;
         if (optionalTransactionDTO.isPresent()) {
             transaction = optionalTransactionDTO.get();
-            logger.info("Return data about transaction");
+            LOGGER.info("Return data about transaction with ID " + transactionId);
         } else {
-            String error = "There is no such transaction in database";
-            logger.error(error);
+            String error = "There is no such transaction in database with ID " + transactionId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return transactionConverter.convertToDTO(transaction);

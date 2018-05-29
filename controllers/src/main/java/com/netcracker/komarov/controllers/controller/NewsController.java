@@ -42,7 +42,7 @@ public class NewsController {
 
     @ApiOperation(value = "Creation of new news")
     @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.POST)
-    public ResponseEntity add(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
+    public ResponseEntity save(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("adminId", adminId);
         String url = getDomain() + "/admins/{adminId}/news";
@@ -59,7 +59,7 @@ public class NewsController {
 
     @ApiOperation(value = "Selecting all client news by client ID")
     @RequestMapping(value = "/clients/{clientId}/news", method = RequestMethod.GET)
-    public ResponseEntity getAllClientNewsById(@PathVariable long clientId) {
+    public ResponseEntity findNewsByClientId(@PathVariable long clientId) {
         Map<String, Long> vars = new HashMap<>();
         vars.put("clientId", clientId);
         String url = getDomain() + "/clients/{clientId}/news";
@@ -120,7 +120,7 @@ public class NewsController {
 
     @ApiOperation(value = "Selecting all news by status")
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
-    public ResponseEntity getCollection(@RequestParam(name = "filter",
+    public ResponseEntity findNewsByParams(@RequestParam(name = "filter",
             required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
             required = false, defaultValue = "false") boolean client) {
         String url = getDomain() + "/admins/news";

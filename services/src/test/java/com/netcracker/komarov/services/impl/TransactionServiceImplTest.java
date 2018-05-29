@@ -46,30 +46,30 @@ public class TransactionServiceImplTest {
                 1, 1, "Optimist", "qwerty"));
         clientService.save(new PersonDTO(0, "Vlad", "M",
                 2, 2, "Sloupok", "0000000"));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.refill(1);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 2);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
+        accountService.refillAccount(1);
     }
 
     @Test
     public void showStories() throws LogicException {
-        accountService.refill(2);
-        accountService.refill(3);
+        accountService.refillAccount(2);
+        accountService.refillAccount(3);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO1 = new TransactionDTO(0, 2, 1, 13, date);
         TransactionDTO transactionDTO2 = new TransactionDTO(0, 1, 3, 24.9, date);
         TransactionDTO transactionDTO3 = new TransactionDTO(0, 3, 2, 60, date);
-        transactionService.createTransaction(transactionDTO1, 2);
-        transactionService.createTransaction(transactionDTO2, 1);
-        transactionService.createTransaction(transactionDTO3, 1);
+        transactionService.save(transactionDTO1, 2);
+        transactionService.save(transactionDTO2, 1);
+        transactionService.save(transactionDTO3, 1);
         Collection<TransactionDTO> transactions = new ArrayList<>();
         TransactionDTO transaction1 = new TransactionDTO(2, 1, 3, 24.9, date);
         TransactionDTO transaction3 = new TransactionDTO(3, 3, 2, 60, date);
         transactions.add(transaction1);
         transactions.add(transaction3);
-        assertEquals(transactions, transactionService.showStories(1));
+        assertEquals(transactions, transactionService.findTransactionsByClientId(1));
     }
 
     @Test(expected = LogicException.class)
@@ -77,7 +77,7 @@ public class TransactionServiceImplTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 110, date);
-        assertNull(transactionService.createTransaction(transactionDTO, 1));
+        assertNull(transactionService.save(transactionDTO, 1));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TransactionServiceImplTest {
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 90, date);
         TransactionDTO res = new TransactionDTO(1, 1, 2, 90, date);
-        assertEquals(res, transactionService.createTransaction(transactionDTO, 1));
+        assertEquals(res, transactionService.save(transactionDTO, 1));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class TransactionServiceImplTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String date = simpleDateFormat.format(new Date());
         TransactionDTO transactionDTO = new TransactionDTO(0, 1, 3, 24.9, date);
-        transactionService.createTransaction(transactionDTO, 1);
+        transactionService.save(transactionDTO, 1);
         TransactionDTO res = new TransactionDTO(1, 1, 3, 24.9, date);
         assertEquals(res, transactionService.findById(1));
     }

@@ -7,10 +7,10 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import java.util.Collection;
 
 public interface TransactionService {
-    TransactionDTO createTransaction(TransactionDTO transactionDTO, long clientId) throws LogicException,
+    TransactionDTO save(TransactionDTO transactionDTO, long clientId) throws LogicException,
             NotFoundException;
 
-    Collection<TransactionDTO> showStories(long clientId) throws NotFoundException;
+    Collection<TransactionDTO> findTransactionsByClientId(long clientId) throws NotFoundException;
 
     TransactionDTO findById(long transactionId) throws NotFoundException;
 

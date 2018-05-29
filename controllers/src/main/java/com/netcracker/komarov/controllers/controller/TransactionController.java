@@ -27,11 +27,10 @@ public class TransactionController {
 
     @ApiOperation(value = "Creation of new transaction")
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.POST)
-    public ResponseEntity createTransaction(@RequestBody TransactionDTO requestTransactionDTO,
-                                            @PathVariable long clientId) {
+    public ResponseEntity save(@RequestBody TransactionDTO requestTransactionDTO, @PathVariable long clientId) {
         ResponseEntity responseEntity;
         try {
-            TransactionDTO dto = transactionService.createTransaction(requestTransactionDTO, clientId);
+            TransactionDTO dto = transactionService.save(requestTransactionDTO, clientId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -43,10 +42,10 @@ public class TransactionController {
 
     @ApiOperation(value = "Selecting all transaction by client ID")
     @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.GET)
-    public ResponseEntity showTransactionStory(@PathVariable long clientId) {
+    public ResponseEntity findTransactionsByClientId(@PathVariable long clientId) {
         ResponseEntity responseEntity;
         try {
-            Collection<TransactionDTO> dtos = transactionService.showStories(clientId);
+            Collection<TransactionDTO> dtos = transactionService.findTransactionsByClientId(clientId);
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(dtos);
         } catch (NotFoundException e) {

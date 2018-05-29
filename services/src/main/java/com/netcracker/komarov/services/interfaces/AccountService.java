@@ -7,15 +7,15 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import java.util.Collection;
 
 public interface AccountService {
-    AccountDTO createAccount(AccountDTO accountDTO, long clientId) throws NotFoundException;
+    AccountDTO saveAccount(AccountDTO accountDTO, long clientId) throws NotFoundException;
 
     AccountDTO lockAccount(long accountId) throws LogicException, NotFoundException;
 
-    Collection<AccountDTO> getAccountsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException;
+    Collection<AccountDTO> findAccountsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException;
 
-    AccountDTO refill(long accountId) throws LogicException, NotFoundException;
+    AccountDTO refillAccount(long accountId) throws LogicException, NotFoundException;
 
-    Collection<AccountDTO> getAllAccounts();
+    Collection<AccountDTO> findAllAdmins();
 
     AccountDTO unlockAccount(long accountId) throws LogicException, NotFoundException;
 

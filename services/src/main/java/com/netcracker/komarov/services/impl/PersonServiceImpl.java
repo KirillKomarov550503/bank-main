@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class PersonServiceImpl implements PersonService {
     private PersonRepository personRepository;
     private PersonConverter personConverter;
-    private Logger logger = LoggerFactory.getLogger(PersonServiceImpl.class);
+    private static final  Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter) {
@@ -36,8 +36,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Transactional
     @Override
-    public Collection<PersonDTO> getAllPeople() {
-        logger.info("Return all people");
+    public Collection<PersonDTO> findAllPeople() {
+        LOGGER.info("Return all people");
         return convertCollection(personRepository.findAll());
     }
 
@@ -45,13 +45,13 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonDTO findById(long personId) throws NotFoundException {
         Optional<Person> optionalPerson = personRepository.findById(personId);
-        Person person = null;
+        Person person;
         if (optionalPerson.isPresent()) {
             person = optionalPerson.get();
-            logger.info("Return person");
+            LOGGER.info("Return person with ID " + personId);
         } else {
-            String error = "There is no such person";
-            logger.error(error);
+            String error = "There is no such person with ID " + personId;
+            LOGGER.error(error);
             throw new NotFoundException(error);
         }
         return personConverter.convertToDTO(person);

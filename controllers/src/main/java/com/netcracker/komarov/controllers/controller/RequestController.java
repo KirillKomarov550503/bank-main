@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @RestController
 @RequestMapping("/bank/v1")
 public class RequestController {
@@ -34,7 +37,7 @@ public class RequestController {
         this.cardService = cardService;
     }
 
-    @ApiOperation(value = "Sending request to unlock account")
+    @ApiOperation(value = "Sending request to unlockAccount account")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/requests", method = RequestMethod.PATCH)
     public ResponseEntity sendRequestToUnlockAccount(@PathVariable long clientId,
                                                      @PathVariable long accountId) {
@@ -58,7 +61,7 @@ public class RequestController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Sending request to unlock card")
+    @ApiOperation(value = "Sending request to unlockAccount card")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}/requests", method = RequestMethod.PATCH)
     public ResponseEntity sendRequestToUnlockCard(@PathVariable long clientId,
                                                   @PathVariable long accountId,
@@ -87,9 +90,9 @@ public class RequestController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all unlock requests")
+    @ApiOperation(value = "Selecting all unlockAccount requests")
     @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
-    public ResponseEntity getAllRequests() {
+    public ResponseEntity findAllRequests() {
         return requestFeignClient.findAllRequests();
     }
 
@@ -118,7 +121,9 @@ public class RequestController {
     }
 
     private ResponseEntity getResponseEntityOfFeignException(FeignException e) {
-        return ResponseEntity.status(e.status()).body(e.getMessage().split("\n")[1]);
+        return ResponseEntity.status(e.status()).body(
+                Stream.of(e.getMessage().split("\n")).skip(1).collect(Collectors.toList())
+        );
     }
 
     private ResponseEntity getResponseEntityOfNotFoundException(String message) {

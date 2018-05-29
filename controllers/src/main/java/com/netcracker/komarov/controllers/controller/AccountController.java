@@ -27,10 +27,10 @@ public class AccountController {
 
     @ApiOperation(value = "Creation of new account")
     @RequestMapping(value = "/clients/{clientId}/accounts", method = RequestMethod.POST)
-    public ResponseEntity create(@PathVariable long clientId) {
+    public ResponseEntity save(@PathVariable long clientId) {
         ResponseEntity responseEntity;
         try {
-            AccountDTO dto = accountService.createAccount(new AccountDTO(false, 0), clientId);
+            AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0), clientId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -40,7 +40,7 @@ public class AccountController {
 
     @ApiOperation(value = "Unlocking account by ID")
     @RequestMapping(value = "/admins/requests/accounts/{accountId}", method = RequestMethod.PATCH)
-    public ResponseEntity unlock(@PathVariable long accountId) {
+    public ResponseEntity unlockAccount(@PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
             AccountDTO dto = accountService.unlockAccount(accountId);
@@ -55,7 +55,7 @@ public class AccountController {
 
     @ApiOperation(value = "Locking account by ID")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.PATCH)
-    public ResponseEntity lock(@PathVariable long clientId, @PathVariable long accountId) {
+    public ResponseEntity lockAccount(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
             clientService.findById(clientId);
@@ -75,12 +75,12 @@ public class AccountController {
 
     @ApiOperation(value = "Refill of your account by ID")
     @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
-    public ResponseEntity refill(@PathVariable long clientId, @PathVariable long accountId) {
+    public ResponseEntity refillAccount(@PathVariable long clientId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         clientService.findById(clientId);
         try {
             if (accountService.isContain(clientId, accountId)) {
-                AccountDTO dto = accountService.refill(accountId);
+                AccountDTO dto = accountService.refillAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
                 responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
@@ -95,11 +95,11 @@ public class AccountController {
 
     @ApiOperation(value = "Selecting of all your accounts by status")
     @RequestMapping(value = "/clients/{clientId}/accounts/status", method = RequestMethod.GET)
-    public ResponseEntity getByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lock",
+    public ResponseEntity findByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lockAccount",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
         try {
-            Collection<AccountDTO> dtos = accountService.getAccountsByClientIdAndLock(clientId, lock);
+            Collection<AccountDTO> dtos = accountService.findAccountsByClientIdAndLock(clientId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -109,8 +109,8 @@ public class AccountController {
 
     @ApiOperation(value = "Selecting all accounts")
     @RequestMapping(value = "/admins/accounts", method = RequestMethod.GET)
-    public ResponseEntity getAll() {
-        Collection<AccountDTO> dtos = accountService.getAllAccounts();
+    public ResponseEntity findAllAccounts() {
+        Collection<AccountDTO> dtos = accountService.findAllAdmins();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 

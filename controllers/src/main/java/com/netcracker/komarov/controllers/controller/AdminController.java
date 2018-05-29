@@ -26,10 +26,10 @@ public class AdminController {
 
     @ApiOperation(value = "Creation of new admin")
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity add(@RequestBody PersonDTO requestPersonDTO) {
+    public ResponseEntity save(@RequestBody PersonDTO requestPersonDTO) {
         ResponseEntity responseEntity;
         try {
-            AdminDTO dto = adminService.addAdmin(requestPersonDTO);
+            AdminDTO dto = adminService.saveAdmin(requestPersonDTO);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (LogicException e) {
             responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
@@ -39,8 +39,8 @@ public class AdminController {
 
     @ApiOperation(value = "Selecting all admins")
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllAdmins() {
-        Collection<AdminDTO> dtos = adminService.getAllAdmin();
+    public ResponseEntity findAllAdmins() {
+        Collection<AdminDTO> dtos = adminService.findAllAdmins();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 

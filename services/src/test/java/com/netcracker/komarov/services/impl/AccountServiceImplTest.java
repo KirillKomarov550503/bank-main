@@ -50,9 +50,9 @@ public class AccountServiceImplTest {
                 2, 2, "Realist", "12345"));
         clientService.save(new PersonDTO(0, "Max", "Ul",
                 3, 3, "Pessimist", "password"));
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
-        accountService.createAccount(new AccountDTO(false, 0.0), 2);
-        accountService.createAccount(new AccountDTO(false, 0.0), 1);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 2);
+        accountService.saveAccount(new AccountDTO(false, 0.0), 1);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class AccountServiceImplTest {
         dtos.add(new AccountDTO(1, false, 0, 1));
         dtos.add(new AccountDTO(2, false, 0, 2));
         dtos.add(new AccountDTO(3, false, 0, 1));
-        assertEquals(dtos, accountService.getAllAccounts());
+        assertEquals(dtos, accountService.findAllAdmins());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class AccountServiceImplTest {
     @Test
     public void refill() {
         AccountDTO accountDTO = new AccountDTO(2, false, 100, 2);
-        assertEquals(accountDTO, accountService.refill(2));
+        assertEquals(accountDTO, accountService.refillAccount(2));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class AccountServiceImplTest {
         Collection<AccountDTO> dtos = new ArrayList<>();
         dtos.add(new AccountDTO(1, true, 0, 1));
         dtos.add(new AccountDTO(3, true, 0, 1));
-        assertEquals(dtos, accountService.getAccountsByClientIdAndLock(1, true));
+        assertEquals(dtos, accountService.findAccountsByClientIdAndLock(1, true));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class AccountServiceImplTest {
         clientService.save(new PersonDTO(0, "Kirill", "Komarov",
                 1, 1, "Optimist", encoder.encode("qwerty")));
         AccountDTO accountDTO = new AccountDTO(4, false, 0, 1);
-        assertEquals(accountDTO, accountService.createAccount(new AccountDTO(false, 0), 1));
+        assertEquals(accountDTO, accountService.saveAccount(new AccountDTO(false, 0), 1));
     }
 
     @Test

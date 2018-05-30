@@ -65,16 +65,14 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     @Override
     public PersonDTO save(PersonDTO personDTO) {
-        System.err.println("PersonDTO: " + personDTO);
         Person person = personConverter.convertToEntity(personDTO);
-        System.err.println("Person: " + person);
         Person temp = personRepository.findPersonByUsername(person.getUsername());
         Person newPerson;
         if (temp == null) {
             String password = person.getPassword();
             person.setPassword(passwordEncoder.encode(password));
             newPerson = personRepository.save(person);
-            LOGGER.info("Add to system new person with ID " + newPerson);
+            LOGGER.info("Add to system new person with ID " + newPerson.getId());
         } else {
             String error = "This username is already exist";
             LOGGER.error(error);

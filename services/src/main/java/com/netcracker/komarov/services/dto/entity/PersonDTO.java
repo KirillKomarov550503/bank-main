@@ -30,6 +30,7 @@ public class PersonDTO implements Serializable {
     @ApiModelProperty(position = 7)
     private String password;
 
+    @ApiModelProperty(position = 8, readOnly = true, hidden = true)
     private Role role;
 
     public PersonDTO() {

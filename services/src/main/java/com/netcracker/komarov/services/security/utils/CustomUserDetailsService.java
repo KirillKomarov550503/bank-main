@@ -63,7 +63,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 temp.setPassword(adminPassword);
                 temp.setRole(Role.ADMIN);
                 PersonDTO dto = personService.save(temp);
-                System.err.println("SuperAdmin: " + dto);
                 customUser = new CustomUser(dto.getUsername(), dto.getPassword(),
                         Collections.singletonList(new SimpleGrantedAuthority("ADMIN")), dto.getId());
             } else {

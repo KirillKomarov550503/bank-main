@@ -8,11 +8,19 @@ import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardDTO implements Serializable {
-    @ApiModelProperty(readOnly = true, hidden = true)
+    @ApiModelProperty(position = 1, readOnly = true, hidden = true)
     private Long id;
+
+    @ApiModelProperty(position = 2, readOnly = true, hidden = true)
     private Boolean locked;
+
+    @ApiModelProperty(position = 3, readOnly = true, hidden = true)
     private Double balance;
+
+    @ApiModelProperty(position = 4, readOnly = true, hidden = true)
     private Long accountId;
+
+    @ApiModelProperty(position = 5)
     private String pin;
 
     public CardDTO() {

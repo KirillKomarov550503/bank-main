@@ -64,31 +64,13 @@ public class PersonController {
     @ApiOperation(value = "Updating information about client")
     @RequestMapping(value = "/admins/{personId}", method = RequestMethod.PUT)
     public ResponseEntity updateAdmin(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
-        ResponseEntity responseEntity = getUpdateResponseEntity(personDTO, personId);
-        return responseEntity;
+        return getUpdateResponseEntity(personDTO, personId);
     }
 
     @ApiOperation(value = "Updating information about client")
     @RequestMapping(value = "/clients/{personId}", method = RequestMethod.PUT)
     public ResponseEntity updateClient(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
-        ResponseEntity responseEntity;
-        responseEntity = getUpdateResponseEntity(personDTO, personId);
-        return responseEntity;
-    }
-
-    private ResponseEntity getUpdateResponseEntity(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
-        ResponseEntity responseEntity;
-        try {
-            personValidator.validate(personDTO);
-            personDTO.setId(personId);
-            PersonDTO dto = personService.update(personDTO);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
-        }
-        return responseEntity;
+        return getUpdateResponseEntity(personDTO, personId);
     }
 
     @ApiOperation(value = "Selecting all people")
@@ -147,6 +129,21 @@ public class PersonController {
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
             responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        return responseEntity;
+    }
+
+    private ResponseEntity getUpdateResponseEntity(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
+        ResponseEntity responseEntity;
+        try {
+            personValidator.validate(personDTO);
+            personDTO.setId(personId);
+            PersonDTO dto = personService.update(personDTO);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
+        } catch (NotFoundException e) {
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
+        } catch (ValidationException e) {
+            responseEntity = getBadRequestResponseEntity(e.getMessage());
         }
         return responseEntity;
     }

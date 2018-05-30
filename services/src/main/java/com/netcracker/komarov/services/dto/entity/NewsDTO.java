@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
-@JsonPropertyOrder({"id", "title", "text", "status", "date"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsDTO implements Serializable {
     @ApiModelProperty(position = 1, readOnly = true, hidden = true)
@@ -70,6 +69,10 @@ public class NewsDTO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     @Override

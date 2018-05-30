@@ -3,6 +3,8 @@ package com.netcracker.komarov.controllers.controller;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.MapConverter;
+import com.netcracker.komarov.services.util.UriBuilder;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,13 +29,18 @@ public class NewsController {
     private RestTemplate restTemplate;
     private PersonService personService;
     private EurekaClient eurekaClient;
+    private UriBuilder uriBuilder;
+    private MapConverter mapConverter;
 
     @Autowired
     public NewsController(RestTemplate restTemplate, PersonService personService,
-                          @Qualifier("eurekaClient") EurekaClient eurekaClient) {
+                          @Qualifier("eurekaClient") EurekaClient eurekaClient,
+                          UriBuilder uriBuilder, MapConverter mapConverter) {
         this.restTemplate = restTemplate;
         this.personService = personService;
         this.eurekaClient = eurekaClient;
+        this.uriBuilder = uriBuilder;
+        this.mapConverter = mapConverter;
     }
 
     @ApiOperation(value = "Creation of new news")
@@ -117,18 +123,14 @@ public class NewsController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all news by status")
+    @ApiOperation(value = "Selecting news by specification")
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
-    public ResponseEntity findNewsByParams(@RequestParam(name = "filter",
-            required = false, defaultValue = "false") boolean filter, @RequestParam(name = "client",
-            required = false, defaultValue = "false") boolean client) {
+    public ResponseEntity findNewsByParams(@RequestParam Map<String, String> parameters) {
         String url = getDomain() + "/admins/news";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-                .queryParam("filter", filter)
-                .queryParam("client", client);
         ResponseEntity responseEntity;
         try {
-            responseEntity = restTemplate.getForEntity(builder.build().toUri(), NewsDTO[].class);
+            responseEntity = restTemplate.getForEntity(uriBuilder.build(url, mapConverter.convert(parameters)),
+                    NewsDTO[].class);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsService(e);
         }

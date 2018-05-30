@@ -5,6 +5,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.validator.impl.PersonValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/bank/v1")
 public class ClientController {
     private ClientService clientService;
+    private PersonValidator personValidator;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, PersonValidator personValidator) {
         this.clientService = clientService;
+        this.personValidator = personValidator;
     }
 
     @ApiOperation(value = "Registration of news client")
@@ -26,6 +29,7 @@ public class ClientController {
     public ResponseEntity save(@RequestBody PersonDTO requestPersonDTO) {
         ResponseEntity responseEntity;
         try {
+            personValidator.validate(requestPersonDTO);
             ClientDTO dto = clientService.save(requestPersonDTO);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (LogicException e) {
@@ -39,6 +43,7 @@ public class ClientController {
     public ResponseEntity update(@RequestBody ClientDTO requestClientDTO, @PathVariable long clientId) {
         ResponseEntity responseEntity;
         try {
+            personValidator.validate();
             requestClientDTO.setId(clientId);
             ClientDTO dto = clientService.update(requestClientDTO);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);

@@ -6,15 +6,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "card")
 public class Card extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
     @Column(name = "locked")
     private boolean locked;
 
     @Column(name = "pin")
-    private int pin;
+    private String pin;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
@@ -24,7 +20,7 @@ public class Card extends BaseEntity {
 
     }
 
-    public Card(boolean locked, int pin, Account account) {
+    public Card(boolean locked, String pin, Account account) {
         this.locked = locked;
         this.pin = pin;
         this.account = account;
@@ -46,11 +42,11 @@ public class Card extends BaseEntity {
         this.locked = locked;
     }
 
-    public int getPin() {
+    public String getPin() {
         return pin;
     }
 
-    public void setPin(int pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 
@@ -70,7 +66,7 @@ public class Card extends BaseEntity {
         Card card = (Card) o;
         return id == card.id &&
                 locked == card.locked &&
-                pin == card.pin &&
+                Objects.equals(pin, card.pin) &&
                 Objects.equals(account, card.account);
     }
 

@@ -13,12 +13,12 @@ public class CardDTO implements Serializable {
     private Boolean locked;
     private Double balance;
     private Long accountId;
-    private Integer pin;
+    private String pin;
 
     public CardDTO() {
     }
 
-    public CardDTO(Long id, Boolean locked, Double balance, Long accountId, Integer pin) {
+    public CardDTO(Long id, Boolean locked, Double balance, Long accountId, String pin) {
         this.id = id;
         this.locked = locked;
         this.balance = balance;
@@ -50,11 +50,11 @@ public class CardDTO implements Serializable {
         this.balance = balance;
     }
 
-    public Integer getPin() {
+    public String getPin() {
         return pin;
     }
 
-    public void setPin(int pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 

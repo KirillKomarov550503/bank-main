@@ -19,10 +19,10 @@ public class PersonDTO implements Serializable {
     private String surname;
 
     @ApiModelProperty(position = 4)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @ApiModelProperty(position = 5)
-    private Long passportId;
+    private String passportId;
 
     @ApiModelProperty(position = 6)
     private String username;
@@ -35,8 +35,8 @@ public class PersonDTO implements Serializable {
     public PersonDTO() {
     }
 
-    public PersonDTO(long id, String name, String surname, Long phoneNumber,
-                     Long passportId, String username, String password) {
+    public PersonDTO(long id, String name, String surname, String phoneNumber,
+                     String passportId, String username, String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -70,19 +70,19 @@ public class PersonDTO implements Serializable {
         this.surname = surname;
     }
 
-    public Long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public Long getPassportId() {
+    public String getPassportId() {
         return passportId;
     }
 
-    public void setPassportId(long passportId) {
+    public void setPassportId(String passportId) {
         this.passportId = passportId;
     }
 

@@ -26,10 +26,10 @@ public class AdminDTO implements Serializable {
     private String password;
 
     @ApiModelProperty(position = 4)
-    private long phoneNumber;
+    private String phoneNumber;
 
     @ApiModelProperty(position = 5)
-    private long passportId;
+    private String passportId;
 
     @JsonIgnore
     private Role role;
@@ -38,7 +38,7 @@ public class AdminDTO implements Serializable {
     }
 
     public AdminDTO(long id, String name, String surname, String login, String password,
-                    long phoneNumber, long passportId, Role role) {
+                    String phoneNumber, String passportId, Role role) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -89,19 +89,19 @@ public class AdminDTO implements Serializable {
         this.password = password;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public long getPassportId() {
+    public String getPassportId() {
         return passportId;
     }
 
-    public void setPassportId(long passportId) {
+    public void setPassportId(String passportId) {
         this.passportId = passportId;
     }
 
@@ -119,8 +119,8 @@ public class AdminDTO implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         AdminDTO adminDTO = (AdminDTO) o;
         return id == adminDTO.id &&
-                phoneNumber == adminDTO.phoneNumber &&
-                passportId == adminDTO.passportId &&
+                Objects.equals(phoneNumber, adminDTO.phoneNumber) &&
+                Objects.equals(passportId, adminDTO.passportId) &&
                 Objects.equals(name, adminDTO.name) &&
                 Objects.equals(surname, adminDTO.surname) &&
                 Objects.equals(login, adminDTO.login) &&
@@ -129,7 +129,6 @@ public class AdminDTO implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, name, surname, login, phoneNumber, passportId, role);
     }
 

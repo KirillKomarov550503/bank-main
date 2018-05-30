@@ -10,16 +10,16 @@ import java.util.Objects;
 public class TransactionDTO implements Serializable {
     @ApiModelProperty(readOnly = true, hidden = true)
     private Long id;
-    private Long accountFromId;
-    private Long accountToId;
-    private Double money;
+    private String accountFromId;
+    private String accountToId;
+    private String money;
     @ApiModelProperty(readOnly = true, hidden = true)
     private String date;
 
     public TransactionDTO() {
     }
 
-    public TransactionDTO(Long id, Long accountFromId, Long accountToId, Double money, String date) {
+    public TransactionDTO(Long id, String accountFromId, String accountToId, String money, String date) {
         this.id = id;
         this.accountFromId = accountFromId;
         this.accountToId = accountToId;
@@ -35,27 +35,27 @@ public class TransactionDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getAccountFromId() {
+    public String getAccountFromId() {
         return accountFromId;
     }
 
-    public void setAccountFromId(Long accountFromId) {
+    public void setAccountFromId(String accountFromId) {
         this.accountFromId = accountFromId;
     }
 
-    public Long getAccountToId() {
+    public String getAccountToId() {
         return accountToId;
     }
 
-    public void setAccountToId(Long accountToId) {
+    public void setAccountToId(String accountToId) {
         this.accountToId = accountToId;
     }
 
-    public Double getMoney() {
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(Double money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 
@@ -75,7 +75,7 @@ public class TransactionDTO implements Serializable {
         return Objects.equals(id, dto.id) &&
                 Objects.equals(accountFromId, dto.accountFromId) &&
                 Objects.equals(accountToId, dto.accountToId) &&
-                Double.compare(dto.money, money) == 0 &&
+                Objects.equals(money, dto.money) &&
                 Objects.equals(date, dto.date);
     }
 

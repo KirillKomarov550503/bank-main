@@ -14,7 +14,7 @@ public class Person extends BaseEntity {
     protected String surname;
 
     @Column(name = "phone_number")
-    protected long phoneNumber;
+    protected String phoneNumber;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
@@ -27,7 +27,7 @@ public class Person extends BaseEntity {
     protected String password;
 
     @Column(name = "passport_id")
-    protected long passportId;
+    protected String passportId;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Admin admin;
@@ -38,8 +38,8 @@ public class Person extends BaseEntity {
     public Person() {
     }
 
-    public Person(String name, String surname, long phoneNumber, Role role,
-                  String username, String password, long passportId,
+    public Person(String name, String surname, String phoneNumber, Role role,
+                  String username, String password, String passportId,
                   Admin admin, Client client) {
         this.name = name;
         this.surname = surname;
@@ -76,11 +76,11 @@ public class Person extends BaseEntity {
         this.surname = surname;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -108,11 +108,11 @@ public class Person extends BaseEntity {
         this.password = password;
     }
 
-    public long getPassportId() {
+    public String getPassportId() {
         return passportId;
     }
 
-    public void setPassportId(long passportId) {
+    public void setPassportId(String passportId) {
         this.passportId = passportId;
     }
 
@@ -138,8 +138,8 @@ public class Person extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Person person = (Person) o;
-        return phoneNumber == person.phoneNumber &&
-                passportId == person.passportId &&
+        return Objects.equals(phoneNumber, person.phoneNumber) &&
+                Objects.equals(passportId, person.passportId) &&
                 Objects.equals(name, person.name) &&
                 Objects.equals(surname, person.surname) &&
                 role == person.role &&

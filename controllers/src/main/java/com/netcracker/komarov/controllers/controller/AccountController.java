@@ -30,7 +30,7 @@ public class AccountController {
     public ResponseEntity save(@PathVariable long clientId) {
         ResponseEntity responseEntity;
         try {
-            AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0), clientId);
+            AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0.0), clientId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());

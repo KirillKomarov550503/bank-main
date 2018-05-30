@@ -53,6 +53,8 @@ public class NewsController {
             responseEntity = restTemplate.postForEntity(url, request, NewsDTO.class, vars);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
+        } catch (HttpStatusCodeException e){
+            responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }

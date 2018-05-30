@@ -11,7 +11,7 @@ public interface CardService {
 
     CardDTO lockCard(long cardId) throws LogicException, NotFoundException;
 
-    Collection<CardDTO> findCardsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException;
+    Collection<CardDTO> findCardsByClientIdAndLock(long personId, boolean lock) throws NotFoundException;
 
     Collection<CardDTO> findCardsByAccountId(long accountId) throws NotFoundException;
 

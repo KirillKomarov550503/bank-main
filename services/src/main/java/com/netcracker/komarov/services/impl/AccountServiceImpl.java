@@ -1,9 +1,9 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
-import com.netcracker.komarov.dao.entity.Client;
+import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.AccountRepository;
-import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
@@ -26,16 +26,16 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
     private RequestFeignClient requestFeignClient;
-    private ClientRepository clientRepository;
+    private PersonRepository personRepository;
     private AccountConverter accountConverter;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
     public AccountServiceImpl(AccountRepository accountRepository, RequestFeignClient requestFeignClient,
-                              ClientRepository clientRepository, AccountConverter accountConverter) {
+                              PersonRepository personRepository, AccountConverter accountConverter) {
         this.accountRepository = accountRepository;
         this.requestFeignClient = requestFeignClient;
-        this.clientRepository = clientRepository;
+        this.personRepository = personRepository;
         this.accountConverter = accountConverter;
     }
 
@@ -46,12 +46,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean isContain(long clientId, long accountId) throws NotFoundException {
+    public boolean isContain(long personId, long accountId) throws NotFoundException {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         boolean contain;
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            contain = account.getClient().getId() == clientId;
+            contain = account.getPerson().getId() == personId;
         } else {
             String error = "No such account with ID " + accountId;
             LOGGER.error(error);
@@ -148,14 +148,14 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public Collection<AccountDTO> findAccountsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException {
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
+    public Collection<AccountDTO> findAccountsByClientIdAndLock(long personId, boolean lock) throws NotFoundException {
+        Optional<Person> optionalClient = personRepository.findById(personId);
         Collection<Account> accounts;
         if (optionalClient.isPresent()) {
-            LOGGER.info("Return all locked accounts by client ID " + clientId);
-            accounts = accountRepository.findAccountsByLockedAndClientId(clientId, lock);
+            LOGGER.info("Return all locked accounts by client ID " + personId);
+            accounts = accountRepository.findAccountsByLockedAndPersonId(personId, lock);
         } else {
-            String error = "There is no such client in database with ID " + clientId;
+            String error = "There is no such client in database with ID " + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -164,22 +164,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public AccountDTO saveAccount(AccountDTO accountDTO, long clientId) throws NotFoundException {
+    public AccountDTO saveAccount(AccountDTO accountDTO, long personId) throws NotFoundException {
         Account account = accountConverter.convertToEntity(accountDTO);
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
-        Client client;
+        Optional<Person> optionalClient = personRepository.findById(personId);
+        Person person;
         Account temp;
         if (optionalClient.isPresent()) {
-            client = optionalClient.get();
-            account.setClient(client);
+            person = optionalClient.get();
+            account.setPerson(person);
             account.setBalance(0.0);
             account.setLocked(false);
-            client.getAccounts().add(account);
-            account.getClient().setId(clientId);
+            person.getAccounts().add(account);
+            account.getPerson().setId(personId);
             temp = accountRepository.save(account);
             LOGGER.info("Creation of account with ID " + temp.getId());
         } else {
-            String error = "There is no such client in database with ID" + clientId;
+            String error = "There is no such client in database with ID" + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

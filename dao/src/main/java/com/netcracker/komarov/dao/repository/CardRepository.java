@@ -15,10 +15,10 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Query("select c from Card c where c.account.id = :account_id")
     Collection<Card> findCardsByAccountId(@Param("account_id") long accountId);
 
-    @Query("select c from Card c where c.account.client.id = :client_id and c.locked = :locked")
-    Collection<Card> findCardsByClientIdAndLocked(@Param("client_id") long clientId, @Param("locked") boolean locked);
+    @Query("select c from Card c where c.account.person.id = :person_id and c.locked = :locked")
+    Collection<Card> findCardsByPersonIdAndLocked(@Param("person_id") long personId, @Param("locked") boolean locked);
 
-    @Query("select c from Card c where c.account.client.id = :client_id")
-    Collection<Card> findCardsByClientId(@Param("client_id") long clientId);
+    @Query("select c from Card c where c.account.person.id = :person_id")
+    Collection<Card> findCardsByPersonId(@Param("person_id") long personId);
 
 }

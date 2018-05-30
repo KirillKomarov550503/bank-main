@@ -32,6 +32,7 @@ public class PersonConverter implements Converter<PersonDTO, Person> {
         person.setPhoneNumber(dto.getPhoneNumber());
         person.setUsername(dto.getUsername());
         person.setPassword(dto.getPassword());
+        person.setRole(dto.getRole());
         return person;
     }
 }

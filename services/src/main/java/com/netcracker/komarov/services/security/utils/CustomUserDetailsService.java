@@ -1,14 +1,10 @@
 package com.netcracker.komarov.services.security.utils;
 
-import com.netcracker.komarov.dao.entity.Admin;
-import com.netcracker.komarov.dao.entity.Client;
 import com.netcracker.komarov.dao.entity.Person;
-import com.netcracker.komarov.dao.repository.AdminRepository;
-import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.dao.repository.PersonRepository;
-import com.netcracker.komarov.services.dto.entity.AdminDTO;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
-import com.netcracker.komarov.services.interfaces.AdminService;
+import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +21,7 @@ import java.util.Collections;
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
     private PersonRepository personRepository;
-    private ClientRepository clientRepository;
-    private AdminRepository adminRepository;
-    private AdminService adminService;
+    private PersonService personService;
     private Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     @Value("${admin.name}")
@@ -37,10 +31,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private String adminSurname;
 
     @Value("${admin.passportId}")
-    private long adminPassportId;
+    private String adminPassportId;
 
     @Value("${admin.phoneNumber}")
-    private long adminPhoneNumber;
+    private String adminPhoneNumber;
 
     @Value("${admin.username}")
     private String adminUsername;
@@ -49,15 +43,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private String adminPassword;
 
     @Autowired
-    public CustomUserDetailsService(PersonRepository personRepository, AdminService adminService,
-                                    AdminRepository adminRepository, ClientRepository clientRepository) {
+    public CustomUserDetailsService(PersonRepository personRepository, PersonService personService) {
         this.personRepository = personRepository;
-        this.adminService = adminService;
-        this.adminRepository = adminRepository;
-        this.clientRepository = clientRepository;
+        this.personService = personService;
     }
 
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Person person = personRepository.findPersonByUsername(username);
@@ -71,29 +61,19 @@ public class CustomUserDetailsService implements UserDetailsService {
                 temp.setPhoneNumber(adminPhoneNumber);
                 temp.setUsername(adminUsername);
                 temp.setPassword(adminPassword);
-                AdminDTO dto = adminService.saveAdmin(temp);
-                customUser = new CustomUser(dto.getLogin(), dto.getPassword(),
+                temp.setRole(Role.ADMIN);
+                PersonDTO dto = personService.save(temp);
+                System.err.println("SuperAdmin: " + dto);
+                customUser = new CustomUser(dto.getUsername(), dto.getPassword(),
                         Collections.singletonList(new SimpleGrantedAuthority("ADMIN")), dto.getId());
             } else {
                 customUser = new CustomUser(person.getUsername(), person.getPassword(),
-                        Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())), getId(person));
+                        Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())), person.getId());
             }
         } else {
             customUser = new CustomUser(person.getUsername(), person.getPassword(),
-                    Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())), getId(person));
+                    Collections.singleton(new SimpleGrantedAuthority(person.getRole().name())), person.getId());
         }
         return customUser;
-    }
-
-    private long getId(Person person) {
-        Admin admin = adminRepository.findAdminByPersonId(person.getId());
-        Client client = clientRepository.findClientByPersonId(person.getId());
-        long id = 0;
-        if (admin != null) {
-            id = admin.getId();
-        } else if (client != null) {
-            id = client.getId();
-        }
-        return id;
     }
 }

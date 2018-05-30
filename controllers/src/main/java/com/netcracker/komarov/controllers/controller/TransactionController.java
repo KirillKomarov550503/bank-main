@@ -3,7 +3,8 @@ package com.netcracker.komarov.controllers.controller;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.exception.ValidationException;
+import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,35 +18,37 @@ import java.util.Collection;
 @RequestMapping("/bank/v1")
 public class TransactionController {
     private TransactionService transactionService;
-    private ClientService clientService;
+    private PersonService personService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, ClientService clientService) {
+    public TransactionController(TransactionService transactionService, PersonService personService) {
         this.transactionService = transactionService;
-        this.clientService = clientService;
+        this.personService = personService;
     }
 
     @ApiOperation(value = "Creation of new transaction")
-    @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.POST)
-    public ResponseEntity save(@RequestBody TransactionDTO requestTransactionDTO, @PathVariable long clientId) {
+    @RequestMapping(value = "/clients/{personId}/transactions", method = RequestMethod.POST)
+    public ResponseEntity save(@RequestBody TransactionDTO requestTransactionDTO, @PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
-            TransactionDTO dto = transactionService.save(requestTransactionDTO, clientId);
+            TransactionDTO dto = transactionService.save(requestTransactionDTO, personId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (LogicException e) {
             responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+        } catch (ValidationException e) {
+            responseEntity = getBadRequestResponseEntity(e.getMessage());
         }
         return responseEntity;
     }
 
     @ApiOperation(value = "Selecting all transaction by client ID")
-    @RequestMapping(value = "/clients/{clientId}/transactions", method = RequestMethod.GET)
-    public ResponseEntity findTransactionsByClientId(@PathVariable long clientId) {
+    @RequestMapping(value = "/clients/{personId}/transactions", method = RequestMethod.GET)
+    public ResponseEntity findTransactionsByClientId(@PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
-            Collection<TransactionDTO> dtos = transactionService.findTransactionsByClientId(clientId);
+            Collection<TransactionDTO> dtos = transactionService.findTransactionsByClientId(personId);
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(dtos);
         } catch (NotFoundException e) {
@@ -55,12 +58,12 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "Selecting transaction by ID")
-    @RequestMapping(value = "/clients/{clientId}/transactions/{transactionId}", method = RequestMethod.GET)
-    public ResponseEntity findById(@PathVariable long clientId, @PathVariable long transactionId) {
+    @RequestMapping(value = "/clients/{personId}/transactions/{transactionId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long personId, @PathVariable long transactionId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (transactionService.isContain(clientId, transactionId)) {
+            personService.findById(personId);
+            if (transactionService.isContain(personId, transactionId)) {
                 TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
@@ -80,5 +83,9 @@ public class TransactionController {
 
     private ResponseEntity getInternalServerErrorResponseEntity(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    }
+
+    private ResponseEntity getBadRequestResponseEntity(String message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }

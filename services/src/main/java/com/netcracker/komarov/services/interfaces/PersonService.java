@@ -9,4 +9,10 @@ public interface PersonService {
     Collection<PersonDTO> findAllPeople();
 
     PersonDTO findById(long personId) throws NotFoundException;
+
+    PersonDTO save(PersonDTO personDTO);
+
+    PersonDTO update(PersonDTO personDTO);
+
+    void deleteById(long personId);
 }

@@ -1,10 +1,10 @@
 package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
-import com.netcracker.komarov.dao.entity.Client;
+import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.entity.Transaction;
 import com.netcracker.komarov.dao.repository.AccountRepository;
-import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.dao.repository.TransactionRepository;
 import com.netcracker.komarov.services.dto.converter.TransactionConverter;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
@@ -28,16 +28,16 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionRepository transactionRepository;
     private AccountRepository accountRepository;
     private TransactionConverter transactionConverter;
-    private ClientRepository clientRepository;
+    private PersonRepository personRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
     public TransactionServiceImpl(TransactionRepository transactionRepository, AccountRepository accountRepository,
-                                  TransactionConverter transactionConverter, ClientRepository clientRepository) {
+                                  TransactionConverter transactionConverter, PersonRepository personRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.transactionConverter = transactionConverter;
-        this.clientRepository = clientRepository;
+        this.personRepository = personRepository;
     }
 
     private Collection<TransactionDTO> convertCollection(Collection<Transaction> transactions) {
@@ -53,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
             Transaction transaction = optionalTransaction.get();
             long accountFromId = transaction.getAccountFromId();
             Account account = accountRepository.findById(accountFromId).get();
-            if (account.getClient().getId() != clientId) {
+            if (account.getPerson().getId() != clientId) {
                 String error = "You do not have access to show this transaction";
                 LOGGER.error(error);
                 throw new LogicException(error);
@@ -69,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public Collection<TransactionDTO> findTransactionsByClientId(long clientId) throws NotFoundException {
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Optional<Person> optionalClient = personRepository.findById(clientId);
         Collection<Transaction> transactions;
         if (optionalClient.isPresent()) {
             transactions = transactionRepository.findTransactionsByClientId(clientId);
@@ -86,22 +86,23 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDTO save(TransactionDTO transactionDTO, long clientId) throws LogicException,
             NotFoundException {
+        Transaction transaction = transactionConverter.convertToEntity(transactionDTO);
         Transaction newTransaction;
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
+        Optional<Person> optionalClient = personRepository.findById(clientId);
         if (!optionalClient.isPresent()) {
             String error = "There is no such client with ID " + clientId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
-        Optional<Account> optionalAccountFrom = accountRepository.findById(transactionDTO.getAccountFromId());
+        Optional<Account> optionalAccountFrom = accountRepository.findById(transaction.getAccountFromId());
         if (!optionalAccountFrom.isPresent()) {
             String error = "Not found account from with ID " + transactionDTO.getAccountFromId();
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
         Account accountFrom = optionalAccountFrom.get();
-        if (accountFrom.getClient().getId() == clientId) {
-            Optional<Account> optionalAccountTo = accountRepository.findById(transactionDTO.getAccountToId());
+        if (accountFrom.getPerson().getId() == clientId) {
+            Optional<Account> optionalAccountTo = accountRepository.findById(transaction.getAccountToId());
             if (!optionalAccountTo.isPresent()) {
                 String error = "There is no exist account to ID: " + transactionDTO.getAccountToId();
                 LOGGER.error(error);
@@ -119,7 +120,7 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new LogicException(error);
             }
             double moneyFrom = accountFrom.getBalance();
-            double transactionMoney = transactionDTO.getMoney();
+            double transactionMoney = transaction.getMoney();
             if (moneyFrom < transactionMoney) {
                 String error = "Not enough money on your account";
                 LOGGER.error(error);
@@ -128,17 +129,17 @@ public class TransactionServiceImpl implements TransactionService {
             double moneyTo = accountTo.getBalance();
             accountFrom.setBalance(moneyFrom - transactionMoney);
             accountTo.setBalance(moneyTo + transactionMoney);
-            Transaction transaction = new Transaction();
+            Transaction trans = new Transaction();
 
             accountRepository.save(accountFrom);
             accountRepository.save(accountTo);
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-            transaction.setDate(simpleDateFormat.format(new Date()));
-            transaction.setAccountFromId(accountFrom.getId());
-            transaction.setAccountToId(accountTo.getId());
-            transaction.setMoney(transactionMoney);
-            newTransaction = transactionRepository.save(transaction);
+            trans.setDate(simpleDateFormat.format(new Date()));
+            trans.setAccountFromId(accountFrom.getId());
+            trans.setAccountToId(accountTo.getId());
+            trans.setMoney(transactionMoney);
+            newTransaction = transactionRepository.save(trans);
             LOGGER.info("Transaction was completed");
         } else {
             String error = "You don't own account with this ID: " + accountFrom.getId();

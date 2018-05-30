@@ -2,8 +2,7 @@ package com.netcracker.komarov.controllers.controller;
 
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.interfaces.AdminService;
-import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
@@ -26,48 +25,46 @@ import java.util.Map;
 @RestController
 @RequestMapping("/bank/v1")
 public class NewsController {
-    private final ClientService clientService;
     private RestTemplate restTemplate;
-    private AdminService adminService;
+    private PersonService personService;
     private EurekaClient eurekaClient;
 
     @Autowired
-    public NewsController(RestTemplate restTemplate, AdminService adminService,
-                          ClientService clientService, @Qualifier("eurekaClient") EurekaClient eurekaClient) {
+    public NewsController(RestTemplate restTemplate, PersonService personService,
+                          @Qualifier("eurekaClient") EurekaClient eurekaClient) {
         this.restTemplate = restTemplate;
-        this.adminService = adminService;
-        this.clientService = clientService;
+        this.personService = personService;
         this.eurekaClient = eurekaClient;
     }
 
     @ApiOperation(value = "Creation of new news")
-    @RequestMapping(value = "/admins/{adminId}/news", method = RequestMethod.POST)
-    public ResponseEntity save(@PathVariable long adminId, @RequestBody NewsDTO newsDTO) {
+    @RequestMapping(value = "/admins/{personId}/news", method = RequestMethod.POST)
+    public ResponseEntity save(@PathVariable long personId, @RequestBody NewsDTO newsDTO) {
         Map<String, Long> vars = new HashMap<>();
-        vars.put("adminId", adminId);
+        vars.put("adminId", personId);
         String url = getDomain() + "/admins/{adminId}/news";
         HttpEntity request = new HttpEntity<>(newsDTO);
         ResponseEntity responseEntity;
         try {
-            adminService.findById(adminId);
+            personService.findById(personId);
             responseEntity = restTemplate.postForEntity(url, request, NewsDTO.class, vars);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (HttpStatusCodeException e){
+        } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsService(e);
         }
         return responseEntity;
     }
 
     @ApiOperation(value = "Selecting all client news by client ID")
-    @RequestMapping(value = "/clients/{clientId}/news", method = RequestMethod.GET)
-    public ResponseEntity findNewsByClientId(@PathVariable long clientId) {
+    @RequestMapping(value = "/clients/{personId}/news", method = RequestMethod.GET)
+    public ResponseEntity findNewsByClientId(@PathVariable long personId) {
         Map<String, Long> vars = new HashMap<>();
-        vars.put("clientId", clientId);
+        vars.put("clientId", personId);
         String url = getDomain() + "/clients/{clientId}/news";
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
+            personService.findById(personId);
             responseEntity = restTemplate.getForEntity(url, NewsDTO[].class, vars);
         } catch (HttpStatusCodeException e) {
             responseEntity = getExceptionFromNewsService(e);

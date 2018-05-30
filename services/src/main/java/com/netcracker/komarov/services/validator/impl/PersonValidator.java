@@ -25,7 +25,7 @@ public class PersonValidator implements Validator<PersonDTO> {
                 regex = "^[A-Za-z0-9_]{6,30}$";
                 break;
             case PASSWORD:
-                regex = "^[A-Za-z0-9]{8,30}$";
+                regex = "^[A-Za-z0-9]{6,30}$";
                 break;
             default:
                 regex = "";

@@ -1,7 +1,9 @@
 package com.netcracker.komarov.dao.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "person")
@@ -29,18 +31,14 @@ public class Person extends BaseEntity {
     @Column(name = "passport_id")
     protected String passportId;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Admin admin;
-
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Client client;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Account> accounts = new HashSet<>();
 
     public Person() {
     }
 
     public Person(String name, String surname, String phoneNumber, Role role,
-                  String username, String password, String passportId,
-                  Admin admin, Client client) {
+                  String username, String password, String passportId) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -48,8 +46,6 @@ public class Person extends BaseEntity {
         this.username = username;
         this.password = password;
         this.passportId = passportId;
-        this.admin = admin;
-        this.client = client;
     }
 
     public long getId() {
@@ -116,20 +112,12 @@ public class Person extends BaseEntity {
         this.passportId = passportId;
     }
 
-    public Admin getAdmin() {
-        return admin;
+    public Set<Account> getAccounts() {
+        return accounts;
     }
 
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
     }
 
     @Override
@@ -149,7 +137,6 @@ public class Person extends BaseEntity {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(super.hashCode(), name, surname, phoneNumber, role, username, password, passportId);
     }
 

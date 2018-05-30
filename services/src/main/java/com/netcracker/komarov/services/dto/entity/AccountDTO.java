@@ -12,7 +12,7 @@ public class AccountDTO implements Serializable {
     private Long id;
     private Boolean locked;
     private Double balance;
-    private Long clientId;
+    private Long accountId;
 
     public AccountDTO() {
     }
@@ -22,11 +22,11 @@ public class AccountDTO implements Serializable {
         this.balance = balance;
     }
 
-    public AccountDTO(Long id, Boolean locked, Double balance, Long clientId) {
+    public AccountDTO(Long id, Boolean locked, Double balance, Long accountId) {
         this.id = id;
         this.locked = locked;
         this.balance = balance;
-        this.clientId = clientId;
+        this.accountId = accountId;
     }
 
     public Long getId() {
@@ -53,12 +53,12 @@ public class AccountDTO implements Serializable {
         this.balance = balance;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     @Override
@@ -69,13 +69,13 @@ public class AccountDTO implements Serializable {
         return Objects.equals(id, that.id) &&
                 locked == that.locked &&
                 Double.compare(that.balance, balance) == 0 &&
-                Objects.equals(clientId, that.clientId);
+                Objects.equals(accountId, that.accountId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, locked, balance, clientId);
+        return Objects.hash(id, locked, balance, accountId);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class AccountDTO implements Serializable {
                 "id=" + id +
                 ", locked=" + locked +
                 ", balance=" + balance +
-                ", clientId=" + clientId +
+                ", accountId=" + accountId +
                 '}';
     }
 }

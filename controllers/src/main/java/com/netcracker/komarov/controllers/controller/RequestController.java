@@ -6,7 +6,7 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
-import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.interfaces.PersonService;
 import feign.FeignException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +24,27 @@ import java.util.stream.Stream;
 @RequestMapping("/bank/v1")
 public class RequestController {
     private CardService cardService;
-    private ClientService clientService;
+    private PersonService personService;
     private AccountService accountService;
     private RequestFeignClient requestFeignClient;
 
     @Autowired
-    public RequestController(RequestFeignClient requestFeignClient, ClientService clientService,
+    public RequestController(RequestFeignClient requestFeignClient, PersonService personService,
                              AccountService accountService, CardService cardService) {
         this.requestFeignClient = requestFeignClient;
-        this.clientService = clientService;
+        this.personService = personService;
         this.accountService = accountService;
         this.cardService = cardService;
     }
 
     @ApiOperation(value = "Sending request to unlockAccount account")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/requests", method = RequestMethod.PATCH)
-    public ResponseEntity sendRequestToUnlockAccount(@PathVariable long clientId,
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/requests", method = RequestMethod.PATCH)
+    public ResponseEntity sendRequestToUnlockAccount(@PathVariable long personId,
                                                      @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (accountService.isContain(clientId, accountId)) {
+            personService.findById(personId);
+            if (accountService.isContain(personId, accountId)) {
                 if (accountService.findById(accountId).isLocked()) {
                     responseEntity = requestFeignClient.save(new RequestDTO(accountId, Status.ACCOUNT));
                 } else {
@@ -62,14 +62,15 @@ public class RequestController {
     }
 
     @ApiOperation(value = "Sending request to unlockAccount card")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/cards/{cardId}/requests", method = RequestMethod.PATCH)
-    public ResponseEntity sendRequestToUnlockCard(@PathVariable long clientId,
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards/{cardId}/requests",
+            method = RequestMethod.PATCH)
+    public ResponseEntity sendRequestToUnlockCard(@PathVariable long personId,
                                                   @PathVariable long accountId,
                                                   @PathVariable long cardId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (accountService.isContain(clientId, accountId)) {
+            personService.findById(personId);
+            if (accountService.isContain(personId, accountId)) {
                 if (cardService.isContain(accountId, cardId)) {
                     if (cardService.findById(cardId).isLocked()) {
                         responseEntity = requestFeignClient.save(new RequestDTO(cardId, Status.CARD));

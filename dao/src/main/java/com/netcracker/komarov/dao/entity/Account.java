@@ -17,7 +17,7 @@ public class Account extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private Client client;
+    private Person person;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Card> cards = new HashSet<>();
@@ -25,10 +25,10 @@ public class Account extends BaseEntity {
     public Account() {
     }
 
-    public Account(double balance, boolean locked, Client client) {
+    public Account(double balance, boolean locked, Person person) {
         this.balance = balance;
         this.locked = locked;
-        this.client = client;
+        this.person = person;
     }
 
     public double getBalance() {
@@ -47,20 +47,20 @@ public class Account extends BaseEntity {
         this.locked = locked;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public Set<Card> getCards() {
         return cards;
     }
 
     public void setCards(Set<Card> cards) {
         this.cards = cards;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     @Override
@@ -71,13 +71,13 @@ public class Account extends BaseEntity {
         Account account = (Account) o;
         return Double.compare(account.balance, balance) == 0 &&
                 locked == account.locked &&
-                Objects.equals(client, account.client);
+                Objects.equals(person, account.person);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), balance, locked, client);
+        return Objects.hash(super.hashCode(), balance, locked, person);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Account extends BaseEntity {
         return "Account{" +
                 "balance=" + balance +
                 ", locked=" + locked +
-                ", client=" + client +
+                ", person=" + person +
                 ", id=" + id +
                 '}';
     }

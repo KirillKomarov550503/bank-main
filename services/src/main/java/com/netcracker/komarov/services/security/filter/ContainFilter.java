@@ -15,11 +15,11 @@ import java.util.regex.Pattern;
 
 @Component
 public class ContainFilter implements Filter {
-    private Logger logger = LoggerFactory.getLogger(ContainFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContainFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.info("Init ContainFilter");
+        LOGGER.info("Init ContainFilter");
     }
 
     @Override
@@ -36,27 +36,13 @@ public class ContainFilter implements Filter {
             pattern = Pattern.compile(adminsRegex);
             matcher = pattern.matcher(uri);
             if (matcher.matches()) {
-                String[] strings = uri.split("/");
-                long id = Long.valueOf(strings[4]);
-                if (id == customUser.getId()) {
-                    filterChain.doFilter(servletRequest, servletResponse);
-                } else {
-                    httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
-                            "You do not have access to this account");
-                }
+                check(servletRequest, servletResponse, filterChain, httpServletResponse, customUser, uri);
             } else {
                 String clientRegex = "(^/bank/v1/clients/[0-9]+$)|(^/bank/v1/clients/[0-9]+/.+$)";
                 pattern = Pattern.compile(clientRegex);
                 matcher = pattern.matcher(uri);
                 if (matcher.matches()) {
-                    String[] strings = uri.split("/");
-                    long id = Long.valueOf(strings[4]);
-                    if (id == customUser.getId()) {
-                        filterChain.doFilter(servletRequest, servletResponse);
-                    } else {
-                        httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
-                                "You do not have access to this account");
-                    }
+                    check(servletRequest, servletResponse, filterChain, httpServletResponse, customUser, uri);
                 } else {
                     filterChain.doFilter(servletRequest, servletResponse);
                 }
@@ -66,8 +52,21 @@ public class ContainFilter implements Filter {
         }
     }
 
+    private void check(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain,
+                       HttpServletResponse httpServletResponse, CustomUser customUser, String uri) throws IOException,
+            ServletException {
+        String[] strings = uri.split("/");
+        long id = Long.valueOf(strings[4]);
+        if (id == customUser.getId()) {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "You do not have access to this account");
+        }
+    }
+
     @Override
     public void destroy() {
-        logger.info("Destroy ContainFilter");
+        LOGGER.info("Destroy ContainFilter");
     }
 }

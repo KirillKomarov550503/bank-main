@@ -12,11 +12,11 @@ import java.util.Collection;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Collection<Account> findAccountsByLocked(boolean locked);
 
-    @Query("select a from Account a where a.locked = :locked and a.client.id = :client_id")
-    Collection<Account> findAccountsByLockedAndClientId(@Param("client_id") long clientId,
+    @Query("select a from Account a where a.locked = :locked and a.person.id = :person_id")
+    Collection<Account> findAccountsByLockedAndPersonId(@Param("person_id") long personId,
                                                         @Param("locked") boolean locked);
 
-    @Query("select a from Account a where a.client.id = :client_id")
-    Collection<Account> findAccountsByClientId(@Param("client_id") long clientId);
+    @Query("select a from Account a where a.person.id = :person_id")
+    Collection<Account> findAccountsByPersonId(@Param("person_id") long personId);
 
 }

@@ -4,7 +4,7 @@ import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AccountService;
-import com.netcracker.komarov.services.interfaces.ClientService;
+import com.netcracker.komarov.services.interfaces.PersonService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,20 +17,20 @@ import java.util.Collection;
 @RequestMapping(value = "/bank/v1")
 public class AccountController {
     private AccountService accountService;
-    private ClientService clientService;
+    private PersonService personService;
 
     @Autowired
-    public AccountController(AccountService accountService, ClientService clientService) {
+    public AccountController(AccountService accountService, PersonService personService) {
         this.accountService = accountService;
-        this.clientService = clientService;
+        this.personService = personService;
     }
 
     @ApiOperation(value = "Creation of new account")
-    @RequestMapping(value = "/clients/{clientId}/accounts", method = RequestMethod.POST)
-    public ResponseEntity save(@PathVariable long clientId) {
+    @RequestMapping(value = "/clients/{personId}/accounts", method = RequestMethod.POST)
+    public ResponseEntity save(@PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
-            AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0.0), clientId);
+            AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0.0), personId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -54,12 +54,12 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Locking account by ID")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.PATCH)
-    public ResponseEntity lockAccount(@PathVariable long clientId, @PathVariable long accountId) {
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.PATCH)
+    public ResponseEntity lockAccount(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (accountService.isContain(clientId, accountId)) {
+            personService.findById(personId);
+            if (accountService.isContain(personId, accountId)) {
                 AccountDTO dto = accountService.lockAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
@@ -74,12 +74,12 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Refill of your account by ID")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
-    public ResponseEntity refillAccount(@PathVariable long clientId, @PathVariable long accountId) {
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
+    public ResponseEntity refillAccount(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
-        clientService.findById(clientId);
+        personService.findById(personId);
         try {
-            if (accountService.isContain(clientId, accountId)) {
+            if (accountService.isContain(personId, accountId)) {
                 AccountDTO dto = accountService.refillAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
@@ -94,12 +94,12 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Selecting of all your accounts by status")
-    @RequestMapping(value = "/clients/{clientId}/accounts/status", method = RequestMethod.GET)
-    public ResponseEntity findByClientIdAndLock(@PathVariable long clientId, @RequestParam(name = "lockAccount",
+    @RequestMapping(value = "/clients/{personId}/accounts/status", method = RequestMethod.GET)
+    public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lockAccount",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
         try {
-            Collection<AccountDTO> dtos = accountService.findAccountsByClientIdAndLock(clientId, lock);
+            Collection<AccountDTO> dtos = accountService.findAccountsByClientIdAndLock(personId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
@@ -115,12 +115,12 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Deleting account by ID")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteById(@PathVariable long clientId, @PathVariable long accountId) {
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (accountService.isContain(clientId, accountId)) {
+            personService.findById(personId);
+            if (accountService.isContain(personId, accountId)) {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
@@ -133,12 +133,12 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Selecting account by ID")
-    @RequestMapping(value = "/clients/{clientId}/accounts/{accountId}", method = RequestMethod.GET)
-    public ResponseEntity findById(@PathVariable long clientId, @PathVariable long accountId) {
+    @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
         try {
-            clientService.findById(clientId);
-            if (accountService.isContain(clientId, accountId)) {
+            personService.findById(personId);
+            if (accountService.isContain(personId, accountId)) {
                 AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {

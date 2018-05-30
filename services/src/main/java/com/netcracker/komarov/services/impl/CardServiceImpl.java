@@ -2,10 +2,10 @@ package com.netcracker.komarov.services.impl;
 
 import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Card;
-import com.netcracker.komarov.dao.entity.Client;
+import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
-import com.netcracker.komarov.dao.repository.ClientRepository;
+import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
@@ -30,18 +30,18 @@ public class CardServiceImpl implements CardService {
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
-    private ClientRepository clientRepository;
+    private PersonRepository personRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
     public CardServiceImpl(RequestFeignClient requestFe, CardRepository cardRepository,
                            AccountRepository accountRepository, CardConverter cardConverter,
-                           ClientRepository clientRepository) {
+                           PersonRepository personRepository) {
         this.requestFeignClient = requestFe;
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
-        this.clientRepository = clientRepository;
+        this.personRepository = personRepository;
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -112,14 +112,14 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public Collection<CardDTO> findCardsByClientIdAndLock(long clientId, boolean lock) throws NotFoundException {
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
+    public Collection<CardDTO> findCardsByClientIdAndLock(long personId, boolean lock) throws NotFoundException {
+        Optional<Person> optionalClient = personRepository.findById(personId);
         Collection<Card> cards;
         if (optionalClient.isPresent()) {
-            cards = cardRepository.findCardsByClientIdAndLocked(clientId, lock);
-            LOGGER.info("Return all unlocked cards by client ID " + clientId);
+            cards = cardRepository.findCardsByPersonIdAndLocked(personId, lock);
+            LOGGER.info("Return all unlocked cards by client ID " + personId);
         } else {
-            String error = "There is no such client in database with ID " + clientId;
+            String error = "There is no such client in database with ID " + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
@@ -27,14 +27,16 @@ public class RequestController {
     private PersonService personService;
     private AccountService accountService;
     private RequestFeignClient requestFeignClient;
+    private ObjectMapper objectMapper;
 
     @Autowired
     public RequestController(RequestFeignClient requestFeignClient, PersonService personService,
-                             AccountService accountService, CardService cardService) {
+                             AccountService accountService, CardService cardService, ObjectMapper objectMapper) {
         this.requestFeignClient = requestFeignClient;
         this.personService = personService;
         this.accountService = accountService;
         this.cardService = cardService;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Sending request to unlockAccount account")
@@ -122,16 +124,17 @@ public class RequestController {
     }
 
     private ResponseEntity getResponseEntityOfFeignException(FeignException e) {
-        return ResponseEntity.status(e.status()).body(
-                Stream.of(e.getMessage().split("\n")).skip(1).collect(Collectors.toList())
-        );
+        String message = Stream.of(e.getMessage().split("\n"))
+                .skip(1)
+                .reduce((s1, s2) -> s1 + s2).orElse(null);
+        return ResponseEntity.status(e.status()).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getResponseEntityOfNotFoundException(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getResponseEntityOfInternalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 }

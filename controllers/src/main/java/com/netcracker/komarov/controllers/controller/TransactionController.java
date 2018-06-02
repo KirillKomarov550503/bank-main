@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -21,13 +22,15 @@ public class TransactionController {
     private TransactionService transactionService;
     private PersonService personService;
     private TransactionValidator transactionValidator;
+    private ObjectMapper objectMapper;
 
     @Autowired
     public TransactionController(TransactionService transactionService, PersonService personService,
-                                 TransactionValidator transactionValidator) {
+                                 TransactionValidator transactionValidator, ObjectMapper objectMapper) {
         this.transactionService = transactionService;
         this.personService = personService;
         this.transactionValidator = transactionValidator;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Creation of new transaction")
@@ -83,14 +86,14 @@ public class TransactionController {
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
     }
 }

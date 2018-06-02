@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
@@ -20,11 +21,13 @@ import java.util.Collection;
 public class PersonController {
     private PersonService personService;
     private PersonValidator personValidator;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public PersonController(PersonService personService, PersonValidator personValidator) {
+    public PersonController(PersonService personService, PersonValidator personValidator, ObjectMapper objectMapper) {
         this.personService = personService;
         this.personValidator = personValidator;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Registration of news client")
@@ -149,14 +152,14 @@ public class PersonController {
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
     }
 }

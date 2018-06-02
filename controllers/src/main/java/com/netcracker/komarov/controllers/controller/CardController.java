@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -23,14 +24,16 @@ public class CardController {
     private PersonService personService;
     private AccountService accountService;
     private CardValidator cardValidator;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public CardController(CardService cardService, PersonService personService,
-                          AccountService accountService, CardValidator cardValidator) {
+    public CardController(CardService cardService, PersonService personService, AccountService accountService,
+                          CardValidator cardValidator, ObjectMapper objectMapper) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.cardValidator = cardValidator;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Creation of new card")
@@ -183,14 +186,14 @@ public class CardController {
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
     }
 }

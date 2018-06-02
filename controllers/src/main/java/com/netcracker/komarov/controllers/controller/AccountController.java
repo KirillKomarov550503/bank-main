@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -18,11 +19,13 @@ import java.util.Collection;
 public class AccountController {
     private AccountService accountService;
     private PersonService personService;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public AccountController(AccountService accountService, PersonService personService) {
+    public AccountController(AccountService accountService, PersonService personService, ObjectMapper objectMapper) {
         this.accountService = accountService;
         this.personService = personService;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Creation of new account")
@@ -151,10 +154,10 @@ public class AccountController {
     }
 
     private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 
     private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.valueToTree(message));
     }
 }

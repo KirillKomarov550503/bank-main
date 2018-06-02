@@ -1,5 +1,6 @@
 package com.netcracker.komarov.controllers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
@@ -31,16 +32,18 @@ public class NewsController {
     private EurekaClient eurekaClient;
     private UriBuilder uriBuilder;
     private MapConverter mapConverter;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public NewsController(RestTemplate restTemplate, PersonService personService,
-                          @Qualifier("eurekaClient") EurekaClient eurekaClient,
-                          UriBuilder uriBuilder, MapConverter mapConverter) {
+    public NewsController(RestTemplate restTemplate, PersonService personService, ObjectMapper objectMapper,
+                          UriBuilder uriBuilder, MapConverter mapConverter,
+                          @Qualifier("eurekaClient") EurekaClient eurekaClient) {
         this.restTemplate = restTemplate;
         this.personService = personService;
         this.eurekaClient = eurekaClient;
         this.uriBuilder = uriBuilder;
         this.mapConverter = mapConverter;
+        this.objectMapper = objectMapper;
     }
 
     @ApiOperation(value = "Creation of new news")
@@ -192,10 +195,10 @@ public class NewsController {
     }
 
     private ResponseEntity getExceptionFromNewsService(HttpStatusCodeException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+        return ResponseEntity.status(e.getStatusCode()).body(objectMapper.valueToTree(e.getResponseBodyAsString()));
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
+    private ResponseEntity getNotFoundResponseEntity(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
     }
 }

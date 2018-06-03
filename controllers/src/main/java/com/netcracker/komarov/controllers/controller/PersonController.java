@@ -65,78 +65,8 @@ public class PersonController {
     }
 
     @ApiOperation(value = "Updating information about client")
-    @RequestMapping(value = "/admins/{personId}", method = RequestMethod.PUT)
-    public ResponseEntity updateAdmin(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
-        return getUpdateResponseEntity(personDTO, personId);
-    }
-
-    @ApiOperation(value = "Updating information about client")
-    @RequestMapping(value = "/clients/{personId}", method = RequestMethod.PUT)
-    public ResponseEntity updateClient(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
-        return getUpdateResponseEntity(personDTO, personId);
-    }
-
-    @ApiOperation(value = "Selecting all people")
-    @RequestMapping(value = "/admins", method = RequestMethod.GET)
-    public ResponseEntity findAllPeople() {
-        Collection<PersonDTO> dtos = personService.findAllPeople();
-        return ResponseEntity.status(HttpStatus.OK).body(dtos);
-    }
-
-    @ApiOperation(value = "Deleting client by ID")
-    @RequestMapping(value = "/admins/{personId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteAdminById(@PathVariable long personId) {
-        ResponseEntity responseEntity;
-        try {
-            personService.deleteById(personId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        }
-        return responseEntity;
-    }
-
-    @ApiOperation(value = "Deleting client by ID")
-    @RequestMapping(value = "/clients/{personId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteClientById(@PathVariable long personId) {
-        ResponseEntity responseEntity;
-        try {
-            personService.deleteById(personId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        }
-        return responseEntity;
-    }
-
-
-    @ApiOperation(value = "Selecting person by ID")
-    @RequestMapping(value = "/admins/{personId}", method = RequestMethod.GET)
-    public ResponseEntity findAdminById(@PathVariable long personId) {
-        ResponseEntity responseEntity;
-        try {
-            PersonDTO dto = personService.findById(personId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        return responseEntity;
-    }
-
-    @ApiOperation(value = "Selecting person by ID")
-    @RequestMapping(value = "/clients/{personId}", method = RequestMethod.GET)
-    public ResponseEntity findClientById(@PathVariable long personId) {
-        ResponseEntity responseEntity;
-        try {
-            PersonDTO dto = personService.findById(personId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        return responseEntity;
-    }
-
-    private ResponseEntity getUpdateResponseEntity(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
+    @RequestMapping(value = "/people/{personId}", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
             personValidator.validate(personDTO);
@@ -147,6 +77,39 @@ public class PersonController {
             responseEntity = getNotFoundResponseEntity(e.getMessage());
         } catch (ValidationException e) {
             responseEntity = getBadRequestResponseEntity(e.getMessage());
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting all people")
+    @RequestMapping(value = "/admins/people", method = RequestMethod.GET)
+    public ResponseEntity findAllPeople() {
+        Collection<PersonDTO> dtos = personService.findAllPeople();
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+    }
+
+    @ApiOperation(value = "Deleting client by ID")
+    @RequestMapping(value = "/people/{personId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteById(@PathVariable long personId) {
+        ResponseEntity responseEntity;
+        try {
+            personService.deleteById(personId);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).build();
+        } catch (NotFoundException e) {
+            responseEntity = getNotFoundResponseEntity(e.getMessage());
+        }
+        return responseEntity;
+    }
+
+    @ApiOperation(value = "Selecting person by ID")
+    @RequestMapping(value = "/people/{personId}", method = RequestMethod.GET)
+    public ResponseEntity findById(@PathVariable long personId) {
+        ResponseEntity responseEntity;
+        try {
+            PersonDTO dto = personService.findById(personId);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
+        } catch (NotFoundException e) {
+            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         return responseEntity;
     }

@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(containFilter);
-        registrationBean.addUrlPatterns(PREFIX + "/clients/*", PREFIX + "/admins/*");
+        registrationBean.addUrlPatterns(PREFIX + "/clients/*", PREFIX + "/admins/*", PREFIX + "/people/*");
         return registrationBean;
     }
 
@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PREFIX + "/admins*", PREFIX + "/admins/**").hasAuthority("ADMIN")
                 .antMatchers(PREFIX + "/clients*", PREFIX + "/clients/**").hasAuthority("CLIENT")
                 .antMatchers(PREFIX + "/news*", PREFIX + "/news/**").permitAll()
+                .antMatchers(PREFIX + "/people/**").authenticated()
                 .antMatchers(PREFIX + "/registration*").anonymous()
                 .and()
                 .httpBasic()

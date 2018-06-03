@@ -10,8 +10,10 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Component
 public class ContainFilter implements Filter {
@@ -30,22 +32,27 @@ public class ContainFilter implements Filter {
         CustomUser customUser = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (customUser != null) {
             String uri = httpServletRequest.getRequestURI();
-            Pattern pattern;
-            Matcher matcher;
-            String adminsRegex = "(^/bank/v1/admins/[0-9]+$)|(^/bank/v1/admins/[0-9]+/.+$)";
-            pattern = Pattern.compile(adminsRegex);
-            matcher = pattern.matcher(uri);
-            if (matcher.matches()) {
-                check(servletRequest, servletResponse, filterChain, httpServletResponse, customUser, uri);
-            } else {
-                String clientRegex = "(^/bank/v1/clients/[0-9]+$)|(^/bank/v1/clients/[0-9]+/.+$)";
-                pattern = Pattern.compile(clientRegex);
-                matcher = pattern.matcher(uri);
+            String[] strings = uri.split("/");
+            String role = strings[3];
+            String[] roles = {"admins", "clients", "people"};
+            Optional<String> search = Stream.of(roles)
+                    .filter(string -> string.equals(role))
+                    .findFirst();
+            if (search.isPresent()) {
+                String regex = "(^/bank/v1/" + role + "/[0-9]+$)|(^/bank/v1/" + role + "/[0-9]+/.+$)";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(uri);
                 if (matcher.matches()) {
-                    check(servletRequest, servletResponse, filterChain, httpServletResponse, customUser, uri);
-                } else {
-                    filterChain.doFilter(servletRequest, servletResponse);
+                    long id = Long.valueOf(strings[4]);
+                    if (id == customUser.getId()) {
+                        filterChain.doFilter(servletRequest, servletResponse);
+                    } else {
+                        httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
+                                "You do not have access to this account");
+                    }
                 }
+            } else {
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -55,14 +62,8 @@ public class ContainFilter implements Filter {
     private void check(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain,
                        HttpServletResponse httpServletResponse, CustomUser customUser, String uri) throws IOException,
             ServletException {
-        String[] strings = uri.split("/");
-        long id = Long.valueOf(strings[4]);
-        if (id == customUser.getId()) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
-            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
-                    "You do not have access to this account");
-        }
+
+
     }
 
     @Override

@@ -91,6 +91,7 @@ public class PersonServiceImpl implements PersonService {
         if (optionalPerson.isPresent()) {
             Person oldPerson = optionalPerson.get();
             newPerson.setId(oldPerson.getId());
+            newPerson.setRole(oldPerson.getRole());
             String password = newPerson.getPassword();
             newPerson.setPassword(passwordEncoder.encode(password));
             person = personRepository.saveAndFlush(oldPerson);

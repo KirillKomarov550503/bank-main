@@ -10,21 +10,28 @@ import java.util.Objects;
 public class TransactionDTO implements Serializable {
     @ApiModelProperty(readOnly = true, hidden = true)
     private Long id;
-    private String accountFromId;
-    private String accountToId;
-    private String money;
+    private Long accountFromId;
+    private Long accountToId;
+    private Double money;
     @ApiModelProperty(readOnly = true, hidden = true)
     private String date;
 
     public TransactionDTO() {
     }
 
-    public TransactionDTO(Long id, String accountFromId, String accountToId, String money, String date) {
+    public TransactionDTO(Long id, Long accountFromId, Long accountToId, Double money, String date) {
         this.id = id;
         this.accountFromId = accountFromId;
         this.accountToId = accountToId;
         this.money = money;
         this.date = date;
+    }
+
+    public TransactionDTO(Long id, Long accountFromId, Long accountToId, Double money) {
+        this.id = id;
+        this.accountFromId = accountFromId;
+        this.accountToId = accountToId;
+        this.money = money;
     }
 
     public Long getId() {
@@ -35,27 +42,27 @@ public class TransactionDTO implements Serializable {
         this.id = id;
     }
 
-    public String getAccountFromId() {
+    public Long getAccountFromId() {
         return accountFromId;
     }
 
-    public void setAccountFromId(String accountFromId) {
+    public void setAccountFromId(Long accountFromId) {
         this.accountFromId = accountFromId;
     }
 
-    public String getAccountToId() {
+    public Long getAccountToId() {
         return accountToId;
     }
 
-    public void setAccountToId(String accountToId) {
+    public void setAccountToId(Long accountToId) {
         this.accountToId = accountToId;
     }
 
-    public String getMoney() {
+    public Double getMoney() {
         return money;
     }
 
-    public void setMoney(String money) {
+    public void setMoney(Double money) {
         this.money = money;
     }
 
@@ -81,7 +88,6 @@ public class TransactionDTO implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, accountFromId, accountToId, money, date);
     }
 

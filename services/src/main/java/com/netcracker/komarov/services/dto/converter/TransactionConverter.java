@@ -13,10 +13,10 @@ public class TransactionConverter implements Converter<TransactionDTO, Transacti
         if (transaction != null) {
             dto = new TransactionDTO();
             dto.setId(transaction.getId());
-            dto.setAccountFromId(String.valueOf(transaction.getAccountFromId()));
-            dto.setAccountToId(String.valueOf(transaction.getAccountToId()));
+            dto.setAccountFromId(transaction.getAccountFromId());
+            dto.setAccountToId(transaction.getAccountToId());
             dto.setDate(transaction.getDate());
-            dto.setMoney(String.valueOf(transaction.getMoney()));
+            dto.setMoney(transaction.getMoney());
         }
         return dto;
     }
@@ -24,9 +24,9 @@ public class TransactionConverter implements Converter<TransactionDTO, Transacti
     @Override
     public Transaction convertToEntity(TransactionDTO dto) {
         Transaction transaction = new Transaction();
-        transaction.setAccountFromId(Integer.valueOf(dto.getAccountFromId()));
-        transaction.setAccountToId(Integer.valueOf(dto.getAccountToId()));
-        transaction.setMoney(Double.valueOf(dto.getMoney()));
+        transaction.setAccountFromId(dto.getAccountFromId());
+        transaction.setAccountToId(dto.getAccountToId());
+        transaction.setMoney(dto.getMoney());
         return transaction;
     }
 }

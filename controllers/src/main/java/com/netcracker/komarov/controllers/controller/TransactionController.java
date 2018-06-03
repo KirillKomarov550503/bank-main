@@ -7,7 +7,6 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.exception.ValidationException;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
-import com.netcracker.komarov.services.validator.impl.TransactionValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,15 +20,13 @@ import java.util.Collection;
 public class TransactionController {
     private TransactionService transactionService;
     private PersonService personService;
-    private TransactionValidator transactionValidator;
     private ObjectMapper objectMapper;
 
     @Autowired
     public TransactionController(TransactionService transactionService, PersonService personService,
-                                 TransactionValidator transactionValidator, ObjectMapper objectMapper) {
+                                 ObjectMapper objectMapper) {
         this.transactionService = transactionService;
         this.personService = personService;
-        this.transactionValidator = transactionValidator;
         this.objectMapper = objectMapper;
     }
 
@@ -38,7 +35,6 @@ public class TransactionController {
     public ResponseEntity save(@RequestBody TransactionDTO transactionDTO, @PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
-            transactionValidator.validate(transactionDTO);
             TransactionDTO dto = transactionService.save(transactionDTO, personId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {

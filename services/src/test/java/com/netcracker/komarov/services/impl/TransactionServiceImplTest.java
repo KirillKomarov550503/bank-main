@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 
 @WebAppConfiguration
@@ -49,53 +50,50 @@ public class TransactionServiceImplTest {
         accountService.saveAccount(new AccountDTO(false, 0.0), 1);
         accountService.saveAccount(new AccountDTO(false, 0.0), 2);
         accountService.saveAccount(new AccountDTO(false, 0.0), 1);
-        accountService.refillAccount(1);
-    }
-
-    @Test
-    public void showStories() throws LogicException {
         accountService.refillAccount(2);
         accountService.refillAccount(3);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        String date = simpleDateFormat.format(new Date());
-        TransactionDTO transactionDTO1 = new TransactionDTO(0L, "2", "1", "13", date);
-        TransactionDTO transactionDTO2 = new TransactionDTO(0L, "1", "3", "24.9", date);
-        TransactionDTO transactionDTO3 = new TransactionDTO(0L, "3", "2", "60", date);
+        TransactionDTO transactionDTO1 = new TransactionDTO(0L, 2L, 1L, 40.0);
+        TransactionDTO transactionDTO2 = new TransactionDTO(0L, 1L, 3L, 24.9);
+        TransactionDTO transactionDTO3 = new TransactionDTO(0L, 3L, 2L, 60.0);
         transactionService.save(transactionDTO1, 2);
         transactionService.save(transactionDTO2, 1);
         transactionService.save(transactionDTO3, 1);
+    }
+
+    @Test
+    public void showStories() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        String date = simpleDateFormat.format(new Date());
         Collection<TransactionDTO> transactions = new ArrayList<>();
-        TransactionDTO transaction1 = new TransactionDTO(2L, "1", "3", "24.9", date);
-        TransactionDTO transaction3 = new TransactionDTO(3L, "1", "2", "60", date);
+        TransactionDTO transaction1 = new TransactionDTO(2L, 1L, 3L, 24.9, date);
+        TransactionDTO transaction3 = new TransactionDTO(3L, 3L, 2L, 60.0, date);
         transactions.add(transaction1);
         transactions.add(transaction3);
         assertEquals(transactions, transactionService.findTransactionsByClientId(1));
     }
 
-//    @Test(expected = LogicException.class)
-//    public void createTransactionException() throws LogicException {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-//        String date = simpleDateFormat.format(new Date());
-//        TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 110, date);
-//        assertNull(transactionService.save(transactionDTO, 1));
-//    }
-//
-//    @Test
-//    public void createTransaction() throws LogicException {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-//        String date = simpleDateFormat.format(new Date());
-//        TransactionDTO transactionDTO = new TransactionDTO(0, 1, 2, 90, date);
-//        TransactionDTO res = new TransactionDTO(1, 1, 2, 90, date);
-//        assertEquals(res, transactionService.save(transactionDTO, 1));
-//    }
-//
-//    @Test
-//    public void findById() throws LogicException {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-//        String date = simpleDateFormat.format(new Date());
-//        TransactionDTO transactionDTO = new TransactionDTO(0, 1, 3, 24.9, date);
-//        transactionService.save(transactionDTO, 1);
-//        TransactionDTO res = new TransactionDTO(1, 1, 3, 24.9, date);
-//        assertEquals(res, transactionService.findById(1));
-//    }
+    @Test(expected = LogicException.class)
+    public void createTransactionException() throws LogicException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        String date = simpleDateFormat.format(new Date());
+        TransactionDTO transactionDTO = new TransactionDTO(0L, 1L, 2L, 110.0, date);
+        assertNull(transactionService.save(transactionDTO, 1));
+    }
+
+    @Test
+    public void createTransaction() throws LogicException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        String date = simpleDateFormat.format(new Date());
+        TransactionDTO transactionDTO = new TransactionDTO(0L, 1L, 2L, 10.0, date);
+        TransactionDTO res = new TransactionDTO(4L, 1L, 2L, 10.0, date);
+        assertEquals(res, transactionService.save(transactionDTO, 1));
+    }
+
+    @Test
+    public void findById() throws LogicException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        String date = simpleDateFormat.format(new Date());
+        TransactionDTO res = new TransactionDTO(1L, 2L, 1L, 40.0, date);
+        assertEquals(res, transactionService.findById(1));
+    }
 }

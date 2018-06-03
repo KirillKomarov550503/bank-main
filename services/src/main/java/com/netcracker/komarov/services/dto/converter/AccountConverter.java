@@ -15,7 +15,7 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
             dto.setLocked(account.isLocked());
             dto.setId(account.getId());
             dto.setBalance(account.getBalance());
-            dto.setAccountId(account.getPerson().getId());
+            dto.setPersonId(account.getPerson().getId());
         }
         return dto;
     }

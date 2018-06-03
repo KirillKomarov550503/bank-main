@@ -47,6 +47,18 @@ public class PersonDTO implements Serializable {
         this.password = password;
     }
 
+    public PersonDTO(Long id, String name, String surname, String phoneNumber, String passportId,
+                     String username, String password, Role role) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.passportId = passportId;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }

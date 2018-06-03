@@ -17,6 +17,7 @@ import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,17 +32,19 @@ public class CardServiceImpl implements CardService {
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
     private PersonRepository personRepository;
+    private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
     public CardServiceImpl(RequestFeignClient requestFe, CardRepository cardRepository,
                            AccountRepository accountRepository, CardConverter cardConverter,
-                           PersonRepository personRepository) {
+                           PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.requestFeignClient = requestFe;
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
         this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -99,6 +102,8 @@ public class CardServiceImpl implements CardService {
             Account account = optionalAccount.get();
             card.setAccount(account);
             card.setLocked(false);
+            String pin = card.getPin();
+            card.setPin(passwordEncoder.encode(pin));
             account.getCards().add(card);
             temp = cardRepository.save(card);
             LOGGER.info("Creation of new card with ID " + temp.getId());

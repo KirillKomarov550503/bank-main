@@ -128,7 +128,7 @@ public class NewsController {
 
     @ApiOperation(value = "Selecting news by specification")
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
-    public ResponseEntity findNewsByParams(@RequestParam Map<String, String> parameters) {
+    public ResponseEntity findNewsByParams(@RequestParam() Map<String, String> parameters) {
         String url = getDomain() + "/admins/news";
         ResponseEntity responseEntity;
         try {

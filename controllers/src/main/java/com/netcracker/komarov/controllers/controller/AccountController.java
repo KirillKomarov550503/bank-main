@@ -7,6 +7,8 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

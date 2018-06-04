@@ -50,20 +50,15 @@ public class ContainFilter implements Filter {
                         httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
                                 "You do not have access to this account");
                     }
+                } else {
+                    filterChain.doFilter(servletRequest, servletResponse);
                 }
             } else {
-                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request");
             }
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
-    }
-
-    private void check(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain,
-                       HttpServletResponse httpServletResponse, CustomUser customUser, String uri) throws IOException,
-            ServletException {
-
-
     }
 
     @Override

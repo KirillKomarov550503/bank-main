@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +25,15 @@ public class PersonServiceImpl implements PersonService {
     private PersonConverter personConverter;
     private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
+    private Environment environment;
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter,
-                             PasswordEncoder passwordEncoder) {
+                             PasswordEncoder passwordEncoder, Environment environment) {
         this.personRepository = personRepository;
         this.personConverter = personConverter;
         this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
     }
 
     private Collection<PersonDTO> convertCollection(Collection<Person> people) {
@@ -55,7 +58,7 @@ public class PersonServiceImpl implements PersonService {
             person = optionalPerson.get();
             LOGGER.info("Return person with ID " + personId);
         } else {
-            String error = "There is no such person with ID " + personId;
+            String error = environment.getProperty("error.person.search") + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -97,7 +100,7 @@ public class PersonServiceImpl implements PersonService {
             person = personRepository.saveAndFlush(oldPerson);
             LOGGER.info("Information about person with ID " + personDTO.getId() + " was updated");
         } else {
-            String error = "There is no such person in database with ID " + personDTO.getId();
+            String error = environment.getProperty("error.person.search") + personDTO.getId();
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -114,7 +117,7 @@ public class PersonServiceImpl implements PersonService {
             personRepository.deletePersonById(personId);
             LOGGER.info("Person with ID " + personId + " was deleted");
         } else {
-            String error = "There is no such person in database with ID " + personId;
+            String error = environment.getProperty("error.person.search") + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

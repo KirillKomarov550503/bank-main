@@ -14,6 +14,7 @@ import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +31,18 @@ public class CardServiceImpl implements CardService {
     private PersonRepository personRepository;
     private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
+    private Environment environment;
 
     @Autowired
     public CardServiceImpl(CardRepository cardRepository, AccountRepository accountRepository,
                            CardConverter cardConverter, PersonRepository personRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, Environment environment) {
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -56,7 +59,7 @@ public class CardServiceImpl implements CardService {
             Card card = optionalCard.get();
             contain = card.getAccount().getId() == accountId;
         } else {
-            String error = "No such card with ID " + cardId;
+            String error = environment.getProperty("error.card.search") + cardId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -80,7 +83,7 @@ public class CardServiceImpl implements CardService {
                 temp = cardRepository.save(card);
             }
         } else {
-            String error = "There is no such card in database with ID " + cardId;
+            String error = environment.getProperty("error.card.search") + cardId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -103,7 +106,7 @@ public class CardServiceImpl implements CardService {
             temp = cardRepository.save(card);
             LOGGER.info("Creation of new card with ID " + temp.getId());
         } else {
-            String error = "There is no such account in database with ID " + cardDTO.getAccountId();
+            String error = environment.getProperty("error.card.search") + cardDTO.getAccountId();
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -119,7 +122,7 @@ public class CardServiceImpl implements CardService {
             cards = cardRepository.findCardsByPersonIdAndLocked(personId, lock);
             LOGGER.info("Return all unlocked cards by client ID " + personId);
         } else {
-            String error = "There is no such client in database with ID " + personId;
+            String error = environment.getProperty("error.card.search") + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -135,7 +138,7 @@ public class CardServiceImpl implements CardService {
             LOGGER.info("Return all cards that connected with account with ID " + accountId);
             cards = cardRepository.findCardsByAccountId(accountId);
         } else {
-            String error = "There is no such account in database with ID " + accountId;
+            String error = environment.getProperty("error.card.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -159,7 +162,7 @@ public class CardServiceImpl implements CardService {
                 throw new LogicException(error);
             }
         } else {
-            String error = "There is no such card in requests with ID " + cardId;
+            String error = environment.getProperty("error.card.search") + cardId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -181,7 +184,7 @@ public class CardServiceImpl implements CardService {
             cardRepository.deleteById(cardId);
             LOGGER.info("Card with ID " + cardId + " was deleted");
         } else {
-            String error = "There is no such card with ID " + cardId;
+            String error = environment.getProperty("error.card.search") + cardId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -194,9 +197,9 @@ public class CardServiceImpl implements CardService {
         Card card;
         if (optionalCard.isPresent()) {
             card = optionalCard.get();
-            LOGGER.info("Return card");
+            LOGGER.info("Return card with ID " + cardId);
         } else {
-            String error = "There is no such card";
+            String error = environment.getProperty("error.card.search") + cardId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

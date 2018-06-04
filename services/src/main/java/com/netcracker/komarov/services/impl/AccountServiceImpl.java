@@ -6,14 +6,14 @@ import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
-import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +22,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@PropertySource("classpath:application-error.properties")
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
     private PersonRepository personRepository;
     private AccountConverter accountConverter;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
+    private Environment environment;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, RequestFeignClient requestFeignClient,
-                              PersonRepository personRepository, AccountConverter accountConverter) {
+    public AccountServiceImpl(AccountRepository accountRepository, PersonRepository personRepository,
+                              AccountConverter accountConverter, Environment environment) {
         this.accountRepository = accountRepository;
         this.personRepository = personRepository;
         this.accountConverter = accountConverter;
+        this.environment = environment;
     }
 
     private Collection<AccountDTO> convertCollection(Collection<Account> accounts) {
@@ -50,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
             Account account = optionalAccount.get();
             contain = account.getPerson().getId() == personId;
         } else {
-            String error = "No such account with ID " + accountId;
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -74,7 +77,7 @@ public class AccountServiceImpl implements AccountService {
                 LOGGER.info("Successful locking account with ID " + accountId);
             }
         } else {
-            String error = "There is no such account in database with ID " + accountId;
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -104,8 +107,8 @@ public class AccountServiceImpl implements AccountService {
                 LOGGER.error(error);
                 throw new LogicException(error);
             }
-        }  else {
-            String error = "There is no such account with ID " + accountId;
+        } else {
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -130,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
                 LOGGER.info("Refill account with ID " + accountId);
             }
         } else {
-            String error = "There is no such account in database with ID " + accountId;
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -146,7 +149,7 @@ public class AccountServiceImpl implements AccountService {
             LOGGER.info("Return all locked accounts by client ID " + personId);
             accounts = accountRepository.findAccountsByLockedAndPersonId(personId, lock);
         } else {
-            String error = "There is no such client in database with ID " + personId;
+            String error = environment.getProperty("error.account.search") + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -170,7 +173,7 @@ public class AccountServiceImpl implements AccountService {
             temp = accountRepository.save(account);
             LOGGER.info("Creation of account with ID " + temp.getId());
         } else {
-            String error = "There is no such client in database with ID" + personId;
+            String error = environment.getProperty("error.account.search") + personId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -185,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.deleteById(accountId);
             LOGGER.info("Account with ID " + accountId + " was deleted");
         } else {
-            String error = "There is no such account in database with ID " + accountId;
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -200,7 +203,7 @@ public class AccountServiceImpl implements AccountService {
             account = optionalAccount.get();
             LOGGER.info("Return account with ID " + accountId);
         } else {
-            String error = "There is no such account with ID " + accountId;
+            String error = environment.getProperty("error.account.search") + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

@@ -14,6 +14,7 @@ import com.netcracker.komarov.services.interfaces.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,17 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionConverter transactionConverter;
     private PersonRepository personRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    private Environment environment;
 
     @Autowired
     public TransactionServiceImpl(TransactionRepository transactionRepository, AccountRepository accountRepository,
-                                  TransactionConverter transactionConverter, PersonRepository personRepository) {
+                                  TransactionConverter transactionConverter, PersonRepository personRepository,
+                                  Environment environment) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.transactionConverter = transactionConverter;
         this.personRepository = personRepository;
+        this.environment = environment;
     }
 
     private Collection<TransactionDTO> convertCollection(Collection<Transaction> transactions) {
@@ -59,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new LogicException(error);
             }
         } else {
-            String error = "No such transaction with ID " + transactionId;
+            String error = environment.getProperty("error.transaction.search") + transactionId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -75,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
             transactions = transactionRepository.findTransactionsByClientId(clientId);
             LOGGER.info("Return transaction story by client ID " + clientId);
         } else {
-            String error = "There is no such client in database with ID " + clientId;
+            String error = environment.getProperty("error.transaction.search") + clientId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -90,13 +94,13 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction newTransaction;
         Optional<Person> optionalClient = personRepository.findById(clientId);
         if (!optionalClient.isPresent()) {
-            String error = "There is no such client with ID " + clientId;
+            String error = environment.getProperty("error.person.search") + clientId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
         Optional<Account> optionalAccountFrom = accountRepository.findById(transaction.getAccountFromId());
         if (!optionalAccountFrom.isPresent()) {
-            String error = "Not found account from with ID " + transactionDTO.getAccountFromId();
+            String error = environment.getProperty("error.account.search") + transactionDTO.getAccountFromId();
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
@@ -142,7 +146,7 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction = transactionRepository.save(trans);
             LOGGER.info("Transaction was completed");
         } else {
-            String error = "You don't own account with this ID: " + accountFrom.getId();
+            String error = environment.getProperty("http.forbidden") + accountFrom.getId();
             LOGGER.error(error);
             throw new LogicException(error);
         }
@@ -158,7 +162,7 @@ public class TransactionServiceImpl implements TransactionService {
             transaction = optionalTransactionDTO.get();
             LOGGER.info("Return data about transaction with ID " + transactionId);
         } else {
-            String error = "There is no such transaction in database with ID " + transactionId;
+            String error = environment.getProperty("error.transaction.search") + transactionId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

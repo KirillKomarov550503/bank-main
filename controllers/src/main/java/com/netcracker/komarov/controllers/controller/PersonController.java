@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.validator.impl.PersonValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +23,15 @@ public class PersonController {
     private PersonService personService;
     private PersonValidator personValidator;
     private ObjectMapper objectMapper;
+    private Environment environment;
 
     @Autowired
-    public PersonController(PersonService personService, PersonValidator personValidator, ObjectMapper objectMapper) {
+    public PersonController(PersonService personService, PersonValidator personValidator,
+                            ObjectMapper objectMapper, Environment environment) {
         this.personService = personService;
         this.personValidator = personValidator;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
     @ApiOperation(value = "Registration of news client")
@@ -39,10 +43,8 @@ public class PersonController {
             personValidator.validate(personDTO);
             PersonDTO dto = personService.save(personDTO);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
-        } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
+        } catch (LogicException | ValidationException e) {
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -56,10 +58,8 @@ public class PersonController {
             personValidator.validate(personDTO);
             PersonDTO dto = personService.save(personDTO);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
-        } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
+        } catch (LogicException | ValidationException e) {
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -73,10 +73,8 @@ public class PersonController {
             personDTO.setId(personId);
             PersonDTO dto = personService.update(personDTO);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
+        } catch (NotFoundException | ValidationException e) {
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -88,6 +86,19 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
+    @ApiOperation(value = "Select person by ID")
+    @RequestMapping(value = "/admins/people/{personId}", method = RequestMethod.GET)
+    public ResponseEntity findPersonById(@PathVariable long personId) {
+        ResponseEntity responseEntity;
+        try {
+            PersonDTO dto = personService.findById(personId);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
+        } catch (NotFoundException e) {
+            responseEntity = getErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        return responseEntity;
+    }
+
     @ApiOperation(value = "Deleting client by ID")
     @RequestMapping(value = "/people/{personId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long personId) {
@@ -96,7 +107,7 @@ public class PersonController {
             personService.deleteById(personId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -109,20 +120,12 @@ public class PersonController {
             PersonDTO dto = personService.findById(personId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
+    private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
     }
 }

@@ -4,7 +4,6 @@ import com.netcracker.komarov.dao.entity.Account;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
-import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @Service
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
-    private RequestFeignClient requestFeignClient;
     private PersonRepository personRepository;
     private AccountConverter accountConverter;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
@@ -34,7 +32,6 @@ public class AccountServiceImpl implements AccountService {
     public AccountServiceImpl(AccountRepository accountRepository, RequestFeignClient requestFeignClient,
                               PersonRepository personRepository, AccountConverter accountConverter) {
         this.accountRepository = accountRepository;
-        this.requestFeignClient = requestFeignClient;
         this.personRepository = personRepository;
         this.accountConverter = accountConverter;
     }
@@ -94,27 +91,21 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public AccountDTO unlockAccount(long accountId) throws LogicException, NotFoundException {
-        Optional<RequestDTO> optionalRequest = requestFeignClient.findAllRequests().getBody()
-                .stream()
-                .filter(requestDTO -> Status.ACCOUNT.equals(requestDTO.getStatus()))
-                .filter(request -> request.getEntityId() == accountId)
-                .findFirst();
         Account res;
-        if (optionalRequest.isPresent()) {
-            RequestDTO request = optionalRequest.get();
-            Account account = accountRepository.findById(request.getEntityId()).get();
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
             if (account.isLocked()) {
                 account.setLocked(false);
                 res = accountRepository.save(account);
-                requestFeignClient.deleteById(request.getId());
-                LOGGER.info("Successful unlocking account with ID: " + account.getId());
+                LOGGER.info("Successful unlock account with ID: " + account.getId());
             } else {
                 String error = "This account is already unlocked";
                 LOGGER.error(error);
                 throw new LogicException(error);
             }
-        } else {
-            String error = "There is no such account in requests with ID " + accountId;
+        }  else {
+            String error = "There is no such account with ID " + accountId;
             LOGGER.error(error);
             throw new NotFoundException(error);
         }

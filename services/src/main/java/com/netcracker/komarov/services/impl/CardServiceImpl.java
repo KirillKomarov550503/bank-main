@@ -6,13 +6,10 @@ import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.AccountRepository;
 import com.netcracker.komarov.dao.repository.CardRepository;
 import com.netcracker.komarov.dao.repository.PersonRepository;
-import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
-import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
-    private RequestFeignClient requestFeignClient;
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
     private CardConverter cardConverter;
@@ -36,10 +32,9 @@ public class CardServiceImpl implements CardService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
 
     @Autowired
-    public CardServiceImpl(RequestFeignClient requestFe, CardRepository cardRepository,
-                           AccountRepository accountRepository, CardConverter cardConverter,
-                           PersonRepository personRepository, PasswordEncoder passwordEncoder) {
-        this.requestFeignClient = requestFe;
+    public CardServiceImpl(CardRepository cardRepository, AccountRepository accountRepository,
+                           CardConverter cardConverter, PersonRepository personRepository,
+                           PasswordEncoder passwordEncoder) {
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
@@ -150,19 +145,13 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public CardDTO unlockCard(long cardId) throws LogicException, NotFoundException {
-        Optional<RequestDTO> optionalRequest = requestFeignClient.findAllRequests().getBody()
-                .stream()
-                .filter(request -> Status.CARD.equals(request.getStatus()))
-                .filter(request -> request.getEntityId() == cardId)
-                .findFirst();
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
         Card res;
-        if (optionalRequest.isPresent()) {
-            RequestDTO requestDTO = optionalRequest.get();
-            Card card = cardRepository.findById(requestDTO.getEntityId()).get();
+        if (optionalCard.isPresent()) {
+            Card card = optionalCard.get();
             if (card.isLocked()) {
                 card.setLocked(false);
                 res = cardRepository.save(card);
-                requestFeignClient.deleteById(requestDTO.getId());
                 LOGGER.info("Successful unlocking card with ID: " + card.getId());
             } else {
                 String error = "This card is already unlocked";

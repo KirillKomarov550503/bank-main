@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,15 +24,17 @@ public class RequestClient {
     private AccountService accountService;
     private RequestFeignClient requestFeignClient;
     private ObjectMapper objectMapper;
+    private Environment environment;
 
     @Autowired
     public RequestClient(CardService cardService, PersonService personService, AccountService accountService,
-                         RequestFeignClient requestFeignClient, ObjectMapper objectMapper) {
+                         RequestFeignClient requestFeignClient, ObjectMapper objectMapper, Environment environment) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.requestFeignClient = requestFeignClient;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
     public ResponseEntity sendRequestToUnlockAccount(long personId, long accountId) {
@@ -42,15 +45,15 @@ public class RequestClient {
                 if (accountService.findById(accountId).isLocked()) {
                     responseEntity = requestFeignClient.save(new RequestDTO(accountId, Status.ACCOUNT));
                 } else {
-                    responseEntity = getResponseEntityOfInternalServerError("Account is unlock");
+                    responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Account is unlock");
                 }
             } else {
-                responseEntity = getResponseEntityOfInternalServerError("You do not have access to this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getResponseEntityOfNotFoundException(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (FeignException e) {
-            responseEntity = getResponseEntityOfFeignException(e);
+            responseEntity = getFeignExceptionResponseEntity(e);
         }
         return responseEntity;
     }
@@ -64,18 +67,18 @@ public class RequestClient {
                     if (cardService.findById(cardId).isLocked()) {
                         responseEntity = requestFeignClient.save(new RequestDTO(cardId, Status.CARD));
                     } else {
-                        responseEntity = getResponseEntityOfInternalServerError("Card is unlock");
+                        responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Card is unlock");
                     }
                 } else {
-                    responseEntity = getResponseEntityOfInternalServerError("You do not have access to this card");
+                    responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
                 }
             } else {
-                responseEntity = getResponseEntityOfInternalServerError("You do not have access to this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getResponseEntityOfNotFoundException(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty(toString()));
         } catch (FeignException e) {
-            responseEntity = getResponseEntityOfFeignException(e);
+            responseEntity = getFeignExceptionResponseEntity(e);
         }
         return responseEntity;
     }
@@ -87,9 +90,19 @@ public class RequestClient {
     public ResponseEntity deleteById(long requestId) {
         ResponseEntity responseEntity;
         try {
+            ResponseEntity<RequestDTO> requestDTOResponseEntity = requestFeignClient.findById(requestId);
+            RequestDTO dto = requestDTOResponseEntity.getBody();
+            switch (dto.getStatus()) {
+                case CARD:
+                    cardService.unlockCard(dto.getEntityId());
+                    break;
+                case ACCOUNT:
+                    accountService.unlockAccount(dto.getEntityId());
+                    break;
+            }
             responseEntity = requestFeignClient.deleteById(requestId);
         } catch (FeignException e) {
-            responseEntity = getResponseEntityOfFeignException(e);
+            responseEntity = getFeignExceptionResponseEntity(e);
         }
         return responseEntity;
     }
@@ -99,23 +112,19 @@ public class RequestClient {
         try {
             responseEntity = requestFeignClient.findById(requestId);
         } catch (FeignException e) {
-            responseEntity = getResponseEntityOfFeignException(e);
+            responseEntity = getFeignExceptionResponseEntity(e);
         }
         return responseEntity;
     }
 
-    private ResponseEntity getResponseEntityOfFeignException(FeignException e) {
+    private ResponseEntity getFeignExceptionResponseEntity(FeignException e) {
         String message = Stream.of(e.getMessage().split("\n"))
                 .skip(1)
                 .reduce((s1, s2) -> s1 + s2).orElse(null);
         return ResponseEntity.status(e.status()).body(objectMapper.valueToTree(message));
     }
 
-    private ResponseEntity getResponseEntityOfNotFoundException(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getResponseEntityOfInternalServerError(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
+    private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
     }
 }

@@ -11,6 +11,7 @@ import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.validator.impl.CardValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +26,17 @@ public class CardController {
     private AccountService accountService;
     private CardValidator cardValidator;
     private ObjectMapper objectMapper;
+    private Environment environment;
 
     @Autowired
     public CardController(CardService cardService, PersonService personService, AccountService accountService,
-                          CardValidator cardValidator, ObjectMapper objectMapper) {
+                          CardValidator cardValidator, ObjectMapper objectMapper, Environment environment) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.cardValidator = cardValidator;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
     @ApiOperation(value = "Creation of new card")
@@ -49,12 +52,12 @@ public class CardController {
                 CardDTO dto = cardService.save(cardDTO);
                 responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -71,15 +74,15 @@ public class CardController {
                     CardDTO dto = cardService.lockCard(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
+                    responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -92,9 +95,9 @@ public class CardController {
             CardDTO dto = cardService.unlockCard(cardId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -108,7 +111,7 @@ public class CardController {
             Collection<CardDTO> dtos = cardService.findCardsByClientIdAndLock(personId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -123,10 +126,10 @@ public class CardController {
                 Collection<CardDTO> dtos = cardService.findCardsByAccountId(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -150,13 +153,13 @@ public class CardController {
                     cardService.deleteById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).build();
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
+                    responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -174,26 +177,18 @@ public class CardController {
                     CardDTO dto = cardService.findById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
                 } else {
-                    responseEntity = getInternalServerErrorResponseEntity("Account do not contain this card");
+                    responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
                 }
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client dot not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
+    private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
     }
 }

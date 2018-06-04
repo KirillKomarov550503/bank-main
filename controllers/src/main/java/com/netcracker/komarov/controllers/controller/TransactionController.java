@@ -9,6 +9,7 @@ import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,15 @@ public class TransactionController {
     private TransactionService transactionService;
     private PersonService personService;
     private ObjectMapper objectMapper;
+    private Environment environment;
 
     @Autowired
     public TransactionController(TransactionService transactionService, PersonService personService,
-                                 ObjectMapper objectMapper) {
+                                 ObjectMapper objectMapper, Environment environment) {
         this.transactionService = transactionService;
         this.personService = personService;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
     @ApiOperation(value = "Creation of new transaction")
@@ -38,11 +41,9 @@ public class TransactionController {
             TransactionDTO dto = transactionService.save(transactionDTO, personId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
-        } catch (ValidationException e) {
-            responseEntity = getBadRequestResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
+        } catch (LogicException | ValidationException e) {
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -56,7 +57,7 @@ public class TransactionController {
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(dtos);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -71,25 +72,17 @@ public class TransactionController {
                 TransactionDTO dto = transactionService.findById(transactionId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this transaction");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getBadRequestResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectMapper.valueToTree(message));
+    private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
     }
 }

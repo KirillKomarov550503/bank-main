@@ -19,13 +19,14 @@ public class RequestController {
         this.requestClient = requestClient;
     }
 
+    @ApiOperation(value = "Send request to unlock account")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/requests", method = RequestMethod.PATCH)
     public ResponseEntity sendRequestToUnlockAccount(@PathVariable long personId,
                                                      @PathVariable long accountId) {
         return requestClient.sendRequestToUnlockAccount(personId, accountId);
     }
 
-    @ApiOperation(value = "Sending request to unlockAccount card")
+    @ApiOperation(value = "Send request to unlock card")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards/{cardId}/requests",
             method = RequestMethod.PATCH)
     public ResponseEntity sendRequestToUnlockCard(@PathVariable long personId,
@@ -34,19 +35,19 @@ public class RequestController {
         return requestClient.sendRequestToUnlockCard(personId, accountId, cardId);
     }
 
-    @ApiOperation(value = "Selecting all unlockAccount requests")
-    @RequestMapping(value = "/admins/requests/accounts", method = RequestMethod.GET)
+    @ApiOperation(value = "Select all requests")
+    @RequestMapping(value = "/admins/requests", method = RequestMethod.GET)
     public ResponseEntity findAllRequests() {
         return requestClient.findAllRequests();
     }
 
-    @ApiOperation(value = "Deleting request by ID")
-    @RequestMapping(value = "/admins/requests/{requestId}/del", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Unlock something by request ID")
+    @RequestMapping(value = "/admins/requests/{requestId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long requestId) {
         return requestClient.deleteById(requestId);
     }
 
-    @ApiOperation(value = "Selecting request by ID")
+    @ApiOperation(value = "Select request by ID")
     @RequestMapping(value = "/admins/requests/{requestId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long requestId) {
         return requestClient.findById(requestId);

@@ -7,9 +7,8 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +21,18 @@ public class AccountController {
     private AccountService accountService;
     private PersonService personService;
     private ObjectMapper objectMapper;
+    private Environment environment;
 
     @Autowired
-    public AccountController(AccountService accountService, PersonService personService, ObjectMapper objectMapper) {
+    public AccountController(AccountService accountService, PersonService personService,
+                             ObjectMapper objectMapper, Environment environment) {
         this.accountService = accountService;
         this.personService = personService;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
-    @ApiOperation(value = "Creation of new account")
+    @ApiOperation(value = "Create new account")
     @RequestMapping(value = "/clients/{personId}/accounts", method = RequestMethod.POST)
     public ResponseEntity save(@PathVariable long personId) {
         ResponseEntity responseEntity;
@@ -38,27 +40,12 @@ public class AccountController {
             AccountDTO dto = accountService.saveAccount(new AccountDTO(false, 0.0), personId);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
 
-    @ApiOperation(value = "Unlocking account by ID")
-    @RequestMapping(value = "/admins/requests/accounts/{accountId}", method = RequestMethod.PATCH)
-    public ResponseEntity unlockAccount(@PathVariable long accountId) {
-        ResponseEntity responseEntity;
-        try {
-            AccountDTO dto = accountService.unlockAccount(accountId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
-        }
-        return responseEntity;
-    }
-
-    @ApiOperation(value = "Locking account by ID")
+    @ApiOperation(value = "Lock account by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.PATCH)
     public ResponseEntity lockAccount(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
@@ -68,12 +55,12 @@ public class AccountController {
                 AccountDTO dto = accountService.lockAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -88,12 +75,12 @@ public class AccountController {
                 AccountDTO dto = accountService.refillAccount(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (LogicException e) {
-            responseEntity = getInternalServerErrorResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
@@ -107,7 +94,7 @@ public class AccountController {
             Collection<AccountDTO> dtos = accountService.findAccountsByClientIdAndLock(personId, lock);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(dtos);
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -129,10 +116,10 @@ public class AccountController {
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
@@ -147,19 +134,15 @@ public class AccountController {
                 AccountDTO dto = accountService.findById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
             } else {
-                responseEntity = getInternalServerErrorResponseEntity("Client do not contain this account");
+                responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getNotFoundResponseEntity(e.getMessage());
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         }
         return responseEntity;
     }
 
-    private ResponseEntity getNotFoundResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectMapper.valueToTree(message));
-    }
-
-    private ResponseEntity getInternalServerErrorResponseEntity(String message) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(objectMapper.valueToTree(message));
+    private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
     }
 }

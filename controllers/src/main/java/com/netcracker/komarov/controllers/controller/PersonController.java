@@ -34,7 +34,7 @@ public class PersonController {
         this.environment = environment;
     }
 
-    @ApiOperation(value = "Registration of news client")
+    @ApiOperation(value = "Register news client")
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ResponseEntity saveClient(@RequestBody PersonDTO personDTO) {
         ResponseEntity responseEntity;
@@ -49,7 +49,7 @@ public class PersonController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Creation of new admin")
+    @ApiOperation(value = "Create new admin")
     @RequestMapping(value = "/admins", method = RequestMethod.POST)
     public ResponseEntity saveAdmin(@RequestBody PersonDTO personDTO) {
         ResponseEntity responseEntity;
@@ -64,7 +64,7 @@ public class PersonController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Updating information about client")
+    @ApiOperation(value = "Update information about client")
     @RequestMapping(value = "/people/{personId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody PersonDTO personDTO, @PathVariable long personId) {
         ResponseEntity responseEntity;
@@ -79,7 +79,7 @@ public class PersonController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all people")
+    @ApiOperation(value = "Select all people")
     @RequestMapping(value = "/admins/people", method = RequestMethod.GET)
     public ResponseEntity findAllPeople() {
         Collection<PersonDTO> dtos = personService.findAllPeople();
@@ -99,7 +99,7 @@ public class PersonController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Deleting client by ID")
+    @ApiOperation(value = "Delete client by ID")
     @RequestMapping(value = "/people/{personId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long personId) {
         ResponseEntity responseEntity;
@@ -112,7 +112,7 @@ public class PersonController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting person by ID")
+    @ApiOperation(value = "Select person by ID")
     @RequestMapping(value = "/people/{personId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long personId) {
         ResponseEntity responseEntity;

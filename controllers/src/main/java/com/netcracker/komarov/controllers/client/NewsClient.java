@@ -178,7 +178,7 @@ public class NewsClient {
     }
 
     private ResponseEntity getExceptionFromNewsService(HttpStatusCodeException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(objectMapper.valueToTree(e.getResponseBodyAsString()));
+        return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {

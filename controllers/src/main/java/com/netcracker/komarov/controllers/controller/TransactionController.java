@@ -33,7 +33,7 @@ public class TransactionController {
         this.environment = environment;
     }
 
-    @ApiOperation(value = "Creation of new transaction")
+    @ApiOperation(value = "Create new transaction")
     @RequestMapping(value = "/clients/{personId}/transactions", method = RequestMethod.POST)
     public ResponseEntity save(@RequestBody TransactionDTO transactionDTO, @PathVariable long personId) {
         ResponseEntity responseEntity;
@@ -48,7 +48,7 @@ public class TransactionController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all transaction by client ID")
+    @ApiOperation(value = "Select all transactions by client ID")
     @RequestMapping(value = "/clients/{personId}/transactions", method = RequestMethod.GET)
     public ResponseEntity findTransactionsByClientId(@PathVariable long personId) {
         ResponseEntity responseEntity;
@@ -62,7 +62,7 @@ public class TransactionController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting transaction by ID")
+    @ApiOperation(value = "Selecte transaction by ID")
     @RequestMapping(value = "/clients/{personId}/transactions/{transactionId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long personId, @PathVariable long transactionId) {
         ResponseEntity responseEntity;

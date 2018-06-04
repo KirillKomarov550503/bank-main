@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@PropertySource("classpath:application-error.properties")
 public class PersonServiceImpl implements PersonService {
     private PersonRepository personRepository;
     private PersonConverter personConverter;
@@ -80,7 +82,6 @@ public class PersonServiceImpl implements PersonService {
             String error = "This username is already exist";
             LOGGER.error(error);
             throw new LogicException(error);
-
         }
         return personConverter.convertToDTO(newPerson);
     }

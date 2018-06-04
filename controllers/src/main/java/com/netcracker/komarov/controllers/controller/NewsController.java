@@ -20,49 +20,49 @@ public class NewsController {
         this.newsClient = newsClient;
     }
 
-    @ApiOperation(value = "Creation of new news")
+    @ApiOperation(value = "Create of new news")
     @RequestMapping(value = "/admins/{personId}/news", method = RequestMethod.POST)
     public ResponseEntity save(@PathVariable long personId, @RequestBody NewsDTO newsDTO) {
         return newsClient.save(personId, newsDTO);
     }
 
-    @ApiOperation(value = "Selecting all client news by client ID")
+    @ApiOperation(value = "Select all client news by client ID")
     @RequestMapping(value = "/clients/{personId}/news", method = RequestMethod.GET)
     public ResponseEntity findNewsByClientId(@PathVariable long personId) {
         return newsClient.findNewsByClientId(personId);
     }
 
-    @ApiOperation(value = "Selecting all general news")
+    @ApiOperation(value = "Select all general news")
     @RequestMapping(value = "/news", method = RequestMethod.GET)
     public ResponseEntity findAllGeneralNews() {
         return newsClient.findAllGeneralNews();
     }
 
-    @ApiOperation(value = "Select news by ID")
+    @ApiOperation(value = "Select general news by ID")
     @RequestMapping(value = "/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity findGeneralNewsById(@PathVariable long newsId) {
         return newsClient.findGeneralNewsById(newsId);
     }
 
-    @ApiOperation(value = "Selecting news by ID")
+    @ApiOperation(value = "Select news by ID")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long newsId) {
         return newsClient.findById(newsId);
     }
 
-    @ApiOperation(value = "Selecting news by specification")
+    @ApiOperation(value = "Select news by specification")
     @RequestMapping(value = "/admins/news", method = RequestMethod.GET)
     public ResponseEntity findNewsByParams(@RequestParam() Map<String, String> parameters) {
         return newsClient.findNewsByParams(parameters);
     }
 
-    @ApiOperation(value = "Sending news to clients")
+    @ApiOperation(value = "Send news to clients")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.POST)
     public ResponseEntity sendNewsToClients(@PathVariable long newsId, @RequestBody Collection<Long> clientIds) {
         return newsClient.sendNewsToClients(newsId, clientIds);
     }
 
-    @ApiOperation(value = "Remarking news")
+    @ApiOperation(value = "Update news")
     @RequestMapping(value = "/admins/news/{newsId}", method = RequestMethod.PUT)
     public ResponseEntity update(@RequestBody NewsDTO requestNewsDTO, @PathVariable long newsId) {
         return newsClient.update(requestNewsDTO, newsId);

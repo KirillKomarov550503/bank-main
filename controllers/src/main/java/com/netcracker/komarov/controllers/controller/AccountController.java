@@ -65,7 +65,7 @@ public class AccountController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Refill of your account by ID")
+    @ApiOperation(value = "Refill account on 100 conventional units by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/money", method = RequestMethod.PATCH)
     public ResponseEntity refillAccount(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
@@ -85,7 +85,7 @@ public class AccountController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting of all your accounts by status")
+    @ApiOperation(value = "Select all accounts by person ID and status")
     @RequestMapping(value = "/clients/{personId}/accounts/status", method = RequestMethod.GET)
     public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lockAccount",
             required = false, defaultValue = "false") boolean lock) {
@@ -99,14 +99,14 @@ public class AccountController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all accounts")
+    @ApiOperation(value = "Select all accounts")
     @RequestMapping(value = "/admins/accounts", method = RequestMethod.GET)
     public ResponseEntity findAllAccounts() {
         Collection<AccountDTO> dtos = accountService.findAllAdmins();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
-    @ApiOperation(value = "Deleting account by ID")
+    @ApiOperation(value = "Delete account by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
@@ -124,7 +124,7 @@ public class AccountController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting account by ID")
+    @ApiOperation(value = "Select account by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}", method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;

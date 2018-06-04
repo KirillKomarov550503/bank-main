@@ -76,7 +76,7 @@ public class RequestClient {
                 responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
             }
         } catch (NotFoundException e) {
-            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty(toString()));
+            responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
         } catch (FeignException e) {
             responseEntity = getFeignExceptionResponseEntity(e);
         }
@@ -121,7 +121,7 @@ public class RequestClient {
         String message = Stream.of(e.getMessage().split("\n"))
                 .skip(1)
                 .reduce((s1, s2) -> s1 + s2).orElse(null);
-        return ResponseEntity.status(e.status()).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(e.status()).body(message);
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {

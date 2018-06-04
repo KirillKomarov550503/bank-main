@@ -14,6 +14,7 @@ import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@PropertySource("classpath:application-error.properties")
 public class CardServiceImpl implements CardService {
     private CardRepository cardRepository;
     private AccountRepository accountRepository;
@@ -92,12 +94,17 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public CardDTO save(CardDTO cardDTO) throws NotFoundException {
+    public CardDTO save(CardDTO cardDTO) throws NotFoundException, LogicException {
         Card card = cardConverter.convertToEntity(cardDTO);
         Optional<Account> optionalAccount = accountRepository.findById(cardDTO.getAccountId());
         Card temp;
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
+            if (account.isLocked()) {
+                String error = "Account with ID " + account.getId() + " is locked";
+                LOGGER.error(error);
+                throw new LogicException(error);
+            }
             card.setAccount(account);
             card.setLocked(false);
             String pin = card.getPin();
@@ -155,7 +162,7 @@ public class CardServiceImpl implements CardService {
             if (card.isLocked()) {
                 card.setLocked(false);
                 res = cardRepository.save(card);
-                LOGGER.info("Successful unlocking card with ID: " + card.getId());
+                LOGGER.info("Successful unlock card with ID: " + card.getId());
             } else {
                 String error = "This card is already unlocked";
                 LOGGER.error(error);

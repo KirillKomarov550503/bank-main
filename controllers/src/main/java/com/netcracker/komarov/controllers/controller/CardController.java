@@ -56,13 +56,13 @@ public class CardController {
             }
         } catch (NotFoundException e) {
             responseEntity = getErrorResponse(HttpStatus.FORBIDDEN, environment.getProperty("http.forbidden"));
-        } catch (ValidationException e) {
+        } catch (ValidationException | LogicException e) {
             responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return responseEntity;
     }
 
-    @ApiOperation(value = "Locking of card by ID")
+    @ApiOperation(value = "Lock card by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards/{cardId}", method = RequestMethod.PATCH)
     public ResponseEntity lockCard(@PathVariable long personId, @PathVariable long accountId,
                                    @PathVariable long cardId) {
@@ -87,7 +87,7 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Unlocking card by ID")
+    @ApiOperation(value = "Unlock card by ID")
     @RequestMapping(value = "/admins/requests/cards/{cardId}", method = RequestMethod.PATCH)
     public ResponseEntity unlockCard(@PathVariable long cardId) {
         ResponseEntity responseEntity;
@@ -102,7 +102,7 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all card by status")
+    @ApiOperation(value = "Select all card by status")
     @RequestMapping(value = "/clients/{personId}/cards/status", method = RequestMethod.GET)
     public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lockAccount",
             required = false, defaultValue = "false") boolean lock) {
@@ -116,7 +116,7 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all card that belong to account ID")
+    @ApiOperation(value = "Select all card that belong to account ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards", method = RequestMethod.GET)
     public ResponseEntity findByAccountId(@PathVariable long personId, @PathVariable long accountId) {
         ResponseEntity responseEntity;
@@ -134,14 +134,14 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting all card")
+    @ApiOperation(value = "Select all cards")
     @RequestMapping(value = "/admins/cards", method = RequestMethod.GET)
     public ResponseEntity findAllCards() {
         Collection<CardDTO> dtos = cardService.findAllCards();
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
 
-    @ApiOperation(value = "Deleting card by ID")
+    @ApiOperation(value = "Delete card by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards/{cardId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable long personId, @PathVariable long accountId,
                                      @PathVariable long cardId) {
@@ -164,7 +164,7 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Selecting card by ID")
+    @ApiOperation(value = "Select card by ID")
     @RequestMapping(value = "/clients/{personId}/accounts/{accountId}/cards/{cardId}",
             method = RequestMethod.GET)
     public ResponseEntity findById(@PathVariable long personId, @PathVariable long accountId,

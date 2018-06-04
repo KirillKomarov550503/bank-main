@@ -7,7 +7,7 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import java.util.Collection;
 
 public interface CardService {
-    CardDTO save(CardDTO card);
+    CardDTO save(CardDTO card) throws NotFoundException, LogicException;
 
     CardDTO lockCard(long cardId) throws LogicException, NotFoundException;
 

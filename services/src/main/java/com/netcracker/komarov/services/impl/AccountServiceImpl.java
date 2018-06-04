@@ -123,7 +123,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             if (account.isLocked()) {
-                String error = "This account is locking";
+                String error = "This account is lock";
                 LOGGER.error(error);
                 throw new LogicException(error);
             } else {

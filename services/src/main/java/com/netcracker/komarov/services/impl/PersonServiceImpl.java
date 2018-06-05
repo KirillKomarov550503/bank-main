@@ -1,11 +1,14 @@
 package com.netcracker.komarov.services.impl;
 
+import com.netcracker.komarov.dao.entity.Account;
+import com.netcracker.komarov.dao.entity.Card;
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.PersonRepository;
 import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,14 +32,17 @@ public class PersonServiceImpl implements PersonService {
     private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
     private Environment environment;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter,
-                             PasswordEncoder passwordEncoder, Environment environment) {
+                             PasswordEncoder passwordEncoder, Environment environment,
+                             RequestFeignClient requestFeignClient) {
         this.personRepository = personRepository;
         this.personConverter = personConverter;
         this.passwordEncoder = passwordEncoder;
         this.environment = environment;
+        this.requestFeignClient = requestFeignClient;
     }
 
     private Collection<PersonDTO> convertCollection(Collection<Person> people) {
@@ -113,8 +120,14 @@ public class PersonServiceImpl implements PersonService {
     public void deleteById(long personId) {
         Optional<Person> optionalPerson = personRepository.findById(personId);
         if (optionalPerson.isPresent()) {
-            Person client = optionalPerson.get();
-            personRepository.save(client);
+            Person person = optionalPerson.get();
+            Set<Account> accounts = person.getAccounts();
+            for (Account account : accounts) {
+                for (Card card : account.getCards()) {
+                    requestFeignClient.deleteById(card.getId(), "CARD");
+                }
+                requestFeignClient.deleteById(account.getId(), "ACCOUNT");
+            }
             personRepository.deletePersonById(personId);
             LOGGER.info("Person with ID " + personId + " was deleted");
         } else {

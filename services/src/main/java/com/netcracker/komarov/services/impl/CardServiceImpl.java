@@ -10,6 +10,7 @@ import com.netcracker.komarov.services.dto.converter.CardConverter;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.CardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +35,20 @@ public class CardServiceImpl implements CardService {
     private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
     private Environment environment;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public CardServiceImpl(CardRepository cardRepository, AccountRepository accountRepository,
                            CardConverter cardConverter, PersonRepository personRepository,
-                           PasswordEncoder passwordEncoder, Environment environment) {
+                           PasswordEncoder passwordEncoder, Environment environment,
+                           RequestFeignClient requestFeignClient) {
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardConverter = cardConverter;
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.environment = environment;
+        this.requestFeignClient = requestFeignClient;
     }
 
     private Collection<CardDTO> convertCollection(Collection<Card> cards) {
@@ -188,6 +192,7 @@ public class CardServiceImpl implements CardService {
     public void deleteById(long cardId) throws NotFoundException {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
         if (optionalCard.isPresent()) {
+            requestFeignClient.deleteById(cardId, "CARD");
             cardRepository.deleteById(cardId);
             LOGGER.info("Card with ID " + cardId + " was deleted");
         } else {

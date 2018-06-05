@@ -16,7 +16,8 @@ public interface RequestFeignClient {
     ResponseEntity<Collection<RequestDTO>> findAllRequests();
 
     @DeleteMapping(value = "/bank/v1/requests/{requestId}")
-    ResponseEntity<Void> deleteById(@PathVariable("requestId") long requestId);
+    ResponseEntity<Void> deleteById(@PathVariable("requestId") long requestId,
+                                    @RequestParam(name = "status", required = false) String status);
 
     @GetMapping(value = "/bank/v1/requests/{requestId}")
     ResponseEntity<RequestDTO> findById(@PathVariable("requestId") long requestId);

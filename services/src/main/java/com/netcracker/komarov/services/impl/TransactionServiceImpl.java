@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -118,6 +119,11 @@ public class TransactionServiceImpl implements TransactionService {
                 LOGGER.error(error);
                 throw new LogicException(error);
             }
+            if (Objects.equals(transactionDTO.getAccountFromId(), transactionDTO.getAccountToId())) {
+                String error = "Account from ID and account to ID equals";
+                LOGGER.error(error);
+                throw new LogicException(error);
+            }
             if (accountTo.isLocked()) {
                 String error = "Other account is lock";
                 LOGGER.error(error);
@@ -146,7 +152,7 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction = transactionRepository.save(trans);
             LOGGER.info("Transaction was completed");
         } else {
-            String error = environment.getProperty("http.forbidden") + accountFrom.getId();
+            String error = environment.getProperty("http.forbidden");
             LOGGER.error(error);
             throw new LogicException(error);
         }

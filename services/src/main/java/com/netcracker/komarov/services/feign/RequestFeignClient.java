@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @FeignClient(name = "bank-request")
 public interface RequestFeignClient {
@@ -16,8 +17,10 @@ public interface RequestFeignClient {
     ResponseEntity<Collection<RequestDTO>> findAllRequests();
 
     @DeleteMapping(value = "/bank/v1/requests/{requestId}")
-    ResponseEntity<Void> deleteById(@PathVariable("requestId") long requestId,
-                                    @RequestParam(name = "status", required = false) String status);
+    ResponseEntity<Void> deleteById(@PathVariable("requestId") long requestId);
+
+    @DeleteMapping(value = "/bank/v1/requests")
+    ResponseEntity<Void> deleteByEntityIdAndStatus(@RequestBody Map<String, Long> entityIdMap);
 
     @GetMapping(value = "/bank/v1/requests/{requestId}")
     ResponseEntity<RequestDTO> findById(@PathVariable("requestId") long requestId);

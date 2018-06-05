@@ -100,7 +100,7 @@ public class RequestClient {
                     accountService.unlockAccount(dto.getEntityId());
                     break;
             }
-            responseEntity = requestFeignClient.deleteById(requestId, null);
+            responseEntity = requestFeignClient.deleteById(requestId);
         } catch (FeignException e) {
             responseEntity = getFeignExceptionResponseEntity(e);
         }

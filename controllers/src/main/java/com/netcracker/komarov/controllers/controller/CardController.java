@@ -5,6 +5,7 @@ import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.exception.ValidationException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.PersonService;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bank/v1")
@@ -27,16 +30,19 @@ public class CardController {
     private CardValidator cardValidator;
     private ObjectMapper objectMapper;
     private Environment environment;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public CardController(CardService cardService, PersonService personService, AccountService accountService,
-                          CardValidator cardValidator, ObjectMapper objectMapper, Environment environment) {
+                          CardValidator cardValidator, ObjectMapper objectMapper, Environment environment,
+                          RequestFeignClient requestFeignClient) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.cardValidator = cardValidator;
         this.objectMapper = objectMapper;
         this.environment = environment;
+        this.requestFeignClient = requestFeignClient;
     }
 
     @ApiOperation(value = "Creation of new card")
@@ -150,6 +156,9 @@ public class CardController {
             personService.findById(personId);
             if (accountService.isContain(personId, accountId)) {
                 if (cardService.isContain(accountId, cardId)) {
+                    Map<String, Long> entityMap = new HashMap<>();
+                    entityMap.put("CARD", cardId);
+                    requestFeignClient.deleteByEntityIdAndStatus(entityMap);
                     cardService.deleteById(cardId);
                     responseEntity = ResponseEntity.status(HttpStatus.OK).build();
                 } else {

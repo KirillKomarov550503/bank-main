@@ -6,6 +6,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.exception.ValidationException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.validator.impl.PersonValidator;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bank/v1")
@@ -24,14 +26,17 @@ public class PersonController {
     private PersonValidator personValidator;
     private ObjectMapper objectMapper;
     private Environment environment;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public PersonController(PersonService personService, PersonValidator personValidator,
-                            ObjectMapper objectMapper, Environment environment) {
+                            ObjectMapper objectMapper, Environment environment,
+                            RequestFeignClient requestFeignClient) {
         this.personService = personService;
         this.personValidator = personValidator;
         this.objectMapper = objectMapper;
         this.environment = environment;
+        this.requestFeignClient = requestFeignClient;
     }
 
     @ApiOperation(value = "Register news client")
@@ -104,6 +109,8 @@ public class PersonController {
     public ResponseEntity deleteById(@PathVariable long personId) {
         ResponseEntity responseEntity;
         try {
+            Map<String, Long> map = personService.getMapForDelete(personId);
+            requestFeignClient.deleteByEntityIdAndStatus(map);
             personService.deleteById(personId);
             responseEntity = ResponseEntity.status(HttpStatus.OK).build();
         } catch (NotFoundException e) {

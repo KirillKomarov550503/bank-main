@@ -4,6 +4,7 @@ import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface PersonService {
     Collection<PersonDTO> findAllPeople();
@@ -15,4 +16,6 @@ public interface PersonService {
     PersonDTO update(PersonDTO personDTO);
 
     void deleteById(long personId);
+
+    Map<String, Long> getMapForDelete(long personId) throws NotFoundException;
 }

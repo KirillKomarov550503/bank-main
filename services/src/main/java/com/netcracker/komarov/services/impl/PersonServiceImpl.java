@@ -8,7 +8,6 @@ import com.netcracker.komarov.services.dto.converter.PersonConverter;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,17 +29,14 @@ public class PersonServiceImpl implements PersonService {
     private PasswordEncoder passwordEncoder;
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
     private Environment environment;
-    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter,
-                             PasswordEncoder passwordEncoder, Environment environment,
-                             RequestFeignClient requestFeignClient) {
+                             PasswordEncoder passwordEncoder, Environment environment) {
         this.personRepository = personRepository;
         this.personConverter = personConverter;
         this.passwordEncoder = passwordEncoder;
         this.environment = environment;
-        this.requestFeignClient = requestFeignClient;
     }
 
     private Collection<PersonDTO> convertCollection(Collection<Person> people) {
@@ -115,19 +109,32 @@ public class PersonServiceImpl implements PersonService {
         return personConverter.convertToDTO(person);
     }
 
+    @Override
+    public Map<String, Long> getMapForDelete(long personId) throws NotFoundException {
+        Optional<Person> optionalPerson = personRepository.findById(personId);
+        Map<String, Long> entityIdMap = new HashMap<>();
+        if (optionalPerson.isPresent()) {
+            Person person = optionalPerson.get();
+            Set<Account> accounts = person.getAccounts();
+            for (Account account : accounts) {
+                entityIdMap.put("ACCOUNT", account.getId());
+                for (Card card : account.getCards()) {
+                    entityIdMap.put("CARD", card.getId());
+                }
+            }
+        } else {
+            String error = environment.getProperty("error.person.search") + personId;
+            LOGGER.error(error);
+            throw new NotFoundException(error);
+        }
+        return entityIdMap;
+    }
+
     @Transactional
     @Override
     public void deleteById(long personId) {
         Optional<Person> optionalPerson = personRepository.findById(personId);
         if (optionalPerson.isPresent()) {
-            Person person = optionalPerson.get();
-            Set<Account> accounts = person.getAccounts();
-            for (Account account : accounts) {
-                for (Card card : account.getCards()) {
-                    requestFeignClient.deleteById(card.getId(), "CARD");
-                }
-                requestFeignClient.deleteById(account.getId(), "ACCOUNT");
-            }
             personRepository.deletePersonById(personId);
             LOGGER.info("Person with ID " + personId + " was deleted");
         } else {

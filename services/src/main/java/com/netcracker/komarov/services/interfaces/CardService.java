@@ -5,6 +5,7 @@ import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface CardService {
     CardDTO save(CardDTO card) throws NotFoundException, LogicException;

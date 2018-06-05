@@ -8,7 +8,6 @@ import com.netcracker.komarov.services.dto.converter.AccountConverter;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
-import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,17 +31,14 @@ public class AccountServiceImpl implements AccountService {
     private AccountConverter accountConverter;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
     private Environment environment;
-    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public AccountServiceImpl(AccountRepository accountRepository, PersonRepository personRepository,
-                              AccountConverter accountConverter, Environment environment,
-                              RequestFeignClient requestFeignClient) {
+                              AccountConverter accountConverter, Environment environment) {
         this.accountRepository = accountRepository;
         this.personRepository = personRepository;
         this.accountConverter = accountConverter;
         this.environment = environment;
-        this.requestFeignClient = requestFeignClient;
     }
 
     private Collection<AccountDTO> convertCollection(Collection<Account> accounts) {
@@ -189,9 +187,6 @@ public class AccountServiceImpl implements AccountService {
     public void deleteById(long accountId) throws NotFoundException {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            account.getCards().forEach(card -> requestFeignClient.deleteById(card.getId(), "CARD"));
-            requestFeignClient.deleteById(accountId, "ACCOUNT");
             accountRepository.deleteById(accountId);
             LOGGER.info("Account with ID " + accountId + " was deleted");
         } else {
@@ -199,6 +194,22 @@ public class AccountServiceImpl implements AccountService {
             LOGGER.error(error);
             throw new NotFoundException(error);
         }
+    }
+
+    @Override
+    public Map<String, Long> getMapForDelete(long accountId) throws NotFoundException {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        Map<String, Long> entityIdMap = new HashMap<>();
+        if (optionalAccount.isPresent()) {
+            entityIdMap.put("ACCOUNT", accountId);
+            Account account = optionalAccount.get();
+            account.getCards().forEach(card -> entityIdMap.put("CARD", card.getId()));
+        } else {
+            String error = environment.getProperty("error.account.search") + accountId;
+            LOGGER.error(error);
+            throw new NotFoundException(error);
+        }
+        return entityIdMap;
     }
 
     @Transactional

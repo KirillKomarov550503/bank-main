@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
+import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/bank/v1")
@@ -22,14 +24,17 @@ public class AccountController {
     private PersonService personService;
     private ObjectMapper objectMapper;
     private Environment environment;
+    private RequestFeignClient requestFeignClient;
 
     @Autowired
     public AccountController(AccountService accountService, PersonService personService,
-                             ObjectMapper objectMapper, Environment environment) {
+                             ObjectMapper objectMapper, Environment environment,
+                             RequestFeignClient requestFeignClient) {
         this.accountService = accountService;
         this.personService = personService;
         this.objectMapper = objectMapper;
         this.environment = environment;
+        this.requestFeignClient = requestFeignClient;
     }
 
     @ApiOperation(value = "Create new account")
@@ -113,6 +118,8 @@ public class AccountController {
         try {
             personService.findById(personId);
             if (accountService.isContain(personId, accountId)) {
+                Map<String, Long> entityIdsMap = accountService.getMapForDelete(accountId);
+                requestFeignClient.deleteByEntityIdAndStatus(entityIdsMap);
                 accountService.deleteById(accountId);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).build();
             } else {

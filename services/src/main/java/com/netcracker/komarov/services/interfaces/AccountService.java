@@ -5,6 +5,7 @@ import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface AccountService {
     AccountDTO saveAccount(AccountDTO accountDTO, long personId) throws NotFoundException;
@@ -24,5 +25,7 @@ public interface AccountService {
     AccountDTO findById(long accountId) throws NotFoundException;
 
     boolean isContain(long personId, long accountId) throws NotFoundException;
+
+    Map<String, Long> getMapForDelete(long accountId) throws NotFoundException;
 }
 

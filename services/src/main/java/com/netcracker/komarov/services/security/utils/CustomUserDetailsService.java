@@ -2,7 +2,6 @@ package com.netcracker.komarov.services.security.utils;
 
 import com.netcracker.komarov.dao.entity.Person;
 import com.netcracker.komarov.dao.repository.PersonRepository;
-import com.netcracker.komarov.services.interfaces.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

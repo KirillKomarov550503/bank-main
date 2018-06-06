@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.dao.entity.Role;
 import com.netcracker.komarov.services.dto.entity.PersonDTO;
 import com.netcracker.komarov.services.exception.LogicException;
@@ -8,6 +7,7 @@ import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.exception.ValidationException;
 import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import com.netcracker.komarov.services.validator.impl.PersonValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +24,17 @@ import java.util.Map;
 public class PersonController {
     private PersonService personService;
     private PersonValidator personValidator;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
     private RequestFeignClient requestFeignClient;
 
     @Autowired
     public PersonController(PersonService personService, PersonValidator personValidator,
-                            ObjectMapper objectMapper, Environment environment,
+                            ErrorJson errorJson, Environment environment,
                             RequestFeignClient requestFeignClient) {
         this.personService = personService;
         this.personValidator = personValidator;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
         this.requestFeignClient = requestFeignClient;
     }
@@ -133,6 +133,6 @@ public class PersonController {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

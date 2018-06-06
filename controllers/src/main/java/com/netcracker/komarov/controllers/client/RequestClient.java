@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.Status;
 import com.netcracker.komarov.services.dto.entity.RequestDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -8,6 +7,7 @@ import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -23,17 +23,17 @@ public class RequestClient {
     private PersonService personService;
     private AccountService accountService;
     private RequestFeignClient requestFeignClient;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
 
     @Autowired
     public RequestClient(CardService cardService, PersonService personService, AccountService accountService,
-                         RequestFeignClient requestFeignClient, ObjectMapper objectMapper, Environment environment) {
+                         RequestFeignClient requestFeignClient, ErrorJson errorJson, Environment environment) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.requestFeignClient = requestFeignClient;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
     }
 
@@ -125,6 +125,6 @@ public class RequestClient {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

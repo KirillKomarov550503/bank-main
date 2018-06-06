@@ -1,6 +1,5 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.CardDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
@@ -9,6 +8,7 @@ import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.CardService;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import com.netcracker.komarov.services.validator.impl.CardValidator;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,19 @@ public class CardController {
     private PersonService personService;
     private AccountService accountService;
     private CardValidator cardValidator;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
     private RequestFeignClient requestFeignClient;
 
     @Autowired
     public CardController(CardService cardService, PersonService personService, AccountService accountService,
-                          CardValidator cardValidator, ObjectMapper objectMapper, Environment environment,
+                          CardValidator cardValidator, ErrorJson errorJson, Environment environment,
                           RequestFeignClient requestFeignClient) {
         this.cardService = cardService;
         this.personService = personService;
         this.accountService = accountService;
         this.cardValidator = cardValidator;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
         this.requestFeignClient = requestFeignClient;
     }
@@ -183,6 +183,6 @@ public class CardController {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

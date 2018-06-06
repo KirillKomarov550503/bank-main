@@ -1,9 +1,9 @@
 package com.netcracker.komarov.controllers.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.NewsDTO;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import com.netcracker.komarov.services.util.MapConverter;
 import com.netcracker.komarov.services.util.UriBuilder;
 import com.netflix.appinfo.InstanceInfo;
@@ -31,19 +31,19 @@ public class NewsClient {
     private EurekaClient eurekaClient;
     private UriBuilder uriBuilder;
     private MapConverter mapConverter;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
 
     @Autowired
     public NewsClient(RestTemplate restTemplate, PersonService personService, UriBuilder uriBuilder,
-                      MapConverter mapConverter, ObjectMapper objectMapper, Environment environment,
+                      MapConverter mapConverter, ErrorJson errorJson, Environment environment,
                       @Qualifier("eurekaClient") EurekaClient eurekaClient) {
         this.restTemplate = restTemplate;
         this.personService = personService;
         this.eurekaClient = eurekaClient;
         this.uriBuilder = uriBuilder;
         this.mapConverter = mapConverter;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
     }
 
@@ -182,6 +182,6 @@ public class NewsClient {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

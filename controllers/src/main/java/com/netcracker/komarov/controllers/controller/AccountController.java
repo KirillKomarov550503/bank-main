@@ -1,12 +1,12 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.AccountDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.feign.RequestFeignClient;
 import com.netcracker.komarov.services.interfaces.AccountService;
 import com.netcracker.komarov.services.interfaces.PersonService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -22,17 +22,17 @@ import java.util.Map;
 public class AccountController {
     private AccountService accountService;
     private PersonService personService;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
     private RequestFeignClient requestFeignClient;
 
     @Autowired
     public AccountController(AccountService accountService, PersonService personService,
-                             ObjectMapper objectMapper, Environment environment,
+                             ErrorJson errorJson, Environment environment,
                              RequestFeignClient requestFeignClient) {
         this.accountService = accountService;
         this.personService = personService;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
         this.requestFeignClient = requestFeignClient;
     }
@@ -150,6 +150,6 @@ public class AccountController {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

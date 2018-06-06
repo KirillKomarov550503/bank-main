@@ -1,12 +1,12 @@
 package com.netcracker.komarov.controllers.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netcracker.komarov.services.dto.entity.TransactionDTO;
 import com.netcracker.komarov.services.exception.LogicException;
 import com.netcracker.komarov.services.exception.NotFoundException;
 import com.netcracker.komarov.services.exception.ValidationException;
 import com.netcracker.komarov.services.interfaces.PersonService;
 import com.netcracker.komarov.services.interfaces.TransactionService;
+import com.netcracker.komarov.services.util.ErrorJson;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -21,15 +21,15 @@ import java.util.Collection;
 public class TransactionController {
     private TransactionService transactionService;
     private PersonService personService;
-    private ObjectMapper objectMapper;
+    private ErrorJson errorJson;
     private Environment environment;
 
     @Autowired
     public TransactionController(TransactionService transactionService, PersonService personService,
-                                 ObjectMapper objectMapper, Environment environment) {
+                                 ErrorJson errorJson, Environment environment) {
         this.transactionService = transactionService;
         this.personService = personService;
-        this.objectMapper = objectMapper;
+        this.errorJson = errorJson;
         this.environment = environment;
     }
 
@@ -83,6 +83,6 @@ public class TransactionController {
     }
 
     private ResponseEntity getErrorResponse(HttpStatus httpStatus, String message) {
-        return ResponseEntity.status(httpStatus).body(objectMapper.valueToTree(message));
+        return ResponseEntity.status(httpStatus).body(errorJson.getErrorJson(message));
     }
 }

@@ -8,8 +8,6 @@ import java.util.Map;
 @Component
 public class MapConverter {
     public Map<String, String> convert(Map<String, String> params) {
-        System.err.println("Key: " + params.keySet());
-        System.err.println("Value: " + params.get("parameters"));
         Map<String, String> map = new HashMap<>();
         String[] par = params.get("parameters").split("&");
         for (String string : par) {

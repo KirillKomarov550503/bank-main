@@ -57,9 +57,16 @@ public class TransactionServiceImpl implements TransactionService {
         if (optionalTransaction.isPresent()) {
             Transaction transaction = optionalTransaction.get();
             long accountFromId = transaction.getAccountFromId();
-            Account account = accountRepository.findById(accountFromId).get();
-            if (account.getPerson().getId() != clientId) {
-                String error = "You do not have access to show this transaction";
+            Optional<Account> optionalAccount = accountRepository.findById(accountFromId);
+            if (optionalAccount.isPresent()) {
+                Account account = optionalAccount.get();
+                if (account.getPerson().getId() != clientId) {
+                    String error = environment.getProperty("http.forbidden");
+                    LOGGER.error(error);
+                    throw new LogicException(error);
+                }
+            } else {
+                String error = environment.getProperty("http.forbidden");
                 LOGGER.error(error);
                 throw new LogicException(error);
             }

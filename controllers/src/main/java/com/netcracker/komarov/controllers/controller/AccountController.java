@@ -91,8 +91,8 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Select all accounts by person ID and status")
-    @RequestMapping(value = "/clients/{personId}/accounts/status", method = RequestMethod.GET)
-    public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lockAccount",
+    @RequestMapping(value = "/clients/{personId}/accounts", method = RequestMethod.GET)
+    public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
         try {

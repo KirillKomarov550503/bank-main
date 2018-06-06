@@ -40,9 +40,6 @@ public class CardServiceImplTest {
     private PersonService personService;
 
     @Autowired
-    private RequestFeignClient requestFeignClient;
-
-    @Autowired
     private AccountService accountService;
 
     @Before

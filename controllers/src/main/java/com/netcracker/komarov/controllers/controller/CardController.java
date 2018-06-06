@@ -93,24 +93,9 @@ public class CardController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Unlock card by ID")
-    @RequestMapping(value = "/admins/requests/cards/{cardId}", method = RequestMethod.PATCH)
-    public ResponseEntity unlockCard(@PathVariable long cardId) {
-        ResponseEntity responseEntity;
-        try {
-            CardDTO dto = cardService.unlockCard(cardId);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(dto);
-        } catch (NotFoundException e) {
-            responseEntity = getErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (LogicException e) {
-            responseEntity = getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-        return responseEntity;
-    }
-
     @ApiOperation(value = "Select all card by status")
-    @RequestMapping(value = "/clients/{personId}/cards/status", method = RequestMethod.GET)
-    public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lockAccount",
+    @RequestMapping(value = "/clients/{personId}/cards", method = RequestMethod.GET)
+    public ResponseEntity findByClientIdAndLock(@PathVariable long personId, @RequestParam(name = "lock",
             required = false, defaultValue = "false") boolean lock) {
         ResponseEntity responseEntity;
         try {
